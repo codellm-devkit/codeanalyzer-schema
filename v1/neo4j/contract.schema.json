@@ -14,18 +14,19 @@
       },
       {
         "repo": "codellm-devkit/codeanalyzer-python",
-        "release": "v1.1.1",
-        "schemaVersion": "2.0.0",
+        "release": "v0.3.2",
+        "schemaVersion": "1.2.0",
         "path": "schema.neo4j.json"
       },
       {
         "repo": "codellm-devkit/codeanalyzer-typescript",
-        "release": "v1.0.0",
-        "schemaVersion": "2.0.0",
-        "path": "schema.neo4j.json"
+        "release": "v0.4.3",
+        "schemaVersion": "1.0.0",
+        "path": "schema.neo4j.json",
+        "normalized": true
       }
     ],
-    "note": "The copies under neo4j/<lang>/ are byte-identical to the tagged release, so `diff` against the analyzer repo is the drift check. They are pinned to the latest release, not to whatever sits on main.",
+    "note": "The copies under v1/neo4j/<lang>/ are byte-identical to the tagged release, so `diff` against the analyzer repo is the drift check. Each is pinned to the same release as the v1 analysis schema for that language: the graph contract an analyzer emitted while it was still on analysis schema v1. The contract's own schema_version runs on an independent line and does not track v1/v2. One exception: the TypeScript copy is normalized rather than byte-identical, because v0.4.3 predates prefixing on that line. It carries an x-cldk block saying so.",
     "validates": [
       "*/schema.neo4j.json"
     ]
@@ -88,6 +89,43 @@
       "items": {
         "type": "string",
         "pattern": "^CREATE (INDEX|FULLTEXT INDEX|VECTOR INDEX) "
+      }
+    },
+    "x-cldk": {
+      "description": "Provenance annotation carried by a tracked copy, not something an analyzer emits. Present only on a copy that is not byte-identical to its release, where it records the origin and what was changed.",
+      "type": "object",
+      "required": [
+        "normalized",
+        "origin"
+      ],
+      "properties": {
+        "normalized": {
+          "type": "boolean"
+        },
+        "origin": {
+          "type": "object",
+          "required": [
+            "repo",
+            "release"
+          ],
+          "properties": {
+            "repo": {
+              "type": "string"
+            },
+            "release": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            },
+            "schemaVersion": {
+              "type": "string"
+            }
+          }
+        },
+        "note": {
+          "type": "string"
+        }
       }
     }
   },

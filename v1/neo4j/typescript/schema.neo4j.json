@@ -1,0 +1,470 @@
+{
+  "schema_version": "1.0.0",
+  "generator": "codeanalyzer-typescript",
+  "marker_labels": [
+    "TSEntrypoint"
+  ],
+  "node_labels": [
+    {
+      "label": "TSApplication",
+      "mergeLabel": "TSApplication",
+      "key": "name",
+      "properties": {
+        "name": "string",
+        "schema_version": "string"
+      }
+    },
+    {
+      "label": "TSModule",
+      "mergeLabel": "TSModule",
+      "key": "file_key",
+      "properties": {
+        "file_key": "string",
+        "module_name": "string",
+        "is_tsx": "boolean",
+        "is_declaration_file": "boolean",
+        "content_hash": "string",
+        "last_modified": "integer",
+        "file_size": "integer",
+        "_module": "string"
+      }
+    },
+    {
+      "label": "TSClass",
+      "mergeLabel": "TSSymbol",
+      "key": "signature",
+      "properties": {
+        "signature": "string",
+        "name": "string",
+        "code": "string",
+        "base_classes": "string[]",
+        "implements_types": "string[]",
+        "type_parameter_names": "string[]",
+        "docstring": "string",
+        "is_abstract": "boolean",
+        "is_exported": "boolean",
+        "is_ambient": "boolean",
+        "start_line": "integer",
+        "end_line": "integer",
+        "framework": "string",
+        "detection_source": "string",
+        "route_path": "string",
+        "http_methods": "string[]",
+        "entrypoint_count": "integer",
+        "_module": "string"
+      }
+    },
+    {
+      "label": "TSInterface",
+      "mergeLabel": "TSSymbol",
+      "key": "signature",
+      "properties": {
+        "signature": "string",
+        "name": "string",
+        "code": "string",
+        "base_classes": "string[]",
+        "type_parameter_names": "string[]",
+        "call_signatures": "string[]",
+        "index_signatures": "string[]",
+        "docstring": "string",
+        "is_exported": "boolean",
+        "is_ambient": "boolean",
+        "start_line": "integer",
+        "end_line": "integer",
+        "_module": "string"
+      }
+    },
+    {
+      "label": "TSEnum",
+      "mergeLabel": "TSSymbol",
+      "key": "signature",
+      "properties": {
+        "signature": "string",
+        "name": "string",
+        "code": "string",
+        "member_names": "string[]",
+        "member_values": "string[]",
+        "docstring": "string",
+        "is_const": "boolean",
+        "is_exported": "boolean",
+        "is_ambient": "boolean",
+        "start_line": "integer",
+        "end_line": "integer",
+        "_module": "string"
+      }
+    },
+    {
+      "label": "TSTypeAlias",
+      "mergeLabel": "TSSymbol",
+      "key": "signature",
+      "properties": {
+        "signature": "string",
+        "name": "string",
+        "code": "string",
+        "aliased_type": "string",
+        "type_parameter_names": "string[]",
+        "docstring": "string",
+        "is_exported": "boolean",
+        "is_ambient": "boolean",
+        "start_line": "integer",
+        "end_line": "integer",
+        "_module": "string"
+      }
+    },
+    {
+      "label": "TSNamespace",
+      "mergeLabel": "TSSymbol",
+      "key": "signature",
+      "properties": {
+        "signature": "string",
+        "name": "string",
+        "docstring": "string",
+        "is_exported": "boolean",
+        "is_ambient": "boolean",
+        "start_line": "integer",
+        "end_line": "integer",
+        "_module": "string"
+      }
+    },
+    {
+      "label": "TSCallable",
+      "mergeLabel": "TSSymbol",
+      "key": "signature",
+      "properties": {
+        "signature": "string",
+        "name": "string",
+        "path": "string",
+        "kind": "string",
+        "return_type": "string",
+        "cyclomatic_complexity": "integer",
+        "code": "string",
+        "code_start_line": "integer",
+        "start_line": "integer",
+        "end_line": "integer",
+        "accessibility": "string",
+        "accessor_kind": "string",
+        "docstring": "string",
+        "type_parameter_names": "string[]",
+        "parameters_json": "string",
+        "accessed_symbols_json": "string",
+        "is_static": "boolean",
+        "is_abstract": "boolean",
+        "is_async": "boolean",
+        "is_generator": "boolean",
+        "is_optional": "boolean",
+        "is_readonly": "boolean",
+        "is_exported": "boolean",
+        "is_ambient": "boolean",
+        "is_implicit": "boolean",
+        "framework": "string",
+        "detection_source": "string",
+        "route_path": "string",
+        "http_methods": "string[]",
+        "entrypoint_count": "integer",
+        "_module": "string"
+      }
+    },
+    {
+      "label": "TSExternal",
+      "mergeLabel": "TSSymbol",
+      "key": "signature",
+      "properties": {
+        "signature": "string",
+        "name": "string",
+        "module": "string"
+      }
+    },
+    {
+      "label": "TSAnonymousCallable",
+      "mergeLabel": "TSSymbol",
+      "key": "signature",
+      "properties": {
+        "signature": "string",
+        "name": "string",
+        "path": "string",
+        "start_line": "integer",
+        "start_column": "integer",
+        "_module": "string"
+      }
+    },
+    {
+      "label": "TSPackage",
+      "mergeLabel": "TSPackage",
+      "key": "name",
+      "properties": {
+        "name": "string"
+      }
+    },
+    {
+      "label": "TSDecorator",
+      "mergeLabel": "TSDecorator",
+      "key": "qualified_name",
+      "properties": {
+        "qualified_name": "string",
+        "name": "string"
+      }
+    },
+    {
+      "label": "TSCallSite",
+      "mergeLabel": "TSCallSite",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "method_name": "string",
+        "receiver_expr": "string",
+        "receiver_type": "string",
+        "argument_types": "string[]",
+        "type_arguments": "string[]",
+        "return_type": "string",
+        "callee_signature": "string",
+        "is_constructor_call": "boolean",
+        "is_optional_chain": "boolean",
+        "start_line": "integer",
+        "start_column": "integer",
+        "end_line": "integer",
+        "end_column": "integer",
+        "_module": "string"
+      }
+    },
+    {
+      "label": "TSAttribute",
+      "mergeLabel": "TSAttribute",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "initializer": "string",
+        "accessibility": "string",
+        "docstring": "string",
+        "is_static": "boolean",
+        "is_readonly": "boolean",
+        "is_optional": "boolean",
+        "is_abstract": "boolean",
+        "start_line": "integer",
+        "end_line": "integer",
+        "_module": "string"
+      }
+    },
+    {
+      "label": "TSVariable",
+      "mergeLabel": "TSVariable",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "initializer": "string",
+        "scope": "string",
+        "declaration_kind": "string",
+        "is_readonly": "boolean",
+        "is_exported": "boolean",
+        "start_line": "integer",
+        "end_line": "integer",
+        "_module": "string"
+      }
+    }
+  ],
+  "relationship_types": [
+    {
+      "type": "TS_HAS_MODULE",
+      "from": [
+        "TSApplication"
+      ],
+      "to": [
+        "TSModule"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_DECLARES",
+      "from": [
+        "TSModule",
+        "TSNamespace",
+        "TSClass",
+        "TSCallable"
+      ],
+      "to": [
+        "TSClass",
+        "TSInterface",
+        "TSEnum",
+        "TSTypeAlias",
+        "TSNamespace",
+        "TSCallable"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_HAS_METHOD",
+      "from": [
+        "TSClass",
+        "TSInterface"
+      ],
+      "to": [
+        "TSCallable"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_HAS_ATTRIBUTE",
+      "from": [
+        "TSClass",
+        "TSInterface"
+      ],
+      "to": [
+        "TSAttribute"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_DECLARES_VAR",
+      "from": [
+        "TSModule",
+        "TSNamespace",
+        "TSCallable"
+      ],
+      "to": [
+        "TSVariable"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_HAS_CALLSITE",
+      "from": [
+        "TSCallable"
+      ],
+      "to": [
+        "TSCallSite"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_RESOLVES_TO",
+      "from": [
+        "TSCallSite"
+      ],
+      "to": [
+        "TSCallable",
+        "TSExternal"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_CALLS",
+      "from": [
+        "TSCallable"
+      ],
+      "to": [
+        "TSCallable",
+        "TSExternal"
+      ],
+      "properties": {
+        "weight": "integer",
+        "provenance": "string[]",
+        "dispatch": "string",
+        "external": "boolean",
+        "module": "string"
+      }
+    },
+    {
+      "type": "TS_EXTENDS",
+      "from": [
+        "TSClass",
+        "TSInterface"
+      ],
+      "to": [
+        "TSClass",
+        "TSInterface"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_IMPLEMENTS",
+      "from": [
+        "TSClass"
+      ],
+      "to": [
+        "TSInterface"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_IMPORTS",
+      "from": [
+        "TSModule"
+      ],
+      "to": [
+        "TSModule",
+        "TSPackage"
+      ],
+      "properties": {
+        "imported_names": "string[]",
+        "import_kinds": "string[]",
+        "is_type_only": "boolean"
+      }
+    },
+    {
+      "type": "TS_RE_EXPORTS",
+      "from": [
+        "TSModule"
+      ],
+      "to": [
+        "TSModule",
+        "TSPackage"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_MEMBER_OF",
+      "from": [
+        "TSExternal"
+      ],
+      "to": [
+        "TSPackage"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_DECORATED_BY",
+      "from": [
+        "TSClass",
+        "TSCallable",
+        "TSAttribute"
+      ],
+      "to": [
+        "TSDecorator"
+      ],
+      "properties": {
+        "positional_arguments": "string[]",
+        "keyword_arguments_json": "string",
+        "start_line": "integer",
+        "end_line": "integer"
+      }
+    }
+  ],
+  "constraints": [
+    "CREATE CONSTRAINT application_name IF NOT EXISTS FOR (x:TSApplication) REQUIRE x.name IS UNIQUE",
+    "CREATE CONSTRAINT module_file_key IF NOT EXISTS FOR (x:TSModule) REQUIRE x.file_key IS UNIQUE",
+    "CREATE CONSTRAINT symbol_signature IF NOT EXISTS FOR (x:TSSymbol) REQUIRE x.signature IS UNIQUE",
+    "CREATE CONSTRAINT package_name IF NOT EXISTS FOR (x:TSPackage) REQUIRE x.name IS UNIQUE",
+    "CREATE CONSTRAINT decorator_qualified_name IF NOT EXISTS FOR (x:TSDecorator) REQUIRE x.qualified_name IS UNIQUE",
+    "CREATE CONSTRAINT callsite_id IF NOT EXISTS FOR (x:TSCallSite) REQUIRE x.id IS UNIQUE",
+    "CREATE CONSTRAINT attribute_id IF NOT EXISTS FOR (x:TSAttribute) REQUIRE x.id IS UNIQUE",
+    "CREATE CONSTRAINT variable_id IF NOT EXISTS FOR (x:TSVariable) REQUIRE x.id IS UNIQUE"
+  ],
+  "indexes": [
+    "CREATE INDEX callable_name IF NOT EXISTS FOR (c:TSCallable) ON (c.name)",
+    "CREATE INDEX decorator_name IF NOT EXISTS FOR (d:TSDecorator) ON (d.name)",
+    "CREATE FULLTEXT INDEX code_fts IF NOT EXISTS FOR (c:TSCallable) ON EACH [c.code, c.docstring]"
+  ],
+  "x-cldk": {
+    "normalized": true,
+    "origin": {
+      "repo": "codellm-devkit/codeanalyzer-typescript",
+      "release": "v0.4.3",
+      "path": "schema.neo4j.json",
+      "schemaVersion": "1.0.0"
+    },
+    "note": "Not byte-identical to the release. codeanalyzer-typescript v0.4.3 emitted every label and relationship type unprefixed; this copy applies the TS/TS_ prefix rule to labels, relationship types, and the label positions inside the Cypher statements. Property names, cardinalities, constraint and index identifiers, and schema_version are untouched."
+  }
+}

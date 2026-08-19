@@ -1,5 +1,5 @@
 {
-  "schema_version": "2.0.0",
+  "schema_version": "1.2.0",
   "generator": "codeanalyzer-python",
   "marker_labels": [],
   "node_labels": [
@@ -20,9 +20,8 @@
     {
       "label": "PyModule",
       "merge_label": "PyModule",
-      "key": "id",
+      "key": "file_key",
       "properties": {
-        "id": "string",
         "file_key": "string",
         "module_name": "string",
         "content_hash": "string",
@@ -34,9 +33,8 @@
     {
       "label": "PyClass",
       "merge_label": "PySymbol",
-      "key": "id",
+      "key": "signature",
       "properties": {
-        "id": "string",
         "signature": "string",
         "name": "string",
         "code": "string",
@@ -50,9 +48,8 @@
     {
       "label": "PyCallable",
       "merge_label": "PySymbol",
-      "key": "id",
+      "key": "signature",
       "properties": {
-        "id": "string",
         "signature": "string",
         "name": "string",
         "path": "string",
@@ -72,9 +69,9 @@
     {
       "label": "PyExternal",
       "merge_label": "PySymbol",
-      "key": "id",
+      "key": "signature",
       "properties": {
-        "id": "string",
+        "signature": "string",
         "name": "string",
         "module": "string"
       }
@@ -141,20 +138,6 @@
         "type": "string",
         "initializer": "string",
         "scope": "string",
-        "start_line": "integer",
-        "end_line": "integer",
-        "_module": "string"
-      }
-    },
-    {
-      "label": "PyCFGNode",
-      "merge_label": "PyCFGNode",
-      "key": "id",
-      "properties": {
-        "id": "string",
-        "kind": "string",
-        "var": "string",
-        "call_node": "string",
         "start_line": "integer",
         "end_line": "integer",
         "_module": "string"
@@ -249,7 +232,7 @@
       ],
       "properties": {
         "weight": "integer",
-        "prov": "string[]"
+        "provenance": "string[]"
       }
     },
     {
@@ -286,99 +269,17 @@
         "PyDecorator"
       ],
       "properties": {}
-    },
-    {
-      "type": "PY_HAS_CFG_NODE",
-      "from": [
-        "PyCallable"
-      ],
-      "to": [
-        "PyCFGNode"
-      ],
-      "properties": {}
-    },
-    {
-      "type": "PY_CFG_NEXT",
-      "from": [
-        "PyCFGNode"
-      ],
-      "to": [
-        "PyCFGNode"
-      ],
-      "properties": {
-        "kind": "string",
-        "_k": "string"
-      }
-    },
-    {
-      "type": "PY_CDG",
-      "from": [
-        "PyCFGNode"
-      ],
-      "to": [
-        "PyCFGNode"
-      ],
-      "properties": {}
-    },
-    {
-      "type": "PY_DDG",
-      "from": [
-        "PyCFGNode"
-      ],
-      "to": [
-        "PyCFGNode"
-      ],
-      "properties": {
-        "var": "string",
-        "prov": "string[]",
-        "_k": "string"
-      }
-    },
-    {
-      "type": "PY_PARAM_IN",
-      "from": [
-        "PyCFGNode"
-      ],
-      "to": [
-        "PyCFGNode"
-      ],
-      "properties": {
-        "var": "string"
-      }
-    },
-    {
-      "type": "PY_PARAM_OUT",
-      "from": [
-        "PyCFGNode"
-      ],
-      "to": [
-        "PyCFGNode"
-      ],
-      "properties": {
-        "var": "string"
-      }
-    },
-    {
-      "type": "PY_SUMMARY",
-      "from": [
-        "PyCFGNode"
-      ],
-      "to": [
-        "PyCFGNode"
-      ],
-      "properties": {}
     }
   ],
   "constraints": [
     "CREATE CONSTRAINT pyapplication_name IF NOT EXISTS FOR (x:PyApplication) REQUIRE x.name IS UNIQUE",
-    "CREATE CONSTRAINT pymodule_id IF NOT EXISTS FOR (x:PyModule) REQUIRE x.id IS UNIQUE",
-    "CREATE CONSTRAINT pysymbol_id IF NOT EXISTS FOR (x:PySymbol) REQUIRE x.id IS UNIQUE",
+    "CREATE CONSTRAINT pymodule_file_key IF NOT EXISTS FOR (x:PyModule) REQUIRE x.file_key IS UNIQUE",
+    "CREATE CONSTRAINT pysymbol_signature IF NOT EXISTS FOR (x:PySymbol) REQUIRE x.signature IS UNIQUE",
     "CREATE CONSTRAINT pypackage_name IF NOT EXISTS FOR (x:PyPackage) REQUIRE x.name IS UNIQUE",
     "CREATE CONSTRAINT pydecorator_name IF NOT EXISTS FOR (x:PyDecorator) REQUIRE x.name IS UNIQUE",
     "CREATE CONSTRAINT pycallsite_id IF NOT EXISTS FOR (x:PyCallSite) REQUIRE x.id IS UNIQUE",
     "CREATE CONSTRAINT pyattribute_id IF NOT EXISTS FOR (x:PyAttribute) REQUIRE x.id IS UNIQUE",
-    "CREATE CONSTRAINT pyvariable_id IF NOT EXISTS FOR (x:PyVariable) REQUIRE x.id IS UNIQUE",
-    "CREATE CONSTRAINT pycfgnode_id IF NOT EXISTS FOR (x:PyCFGNode) REQUIRE x.id IS UNIQUE"
+    "CREATE CONSTRAINT pyvariable_id IF NOT EXISTS FOR (x:PyVariable) REQUIRE x.id IS UNIQUE"
   ],
   "indexes": [
     "CREATE INDEX py_callable_name IF NOT EXISTS FOR (c:PyCallable) ON (c.name)",
