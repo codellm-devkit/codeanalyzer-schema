@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codellm-devkit.github.io/schema/v1/LANG/analysis.schema.json",
+  "title": "codeanalyzer-LANG v1 analysis output",
+  "description": "Template for a v1 (pre-canonical) analysis.json. Copy into v1/<lang>/, replace LANG, fill the $defs from the analyzer release named in x-cldk.source, and delete anything the language does not emit. v1 is descriptive, not prescriptive: each analyzer's v1 shape is whatever that release actually produced.",
+
+  "x-cldk": {
+    "schemaVersion": 1,
+    "language": "LANG",
+    "source": {
+      "repo": "codellm-devkit/codeanalyzer-LANG",
+      "release": "vX.Y.Z",
+      "definedIn": "path/to/schema/source/in/that/release"
+    },
+    "consumers": [
+      { "repo": "codellm-devkit/python-sdk", "release": "v1.5.x" }
+    ]
+  },
+
+  "type": "object",
+  "required": ["symbol_table"],
+  "additionalProperties": true,
+
+  "properties": {
+    "symbol_table": {
+      "description": "Per-file analysis, keyed by project-relative POSIX path (Java keys on compilation unit path, Python/TypeScript on module file path).",
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/CompilationUnit" }
+    },
+    "call_graph": {
+      "description": "Flat edge list. Endpoints are callable signatures, using the same canonicalizer caller- and callee-side.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/CallEdge" },
+      "default": []
+    },
+    "external_symbols": {
+      "description": "Call-graph endpoints not declared in symbol_table (library / builtin members), keyed by signature. Omit if the analyzer does not emit it.",
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/ExternalSymbol" }
+    },
+    "analyzer": { "$ref": "#/$defs/AnalyzerInfo" },
+    "repository": { "$ref": "#/$defs/RepositoryInfo" },
+    "version": {
+      "description": "Analyzer version string. Java emits this at the top level instead of an analyzer object.",
+      "type": "string"
+    }
+  },
+
+  "$defs": {
+    "CompilationUnit": {
+      "description": "One source file. Java: JavaCompilationUnit. Python: PyModule. TypeScript: TSModule. Fill in the language's own members (classes, functions/callables, imports, comments, variables, and any language-only members such as TS interfaces/enums/type aliases/namespaces or Java record components).",
+      "type": "object",
+      "properties": {
+        "file_path": { "type": "string" },
+        "imports": { "type": "array", "items": { "$ref": "#/$defs/Import" } },
+        "comments": { "type": "array", "items": { "$ref": "#/$defs/Comment" } },
+        "classes": { "type": "object", "additionalProperties": { "$ref": "#/$defs/Class" } },
+        "callables": { "type": "object", "additionalProperties": { "$ref": "#/$defs/Callable" } }
+      }
+    },
+
+    "Class": {
+      "description": "Type-like declaration (class, record, interface, enum). Key in the parent map is the signature.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "signature": { "type": "string" },
+        "code": { "type": ["string", "null"] },
+        "comments": { "type": "array", "items": { "$ref": "#/$defs/Comment" } },
+        "callables": { "type": "object", "additionalProperties": { "$ref": "#/$defs/Callable" } },
+        "attributes": { "type": "object", "additionalProperties": { "$ref": "#/$defs/Field" } },
+        "inner_classes": { "type": "object", "additionalProperties": { "$ref": "#/$defs/Class" } }
+      },
+      "allOf": [{ "$ref": "#/$defs/SourceRange" }]
+    },
+
+    "Callable": {
+      "description": "Function, method, constructor, lambda, or other callable. `signature` is the call-graph identity and MUST match the endpoints used in call_graph.",
+      "type": "object",
+      "required": ["signature"],
+      "properties": {
+        "name": { "type": "string" },
+        "signature": { "type": "string" },
+        "code": { "type": ["string", "null"] },
+        "return_type": { "type": ["string", "null"] },
+        "parameters": { "type": "array", "items": { "$ref": "#/$defs/Parameter" } },
+        "comments": { "type": "array", "items": { "$ref": "#/$defs/Comment" } },
+        "call_sites": { "type": "array", "items": { "$ref": "#/$defs/CallSite" } },
+        "accessed_symbols": { "type": "array", "items": { "$ref": "#/$defs/Symbol" } },
+        "local_variables": { "type": "array", "items": { "$ref": "#/$defs/VariableDeclaration" } },
+        "cyclomatic_complexity": { "type": "integer" }
+      },
+      "allOf": [{ "$ref": "#/$defs/SourceRange" }]
+    },
+
+    "CallSite": {
+      "description": "A call expression inside a callable body. `callee_signature` links to a Callable or an ExternalSymbol.",
+      "type": "object",
+      "properties": {
+        "method_name": { "type": "string" },
+        "receiver_expr": { "type": ["string", "null"] },
+        "receiver_type": { "type": ["string", "null"] },
+        "argument_types": { "type": "array", "items": { "type": "string" } },
+        "return_type": { "type": ["string", "null"] },
+        "callee_signature": { "type": ["string", "null"] },
+        "is_constructor_call": { "type": "boolean" }
+      },
+      "allOf": [{ "$ref": "#/$defs/SourceRange" }]
+    },
+
+    "CallEdge": {
+      "type": "object",
+      "required": ["source", "target"],
+      "properties": {
+        "source": { "description": "Caller callable signature.", "type": "string" },
+        "target": { "description": "Callee callable signature.", "type": "string" },
+        "type": { "type": "string", "default": "CALL_DEP" },
+        "weight": { "type": "integer", "default": 1 }
+      }
+    },
+
+    "ExternalSymbol": {
+      "type": "object",
+      "properties": {
+        "name": { "description": "Member/short name, e.g. `get` for `requests.get`.", "type": "string" },
+        "module": { "type": ["string", "null"] }
+      }
+    },
+
+    "Parameter": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": ["string", "null"] },
+        "default_value": { "type": ["string", "null"] }
+      },
+      "allOf": [{ "$ref": "#/$defs/SourceRange" }]
+    },
+
+    "Field": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": ["string", "null"] },
+        "initializer": { "type": ["string", "null"] },
+        "comments": { "type": "array", "items": { "$ref": "#/$defs/Comment" } }
+      },
+      "allOf": [{ "$ref": "#/$defs/SourceRange" }]
+    },
+
+    "VariableDeclaration": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": ["string", "null"] },
+        "initializer": { "type": ["string", "null"] },
+        "scope": { "type": "string" }
+      },
+      "allOf": [{ "$ref": "#/$defs/SourceRange" }]
+    },
+
+    "Symbol": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "qualified_name": { "type": ["string", "null"] },
+        "kind": { "type": "string" },
+        "scope": { "type": "string" },
+        "type": { "type": ["string", "null"] }
+      }
+    },
+
+    "Import": {
+      "type": "object",
+      "properties": {
+        "module": { "type": "string" },
+        "name": { "type": ["string", "null"] },
+        "alias": { "type": ["string", "null"] },
+        "resolved_module": { "type": ["string", "null"] }
+      },
+      "allOf": [{ "$ref": "#/$defs/SourceRange" }]
+    },
+
+    "Comment": {
+      "type": "object",
+      "properties": {
+        "content": { "type": "string" },
+        "is_docstring": { "type": "boolean" }
+      },
+      "allOf": [{ "$ref": "#/$defs/SourceRange" }]
+    },
+
+    "AnalyzerInfo": {
+      "description": "Which analyzer produced this snapshot, and how it was configured.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "config": { "type": "object" }
+      }
+    },
+
+    "RepositoryInfo": {
+      "type": "object",
+      "properties": {
+        "uri": { "type": ["string", "null"] },
+        "revision": { "type": "string" },
+        "dirty": { "type": "boolean" }
+      }
+    },
+
+    "SourceRange": {
+      "description": "Positions are 1-based lines, 0-based columns, -1 when unknown. Some analyzers only emit the line pair.",
+      "type": "object",
+      "properties": {
+        "start_line": { "type": "integer", "default": -1 },
+        "end_line": { "type": "integer", "default": -1 },
+        "start_column": { "type": "integer", "default": -1 },
+        "end_column": { "type": "integer", "default": -1 }
+      }
+    }
+  }
+}

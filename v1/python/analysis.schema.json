@@ -1,0 +1,994 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codellm-devkit.github.io/schema/v1/python/analysis.schema.json",
+  "title": "codeanalyzer-python v1 analysis output",
+  "description": "Represents a Python application.",
+  "x-cldk": {
+    "schemaVersion": 1,
+    "language": "python",
+    "source": {
+      "repo": "codellm-devkit/codeanalyzer-python",
+      "release": "v0.3.2",
+      "definedIn": "codeanalyzer/schema/py_schema.py (PyApplication)"
+    },
+    "consumers": [
+      {
+        "repo": "codellm-devkit/python-sdk",
+        "release": "v1.5.x"
+      }
+    ]
+  },
+  "$defs": {
+    "PyAnalyzerInfo": {
+      "description": "Which analyzer produced this snapshot, and how it was configured.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "config": {
+          "additionalProperties": true,
+          "default": {},
+          "title": "Config",
+          "type": "object"
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ],
+      "title": "PyAnalyzerInfo",
+      "type": "object"
+    },
+    "PyCallArgument": {
+      "description": "One call-site argument: AST category + inferred type, kept separate.\n\nThe legacy ``PyCallsite.argument_types`` mixed these two vocabularies\nin one list; this model is the disambiguated replacement (#86).",
+      "properties": {
+        "ast_kind": {
+          "title": "Ast Kind",
+          "type": "string"
+        },
+        "inferred_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inferred Type"
+        }
+      },
+      "required": [
+        "ast_kind"
+      ],
+      "title": "PyCallArgument",
+      "type": "object"
+    },
+    "PyCallEdge": {
+      "description": "Identity-only call-graph edge with weight.\n\nMirrors Java's ``CallDependency``. ``source`` and ``target`` are\n``PyCallable.signature`` strings \u2014 nodes of the graph are the existing\n``PyCallable`` entries in the symbol table, not a separate vertex type.\nRich per-call metadata (receiver, arguments, location, ...) lives on\n``PyCallsite`` inside the source ``PyCallable.call_sites``.",
+      "properties": {
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "type": {
+          "const": "CALL_DEP",
+          "default": "CALL_DEP",
+          "title": "Type",
+          "type": "string"
+        },
+        "weight": {
+          "default": 1,
+          "title": "Weight",
+          "type": "integer"
+        },
+        "provenance": {
+          "default": [],
+          "items": {
+            "enum": [
+              "jedi",
+              "pycg",
+              "joern"
+            ],
+            "type": "string"
+          },
+          "title": "Provenance",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source",
+        "target"
+      ],
+      "title": "PyCallEdge",
+      "type": "object"
+    },
+    "PyCallable": {
+      "description": "Represents a Python callable (function/method).",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "signature": {
+          "title": "Signature",
+          "type": "string"
+        },
+        "comments": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PyComment"
+          },
+          "title": "Comments",
+          "type": "array"
+        },
+        "decorators": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Decorators",
+          "type": "array"
+        },
+        "parameters": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PyCallableParameter"
+          },
+          "title": "Parameters",
+          "type": "array"
+        },
+        "return_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Type"
+        },
+        "code": {
+          "default": null,
+          "title": "Code",
+          "type": "string"
+        },
+        "start_line": {
+          "default": -1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "default": -1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "code_start_line": {
+          "default": -1,
+          "title": "Code Start Line",
+          "type": "integer"
+        },
+        "accessed_symbols": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PySymbol"
+          },
+          "title": "Accessed Symbols",
+          "type": "array"
+        },
+        "call_sites": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PyCallsite"
+          },
+          "title": "Call Sites",
+          "type": "array"
+        },
+        "inner_callables": {
+          "additionalProperties": {
+            "$ref": "#/$defs/PyCallable"
+          },
+          "default": {},
+          "title": "Inner Callables",
+          "type": "object"
+        },
+        "inner_classes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/PyClass"
+          },
+          "default": {},
+          "title": "Inner Classes",
+          "type": "object"
+        },
+        "local_variables": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PyVariableDeclaration"
+          },
+          "title": "Local Variables",
+          "type": "array"
+        },
+        "cyclomatic_complexity": {
+          "default": 0,
+          "title": "Cyclomatic Complexity",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "path",
+        "signature"
+      ],
+      "title": "PyCallable",
+      "type": "object"
+    },
+    "PyCallableParameter": {
+      "description": "Represents a parameter of a Python callable (function/method).",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        },
+        "default_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Value"
+        },
+        "start_line": {
+          "default": -1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "default": -1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "start_column": {
+          "default": -1,
+          "title": "Start Column",
+          "type": "integer"
+        },
+        "end_column": {
+          "default": -1,
+          "title": "End Column",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "PyCallableParameter",
+      "type": "object"
+    },
+    "PyCallsite": {
+      "description": "Represents a Python call site (function or method invocation) with contextual metadata.",
+      "properties": {
+        "method_name": {
+          "title": "Method Name",
+          "type": "string"
+        },
+        "receiver_expr": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Receiver Expr"
+        },
+        "receiver_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Receiver Type"
+        },
+        "argument_types": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Argument Types",
+          "type": "array"
+        },
+        "arguments": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PyCallArgument"
+          },
+          "title": "Arguments",
+          "type": "array"
+        },
+        "return_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Type"
+        },
+        "callee_signature": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Callee Signature"
+        },
+        "is_constructor_call": {
+          "default": false,
+          "title": "Is Constructor Call",
+          "type": "boolean"
+        },
+        "start_line": {
+          "default": -1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "start_column": {
+          "default": -1,
+          "title": "Start Column",
+          "type": "integer"
+        },
+        "end_line": {
+          "default": -1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "end_column": {
+          "default": -1,
+          "title": "End Column",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "method_name"
+      ],
+      "title": "PyCallsite",
+      "type": "object"
+    },
+    "PyClass": {
+      "description": "Represents a Python class.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "signature": {
+          "title": "Signature",
+          "type": "string"
+        },
+        "comments": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PyComment"
+          },
+          "title": "Comments",
+          "type": "array"
+        },
+        "code": {
+          "default": null,
+          "title": "Code",
+          "type": "string"
+        },
+        "base_classes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Base Classes",
+          "type": "array"
+        },
+        "methods": {
+          "additionalProperties": {
+            "$ref": "#/$defs/PyCallable"
+          },
+          "default": {},
+          "title": "Methods",
+          "type": "object"
+        },
+        "attributes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/PyClassAttribute"
+          },
+          "default": {},
+          "title": "Attributes",
+          "type": "object"
+        },
+        "inner_classes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/PyClass"
+          },
+          "default": {},
+          "title": "Inner Classes",
+          "type": "object"
+        },
+        "start_line": {
+          "default": -1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "default": -1,
+          "title": "End Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "signature"
+      ],
+      "title": "PyClass",
+      "type": "object"
+    },
+    "PyClassAttribute": {
+      "description": "Represents a Python class attribute.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        },
+        "initializer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Initializer"
+        },
+        "comments": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PyComment"
+          },
+          "title": "Comments",
+          "type": "array"
+        },
+        "start_line": {
+          "default": -1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "default": -1,
+          "title": "End Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "PyClassAttribute",
+      "type": "object"
+    },
+    "PyComment": {
+      "description": "Represents a Python comment.",
+      "properties": {
+        "content": {
+          "title": "Content",
+          "type": "string"
+        },
+        "start_line": {
+          "default": -1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "default": -1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "start_column": {
+          "default": -1,
+          "title": "Start Column",
+          "type": "integer"
+        },
+        "end_column": {
+          "default": -1,
+          "title": "End Column",
+          "type": "integer"
+        },
+        "is_docstring": {
+          "default": false,
+          "title": "Is Docstring",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "PyComment",
+      "type": "object"
+    },
+    "PyExternalSymbol": {
+      "description": "A call-graph target outside the analyzed project -- an imported library or\nbuiltin member. Mirrors codeanalyzer-typescript's ``TSExternalSymbol`` and is\nkeyed in ``PyApplication.external_symbols`` by its call-graph signature.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "module": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Module"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "PyExternalSymbol",
+      "type": "object"
+    },
+    "PyImport": {
+      "description": "Represents a Python import statement.",
+      "properties": {
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "alias": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alias"
+        },
+        "resolved_module": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolved Module"
+        },
+        "start_line": {
+          "default": -1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "default": -1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "start_column": {
+          "default": -1,
+          "title": "Start Column",
+          "type": "integer"
+        },
+        "end_column": {
+          "default": -1,
+          "title": "End Column",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "module",
+        "name"
+      ],
+      "title": "PyImport",
+      "type": "object"
+    },
+    "PyModule": {
+      "description": "Represents a Python module.",
+      "properties": {
+        "file_path": {
+          "title": "File Path",
+          "type": "string"
+        },
+        "module_name": {
+          "title": "Module Name",
+          "type": "string"
+        },
+        "imports": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PyImport"
+          },
+          "title": "Imports",
+          "type": "array"
+        },
+        "comments": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PyComment"
+          },
+          "title": "Comments",
+          "type": "array"
+        },
+        "classes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/PyClass"
+          },
+          "default": {},
+          "title": "Classes",
+          "type": "object"
+        },
+        "functions": {
+          "additionalProperties": {
+            "$ref": "#/$defs/PyCallable"
+          },
+          "default": {},
+          "title": "Functions",
+          "type": "object"
+        },
+        "variables": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PyVariableDeclaration"
+          },
+          "title": "Variables",
+          "type": "array"
+        },
+        "content_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Hash"
+        },
+        "last_modified": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Modified"
+        },
+        "file_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Size"
+        }
+      },
+      "required": [
+        "file_path",
+        "module_name"
+      ],
+      "title": "PyModule",
+      "type": "object"
+    },
+    "PyRepositoryInfo": {
+      "description": "Where the analyzed source came from: git provenance captured at analysis time.",
+      "properties": {
+        "uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uri"
+        },
+        "revision": {
+          "title": "Revision",
+          "type": "string"
+        },
+        "dirty": {
+          "default": false,
+          "title": "Dirty",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "revision"
+      ],
+      "title": "PyRepositoryInfo",
+      "type": "object"
+    },
+    "PySymbol": {
+      "description": "Represents a symbol used or declared in Python code.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "local",
+            "nonlocal",
+            "global",
+            "class",
+            "module"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "variable",
+            "parameter",
+            "attribute",
+            "function",
+            "class",
+            "module"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        },
+        "qualified_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Qualified Name"
+        },
+        "is_builtin": {
+          "default": false,
+          "title": "Is Builtin",
+          "type": "boolean"
+        },
+        "lineno": {
+          "default": -1,
+          "title": "Lineno",
+          "type": "integer"
+        },
+        "col_offset": {
+          "default": -1,
+          "title": "Col Offset",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "scope",
+        "kind"
+      ],
+      "title": "PySymbol",
+      "type": "object"
+    },
+    "PyVariableDeclaration": {
+      "description": "Represents a Python variable declaration.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Type"
+        },
+        "initializer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Initializer"
+        },
+        "value": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "scope": {
+          "default": "module",
+          "enum": [
+            "module",
+            "class",
+            "function"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "start_line": {
+          "default": -1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "default": -1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "start_column": {
+          "default": -1,
+          "title": "Start Column",
+          "type": "integer"
+        },
+        "end_column": {
+          "default": -1,
+          "title": "End Column",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ],
+      "title": "PyVariableDeclaration",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "symbol_table": {
+      "additionalProperties": {
+        "$ref": "#/$defs/PyModule"
+      },
+      "title": "Symbol Table",
+      "type": "object"
+    },
+    "call_graph": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PyCallEdge"
+      },
+      "title": "Call Graph",
+      "type": "array"
+    },
+    "external_symbols": {
+      "additionalProperties": {
+        "$ref": "#/$defs/PyExternalSymbol"
+      },
+      "default": {},
+      "title": "External Symbols",
+      "type": "object"
+    },
+    "analyzer": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PyAnalyzerInfo"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "repository": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PyRepositoryInfo"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "symbol_table"
+  ],
+  "type": "object"
+}
