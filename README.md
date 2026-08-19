@@ -1,0 +1,2 @@
+# codeanalyzer-schema
+Versioned schema
