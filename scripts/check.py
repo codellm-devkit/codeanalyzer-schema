@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Check every schema in this repo is a valid JSON Schema, and validate any
-sample documents placed next to it.
+"""Check every schema in this repo is a valid JSON Schema, and validate the
+documents it claims to cover.
 
-A sample is any *.sample.json sitting in the same directory as a schema; it is
-validated against that directory's analysis.schema.json.
+A schema validates any *.sample.json sitting in its own directory, plus every
+file matched by the globs in its x-cldk.validates list (relative to the schema).
 
     python3 scripts/check.py            # all versions
     python3 scripts/check.py v1/java    # one directory
@@ -23,9 +23,13 @@ def check(schema_path: Path) -> int:
     rel = schema_path.relative_to(ROOT)
     print(f"ok    {rel}")
 
+    covered = list(schema_path.parent.glob("*.sample.json"))
+    for pattern in schema.get("x-cldk", {}).get("validates", []):
+        covered += schema_path.parent.glob(pattern)
+
     failures = 0
     validator = Draft202012Validator(schema)
-    for sample in sorted(schema_path.parent.glob("*.sample.json")):
+    for sample in sorted(set(covered)):
         errors = sorted(validator.iter_errors(json.loads(sample.read_text())),
                         key=lambda e: list(e.absolute_path))
         if errors:
