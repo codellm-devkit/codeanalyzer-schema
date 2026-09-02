@@ -133,7 +133,7 @@
       "additionalProperties": false,
       "required": ["id", "kind", "name", "path", "span"],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://iac/"},
+        "id": {"type": "string", "pattern": "^can://artifact/"},
         "kind": {"const": "config_key"},
         "name": {"type": "string", "minLength": 1},
         "path": {"type": "string", "minLength": 1},
@@ -187,7 +187,14 @@
     },
     "IaCFacet": {
       "oneOf": [
-        {"$ref": "#/$defs/HelmChart"}
+        {"$ref": "#/$defs/HelmChart"},
+        {"$ref": "#/$defs/HelmRequirements"},
+        {"$ref": "#/$defs/HelmLock"},
+        {"$ref": "#/$defs/HelmValues"},
+        {"$ref": "#/$defs/HelmValuesSchema"},
+        {"$ref": "#/$defs/HelmTemplate"},
+        {"$ref": "#/$defs/HelmCRD"},
+        {"$ref": "#/$defs/HelmIgnore"}
       ]
     },
     "HelmChart": {
@@ -224,6 +231,224 @@
         "name": {"type": "string", "minLength": 1},
         "email": {"type": "string", "minLength": 1},
         "url": {"type": "string", "minLength": 1}
+      }
+    },
+    "HelmRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dialect", "kind", "status", "roles", "dependencies"],
+      "properties": {
+        "dialect": {"const": "helm"},
+        "kind": {"const": "helm_requirements"},
+        "status": {"enum": ["complete", "partial", "failed"]},
+        "roles": {"const": ["legacy_dependency_manifest"]},
+        "dependencies": {"type": "object", "additionalProperties": {"$ref": "#/$defs/HelmDependency"}}
+      }
+    },
+    "HelmLock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dialect", "kind", "status", "roles", "dependencies"],
+      "properties": {
+        "dialect": {"const": "helm"},
+        "kind": {"const": "helm_lock"},
+        "status": {"enum": ["complete", "partial", "failed"]},
+        "roles": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"enum": ["dependency_lock", "legacy_dependency_lock"]}
+        },
+        "dependencies": {"type": "object", "additionalProperties": {"$ref": "#/$defs/HelmDependency"}}
+      }
+    },
+    "HelmValues": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dialect", "kind", "status", "roles"],
+      "properties": {
+        "dialect": {"const": "helm"},
+        "kind": {"const": "helm_values"},
+        "status": {"enum": ["complete", "partial", "failed"]},
+        "roles": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"enum": ["default", "parent", "override"]}
+        }
+      }
+    },
+    "HelmValuesSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dialect", "kind", "status", "roles"],
+      "properties": {
+        "dialect": {"const": "helm"},
+        "kind": {"const": "helm_values_schema"},
+        "status": {"enum": ["complete", "partial", "failed"]},
+        "roles": {"const": ["validation_schema"]}
+      }
+    },
+    "HelmTemplate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dialect",
+        "kind",
+        "status",
+        "roles",
+        "named_templates",
+        "template_calls",
+        "value_references",
+        "resource_templates",
+        "lookup_references"
+      ],
+      "properties": {
+        "dialect": {"const": "helm"},
+        "kind": {"const": "helm_template"},
+        "status": {"enum": ["complete", "partial", "failed"]},
+        "roles": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"enum": ["resource", "helper", "notes", "test", "hook"]}
+        },
+        "named_templates": {"type": "object", "additionalProperties": {"$ref": "#/$defs/HelmNamedTemplate"}},
+        "template_calls": {"type": "object", "additionalProperties": {"$ref": "#/$defs/HelmTemplateCall"}},
+        "value_references": {"type": "object", "additionalProperties": {"$ref": "#/$defs/HelmValueReference"}},
+        "resource_templates": {"type": "object", "additionalProperties": {"$ref": "#/$defs/HelmResourceTemplate"}},
+        "lookup_references": {"type": "object", "additionalProperties": {"$ref": "#/$defs/HelmLookupReference"}}
+      }
+    },
+    "HelmCRD": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dialect", "kind", "status", "roles"],
+      "properties": {
+        "dialect": {"const": "helm"},
+        "kind": {"const": "helm_crd"},
+        "status": {"enum": ["complete", "partial", "failed"]},
+        "roles": {"const": ["custom_resource_definition"]}
+      }
+    },
+    "HelmIgnore": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dialect", "kind", "status", "roles"],
+      "properties": {
+        "dialect": {"const": "helm"},
+        "kind": {"const": "helm_ignore"},
+        "status": {"enum": ["complete", "partial", "failed"]},
+        "roles": {"const": ["ignore_rules"]}
+      }
+    },
+    "HelmDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "name", "version_constraint", "span"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^can://iac/"},
+        "kind": {"const": "helm_dependency"},
+        "name": {"type": "string", "minLength": 1},
+        "version_constraint": {"type": "string", "minLength": 1},
+        "alias": {"type": "string", "minLength": 1},
+        "repository": {"type": "string", "minLength": 1},
+        "condition": {"type": "string", "minLength": 1},
+        "tags": {"type": "array", "items": {"type": "string"}},
+        "import_values": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {"type": "string"},
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["child", "parent"],
+                "properties": {
+                  "child": {"type": "string"},
+                  "parent": {"type": "string"}
+                }
+              }
+            ]
+          }
+        },
+        "span": {"$ref": "#/$defs/Span"}
+      }
+    },
+    "HelmNamedTemplate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "name", "span"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^can://iac/"},
+        "kind": {"const": "helm_named_template"},
+        "name": {"type": "string", "minLength": 1},
+        "span": {"$ref": "#/$defs/Span"}
+      }
+    },
+    "HelmTemplateCall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "call_kind", "name_expression", "span"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^can://iac/"},
+        "kind": {"const": "helm_template_call"},
+        "call_kind": {"enum": ["template", "include", "block", "tpl"]},
+        "name_expression": {"type": "string"},
+        "target_id": {"type": "string", "pattern": "^can://iac/"},
+        "span": {"$ref": "#/$defs/Span"}
+      }
+    },
+    "HelmValueReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "path_expression", "span"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^can://iac/"},
+        "kind": {"const": "helm_value_reference"},
+        "path_expression": {"type": "string", "minLength": 1},
+        "target_id": {"type": "string", "pattern": "^can://(artifact|iac)/"},
+        "span": {"$ref": "#/$defs/Span"}
+      }
+    },
+    "HelmResourceTemplate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "document_index", "span"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^can://iac/"},
+        "kind": {"const": "helm_resource_template"},
+        "document_index": {"type": "integer", "minimum": 0},
+        "span": {"$ref": "#/$defs/Span"}
+      }
+    },
+    "HelmLookupReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "group_expression",
+        "version_expression",
+        "resource_kind_expression",
+        "namespace_expression",
+        "name_expression",
+        "span"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^can://iac/"},
+        "kind": {"const": "helm_lookup_reference"},
+        "group_expression": {"type": "string"},
+        "version_expression": {"type": "string"},
+        "resource_kind_expression": {"type": "string"},
+        "namespace_expression": {"type": "string"},
+        "name_expression": {"type": "string"},
+        "span": {"$ref": "#/$defs/Span"}
+      }
+    },
+    "HelmValueFacet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": {"const": "helm_value"}
       }
     }
   }
