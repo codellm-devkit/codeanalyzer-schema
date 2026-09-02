@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codellm-devkit.github.io/schema/v2/iac/neo4j/contract.schema.json",
+  "title": "codeanalyzer-iac Neo4j graph contract",
+  "x-cldk": {
+    "kind": "neo4j-graph-contract",
+    "validates": ["schema.neo4j.sample.json"]
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generator", "marker_labels", "node_labels", "relationship_types", "constraints", "indexes"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "generator": {"const": "codeanalyzer-iac"},
+    "marker_labels": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "node_labels": {"type": "array", "items": {"$ref": "#/$defs/NodeLabel"}, "minItems": 1},
+    "relationship_types": {"type": "array", "items": {"$ref": "#/$defs/RelationshipType"}, "minItems": 1},
+    "constraints": {"type": "array", "items": {"type": "string", "pattern": "^CREATE CONSTRAINT "}},
+    "indexes": {"type": "array", "items": {"type": "string", "pattern": "^CREATE (INDEX|FULLTEXT INDEX|VECTOR INDEX) "}}
+  },
+  "$defs": {
+    "NodeLabel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "merge_label", "key", "properties"],
+      "properties": {
+        "label": {"$ref": "#/$defs/LabelName"},
+        "merge_label": {"$ref": "#/$defs/LabelName"},
+        "key": {"type": "string", "minLength": 1},
+        "properties": {
+          "type": "object",
+          "additionalProperties": {"$ref": "#/$defs/PropertyType"}
+        }
+      }
+    },
+    "RelationshipType": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "from", "to", "properties"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^(HAS_ARTIFACT|DEFINES_CONFIG|IAC_[A-Z0-9_]+)$"
+        },
+        "from": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/LabelName"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "to": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/LabelName"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {"$ref": "#/$defs/PropertyType"}
+        }
+      }
+    },
+    "LabelName": {
+      "type": "string",
+      "pattern": "^(Application|Artifact|ConfigKey|Package|IdentityAlias|(IaC|Helm|Kubernetes|CodeAnalyzerIaC)[A-Za-z0-9_]*)$"
+    },
+    "PropertyType": {
+      "type": "string",
+      "enum": ["string", "integer", "float", "boolean", "string[]", "integer[]", "float[]", "boolean[]"]
+    }
+  }
+}
