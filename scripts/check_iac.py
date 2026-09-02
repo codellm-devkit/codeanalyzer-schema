@@ -206,8 +206,6 @@ def assert_monotone(lower: dict, higher: dict) -> list[str]:
             if not isinstance(right, list) or left != right[: len(left)]:
                 errors.append(f"list changed at {'/'.join(path)}")
             return
-        if path and path[-1] == "target_id" and left is None and isinstance(right, str):
-            return
         if left != right:
             errors.append(f"value changed at {'/'.join(path)}")
 

@@ -186,6 +186,27 @@ class CheckIaCTest(unittest.TestCase):
         higher["application"]["artifacts"]["README.md"]["path"] = "renamed.md"
         self.assertIn("value changed at application/artifacts/README.md/path", assert_monotone(lower, higher))
 
+    def test_monotonicity_allows_absent_target_id_to_be_added(self):
+        lower = {"max_level": 1, "reference": {}}
+        higher = {"max_level": 2, "reference": {"target_id": "can://iac/payments/target"}}
+        self.assertEqual([], assert_monotone(lower, higher))
+
+    def test_monotonicity_rejects_present_null_target_id_replacement(self):
+        lower = {"max_level": 1, "reference": {"target_id": None}}
+        higher = {"max_level": 2, "reference": {"target_id": "can://iac/payments/target"}}
+        self.assertEqual(
+            ["value changed at reference/target_id"],
+            assert_monotone(lower, higher),
+        )
+
+    def test_monotonicity_rejects_changed_target_id(self):
+        lower = {"max_level": 1, "reference": {"target_id": "can://iac/payments/one"}}
+        higher = {"max_level": 2, "reference": {"target_id": "can://iac/payments/two"}}
+        self.assertEqual(
+            ["value changed at reference/target_id"],
+            assert_monotone(lower, higher),
+        )
+
     def test_catalog_relationships_are_identity_only(self):
         catalog = self.load_catalog()
         catalog["relationship_types"][0]["properties"]["ordinal"] = "integer"

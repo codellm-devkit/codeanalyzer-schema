@@ -48,7 +48,15 @@ python3 -m unittest discover -s tests -v
 ```
 
 The unit and repository check suites use only checked-in files and stay
-network-free. The two live repositories are a downstream backend-consumer
-gate, not inputs fetched by this repository: preserve emitted JSON from each
-pinned consumer, validate it with `v2/iac/json/analysis.schema.json`, and run
-it through `scripts/check_iac.py` without weakening either contract.
+network-free. These live repositories are downstream backend-consumer gates,
+not inputs fetched by this repository:
+
+- `sample-daytrader/sample.daytrader.microservices`: each emitted document
+  must pass structural validation with `v2/iac/json/analysis.schema.json` and
+  semantic `scripts/check_iac.py` validation.
+- `quarkuscoffeeshop/quarkuscoffeeshop-helm`: each emitted document must pass
+  structural validation with `v2/iac/json/analysis.schema.json` and semantic
+  `scripts/check_iac.py` validation.
+
+Preserve the emitted JSON from both pinned repositories and do not weaken
+either contract to admit a consumer output.
