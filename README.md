@@ -51,10 +51,12 @@ The unit and repository check suites use only checked-in files and stay
 network-free. These live repositories are downstream backend-consumer gates,
 not inputs fetched by this repository:
 
-- `sample-daytrader/sample.daytrader.microservices`: each emitted document
+- `sample-daytrader/sample.daytrader.microservices@8a68b59430a94a242c54384763da9eb7682728b4`:
+  each emitted document
   must pass structural validation with `v2/iac/json/analysis.schema.json` and
   semantic `scripts/check_iac.py` validation.
-- `quarkuscoffeeshop/quarkuscoffeeshop-helm`: each emitted document must pass
+- `quarkuscoffeeshop/quarkuscoffeeshop-helm@aa3c842658e0fc7e44fa25132d8b817eab225cbe`:
+  each emitted document must pass
   structural validation with `v2/iac/json/analysis.schema.json` and semantic
   `scripts/check_iac.py` validation.
 

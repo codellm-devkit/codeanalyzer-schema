@@ -13,6 +13,54 @@
   },
   "$ref": "#/$defs/Analysis",
   "$defs": {
+    "ApplicationId": {
+      "type": "string",
+      "pattern": "^can://iac/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+(?![\\s\\S])"
+    },
+    "ArtifactId": {
+      "type": "string",
+      "pattern": "^can://artifact/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+(?:/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+)*(?![\\s\\S])"
+    },
+    "ConfigKeyId": {
+      "type": "string",
+      "pattern": "^can://artifact/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+(?:/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+)*@key/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+(?:/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+)*(?![\\s\\S])"
+    },
+    "SemanticId": {
+      "type": "string",
+      "pattern": "^can://iac/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+(?:/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+)*(?:@(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+(?::(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+)*)?(?![\\s\\S])"
+    },
+    "Purl": {
+      "type": "string",
+      "pattern": "^pkg:oci/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+(?:/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+)*(?:@(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+)?(?:\\?[a-z][a-z0-9._-]*=(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+(?:&[a-z][a-z0-9._-]*=(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+)*)?(?:#(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+(?:/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+)*)?(?![\\s\\S])"
+    },
+    "AliasTargetId": {
+      "oneOf": [
+        {"$ref": "#/$defs/ArtifactId"},
+        {"$ref": "#/$defs/SemanticId"}
+      ]
+    },
+    "ValueSourceId": {
+      "oneOf": [
+        {"$ref": "#/$defs/ArtifactId"},
+        {"$ref": "#/$defs/ConfigKeyId"}
+      ]
+    },
+    "OriginId": {
+      "oneOf": [
+        {"$ref": "#/$defs/ArtifactId"},
+        {"$ref": "#/$defs/ConfigKeyId"},
+        {"$ref": "#/$defs/SemanticId"}
+      ]
+    },
+    "NodeId": {
+      "oneOf": [
+        {"$ref": "#/$defs/ApplicationId"},
+        {"$ref": "#/$defs/ArtifactId"},
+        {"$ref": "#/$defs/ConfigKeyId"},
+        {"$ref": "#/$defs/SemanticId"},
+        {"$ref": "#/$defs/Purl"}
+      ]
+    },
     "Analysis": {
       "type": "object",
       "additionalProperties": false,
@@ -48,7 +96,7 @@
         "edges"
       ],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://iac/[^/]+$"},
+        "id": {"$ref": "#/$defs/ApplicationId"},
         "kind": {"const": "application"},
         "artifacts": {
           "type": "object",
@@ -78,7 +126,7 @@
       "additionalProperties": false,
       "required": ["id", "kind", "path", "format", "source", "sha256", "size_bytes", "config_keys", "aliases"],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://artifact/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+(?:/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+)*(?![\\s\\S])"},
+        "id": {"$ref": "#/$defs/ArtifactId"},
         "kind": {"const": "artifact"},
         "path": {
           "type": "string",
@@ -130,7 +178,7 @@
       "additionalProperties": false,
       "required": ["id", "kind", "name", "path", "span"],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://artifact/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+(?:/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+)*@key/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+(?:/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+)*(?![\\s\\S])"},
+        "id": {"$ref": "#/$defs/ConfigKeyId"},
         "kind": {"const": "config_key"},
         "name": {"type": "string", "minLength": 1},
         "path": {"type": "string", "minLength": 1},
@@ -143,9 +191,9 @@
       "additionalProperties": false,
       "required": ["id", "kind", "target"],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://iac/"},
+        "id": {"$ref": "#/$defs/SemanticId"},
         "kind": {"type": "string", "minLength": 1},
-        "target": {"type": "string", "pattern": "^can://(artifact|iac)/"}
+        "target": {"$ref": "#/$defs/AliasTargetId"}
       }
     },
     "Diagnostic": {
@@ -153,13 +201,13 @@
       "additionalProperties": false,
       "required": ["id", "kind", "severity", "code", "message"],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://iac/"},
+        "id": {"$ref": "#/$defs/SemanticId"},
         "kind": {"const": "diagnostic"},
         "severity": {"enum": ["info", "warning", "error"]},
         "code": {"type": "string", "minLength": 1},
         "message": {"type": "string", "minLength": 1},
         "phase": {"enum": ["load", "dependency", "values", "template", "decode"]},
-        "artifact_id": {"type": "string", "pattern": "^can://artifact/"},
+        "artifact_id": {"$ref": "#/$defs/ArtifactId"},
         "span": {"$ref": "#/$defs/Span"}
       }
     },
@@ -168,9 +216,9 @@
       "additionalProperties": false,
       "required": ["id", "kind", "purl"],
       "properties": {
-        "id": {"type": "string", "pattern": "^pkg:[a-z][a-z0-9.+-]*/.+"},
+        "id": {"$ref": "#/$defs/Purl"},
         "kind": {"const": "package"},
-        "purl": {"type": "string", "pattern": "^pkg:[a-z][a-z0-9.+-]*/.+"}
+        "purl": {"$ref": "#/$defs/Purl"}
       }
     },
     "Edge": {
@@ -178,8 +226,8 @@
       "additionalProperties": false,
       "required": ["src", "dst"],
       "properties": {
-        "src": {"type": "string", "minLength": 1},
-        "dst": {"type": "string", "minLength": 1}
+        "src": {"$ref": "#/$defs/NodeId"},
+        "dst": {"$ref": "#/$defs/NodeId"}
       }
     },
     "IaCFacet": {
@@ -342,7 +390,7 @@
       "additionalProperties": false,
       "required": ["id", "kind", "name", "version_constraint", "span"],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://iac/"},
+        "id": {"$ref": "#/$defs/SemanticId"},
         "kind": {"const": "helm_dependency"},
         "name": {"type": "string", "minLength": 1},
         "version_constraint": {"type": "string", "minLength": 1},
@@ -375,7 +423,7 @@
       "additionalProperties": false,
       "required": ["id", "kind", "name", "span"],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://iac/"},
+        "id": {"$ref": "#/$defs/SemanticId"},
         "kind": {"const": "helm_named_template"},
         "name": {"type": "string", "minLength": 1},
         "span": {"$ref": "#/$defs/Span"}
@@ -386,11 +434,11 @@
       "additionalProperties": false,
       "required": ["id", "kind", "call_kind", "name_expression", "span"],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://iac/"},
+        "id": {"$ref": "#/$defs/SemanticId"},
         "kind": {"const": "helm_template_call"},
         "call_kind": {"enum": ["template", "include", "block", "tpl"]},
         "name_expression": {"type": "string"},
-        "target_id": {"type": "string", "pattern": "^can://iac/"},
+        "target_id": {"$ref": "#/$defs/SemanticId"},
         "span": {"$ref": "#/$defs/Span"}
       }
     },
@@ -399,10 +447,10 @@
       "additionalProperties": false,
       "required": ["id", "kind", "path_expression", "span"],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://iac/"},
+        "id": {"$ref": "#/$defs/SemanticId"},
         "kind": {"const": "helm_value_reference"},
         "path_expression": {"type": "string", "minLength": 1},
-        "target_id": {"type": "string", "pattern": "^can://(artifact|iac)/"},
+        "target_id": {"$ref": "#/$defs/ConfigKeyId"},
         "span": {"$ref": "#/$defs/Span"}
       }
     },
@@ -411,7 +459,7 @@
       "additionalProperties": false,
       "required": ["id", "kind", "document_index", "span"],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://iac/"},
+        "id": {"$ref": "#/$defs/SemanticId"},
         "kind": {"const": "helm_resource_template"},
         "document_index": {"type": "integer", "minimum": 0},
         "span": {"$ref": "#/$defs/Span"}
@@ -431,7 +479,7 @@
         "span"
       ],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://iac/"},
+        "id": {"$ref": "#/$defs/SemanticId"},
         "kind": {"const": "helm_lookup_reference"},
         "group_expression": {"type": "string"},
         "version_expression": {"type": "string"},
@@ -479,13 +527,13 @@
       "additionalProperties": false,
       "required": ["id", "kind", "name", "version_constraint"],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://iac/"},
+        "id": {"$ref": "#/$defs/SemanticId"},
         "kind": {"const": "helm_chart_reference"},
         "name": {"type": "string", "minLength": 1},
         "version_constraint": {"type": "string", "minLength": 1},
         "repository": {"type": "string", "minLength": 1},
-        "purl": {"type": "string", "pattern": "^pkg:[a-z][a-z0-9.+-]*/.+"},
-        "resolved_chart_id": {"type": "string", "pattern": "^can://iac/"}
+        "purl": {"$ref": "#/$defs/Purl"},
+        "resolved_chart_id": {"$ref": "#/$defs/ArtifactId"}
       }
     },
     "CodeAnalyzerIaCConfig": {
@@ -503,11 +551,11 @@
       "additionalProperties": false,
       "required": ["id", "kind", "name", "origin", "chart_id", "release_name", "namespace", "value_layers", "api_versions"],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://iac/"},
+        "id": {"$ref": "#/$defs/SemanticId"},
         "kind": {"const": "helm_render_profile"},
         "name": {"type": "string", "minLength": 1},
         "origin": {"enum": ["default", "config"]},
-        "chart_id": {"type": "string", "pattern": "^can://artifact/"},
+        "chart_id": {"$ref": "#/$defs/ArtifactId"},
         "release_name": {"type": "string", "minLength": 1},
         "namespace": {"type": "string", "minLength": 1},
         "value_layers": {"type": "object", "additionalProperties": {"$ref": "#/$defs/HelmValueLayer"}},
@@ -520,10 +568,10 @@
       "additionalProperties": false,
       "required": ["id", "kind", "ordinal", "source_id"],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://iac/"},
+        "id": {"$ref": "#/$defs/SemanticId"},
         "kind": {"const": "helm_value_layer"},
         "ordinal": {"type": "integer", "minimum": 0},
-        "source_id": {"type": "string", "pattern": "^can://(artifact|iac)/"}
+        "source_id": {"$ref": "#/$defs/ValueSourceId"}
       }
     },
     "HelmRender": {
@@ -531,38 +579,45 @@
       "additionalProperties": false,
       "required": ["id", "kind", "status", "profile_id", "renderer_name", "renderer_version", "value_layer_ids", "effective_values_sha256", "diagnostics", "resources"],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://iac/"},
+        "id": {"$ref": "#/$defs/SemanticId"},
         "kind": {"const": "helm_render"},
         "status": {"enum": ["succeeded", "partial", "failed", "skipped"]},
-        "profile_id": {"type": "string", "pattern": "^can://iac/"},
+        "profile_id": {"$ref": "#/$defs/SemanticId"},
         "renderer_name": {"type": "string", "minLength": 1},
         "renderer_version": {"type": "string", "minLength": 1},
-        "value_layer_ids": {"type": "array", "items": {"type": "string", "pattern": "^can://iac/"}},
+        "value_layer_ids": {"type": "array", "items": {"$ref": "#/$defs/SemanticId"}},
         "effective_values_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "diagnostics": {"type": "object", "additionalProperties": {"$ref": "#/$defs/Diagnostic"}},
         "resources": {"type": "object", "additionalProperties": {"$ref": "#/$defs/KubernetesResource"}},
         "phase": {"enum": ["load", "dependency", "values", "template", "decode"]}
-      }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "succeeded"}}},
+          "then": {"not": {"required": ["phase"]}},
+          "else": {"required": ["phase"]}
+        }
+      ]
     },
     "KubernetesResource": {
       "type": "object",
       "additionalProperties": false,
       "required": ["id", "kind", "api_version", "resource_kind", "manifest_sha256", "render_id", "origin_ids"],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://iac/"},
+        "id": {"$ref": "#/$defs/SemanticId"},
         "kind": {"const": "kubernetes_resource"},
         "api_version": {"type": "string", "minLength": 1},
         "resource_kind": {"type": "string", "minLength": 1},
         "manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "render_id": {"type": "string", "pattern": "^can://iac/"},
-        "origin_ids": {"type": "array", "items": {"type": "string", "pattern": "^can://(artifact|iac)/"}},
+        "render_id": {"$ref": "#/$defs/SemanticId"},
+        "origin_ids": {"type": "array", "items": {"$ref": "#/$defs/OriginId"}},
         "namespace": {"type": "string", "minLength": 1},
         "name": {"type": "string", "minLength": 1},
         "generate_name": {"type": "string", "minLength": 1},
         "labels": {"type": "object", "additionalProperties": {"type": "string"}},
         "annotations": {"type": "object", "additionalProperties": {"type": "string"}},
         "plural": {"type": "string", "minLength": 1},
-        "address_id": {"type": "string", "pattern": "^can://iac/"},
+        "address_id": {"$ref": "#/$defs/SemanticId"},
         "secret_data": {"type": "object", "additionalProperties": {"$ref": "#/$defs/KubernetesSecretDatum"}}
       }
     },
@@ -580,7 +635,7 @@
       "additionalProperties": false,
       "required": ["id", "kind", "group", "resource_kind", "namespace", "name"],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://iac/"},
+        "id": {"$ref": "#/$defs/SemanticId"},
         "kind": {"const": "kubernetes_resource_address"},
         "group": {"type": "string"},
         "resource_kind": {"type": "string", "minLength": 1},
