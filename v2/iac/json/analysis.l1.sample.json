@@ -1,0 +1,58 @@
+{
+  "schema_version": "2.0.0",
+  "language": "iac",
+  "max_level": 1,
+  "analyzer": {"name": "codeanalyzer-iac", "version": "0.1.0"},
+  "application": {
+    "id": "can://iac/payments",
+    "kind": "application",
+    "artifacts": {
+      "README.md": {
+        "id": "can://artifact/payments/README.md",
+        "kind": "artifact",
+        "path": "README.md",
+        "format": "text",
+        "source": "payments infrastructure\n",
+        "sha256": "79accdf71a72e00a8b25fe1284094368e885e2fe55db0cf686a83c5359bf43df",
+        "size_bytes": 24,
+        "config_keys": {},
+        "aliases": []
+      },
+      "charts/api/Chart.yaml": {
+        "id": "can://artifact/payments/charts/api/Chart.yaml",
+        "kind": "artifact",
+        "path": "charts/api/Chart.yaml",
+        "format": "yaml",
+        "source": "apiVersion: v2\nname: api\nversion: 1.2.3\ntype: application\n",
+        "sha256": "4a0bf85edced2838bb82ae1a52bf8830a718462ff54f4c6fb11ce539fabb53af",
+        "size_bytes": 58,
+        "config_keys": {},
+        "aliases": [{
+          "id": "can://iac/payments/helm/chart/charts/api",
+          "kind": "helm_chart",
+          "target": "can://artifact/payments/charts/api/Chart.yaml"
+        }],
+        "iac": {
+          "dialect": "helm",
+          "kind": "helm_chart",
+          "status": "complete",
+          "api_version": "v2",
+          "name": "api",
+          "version": "1.2.3",
+          "chart_type": "application",
+          "maintainers": [],
+          "keywords": [],
+          "sources": [],
+          "annotations": {},
+          "dependencies": {},
+          "renders": {}
+        }
+      }
+    },
+    "packages": {},
+    "external_chart_references": {},
+    "kubernetes_resource_addresses": {},
+    "diagnostics": {},
+    "edges": {}
+  }
+}
