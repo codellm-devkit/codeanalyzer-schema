@@ -133,7 +133,7 @@
       "additionalProperties": false,
       "required": ["id", "kind", "name", "path", "span"],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://artifact/"},
+        "id": {"type": "string", "pattern": "^can://artifact/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+(?:/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+)*@key/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+(?:/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+)*(?![\\s\\S])"},
         "kind": {"const": "config_key"},
         "name": {"type": "string", "minLength": 1},
         "path": {"type": "string", "minLength": 1},
