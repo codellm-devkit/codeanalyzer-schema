@@ -152,6 +152,24 @@
     "kubernetes_resource_addresses": {},
     "diagnostics": {},
     "edges": {
+      "has_artifact": {
+        "README.md": {"src": "can://iac/payments", "dst": "can://artifact/payments/README.md"},
+        "charts/api/Chart.yaml": {"src": "can://iac/payments", "dst": "can://artifact/payments/charts/api/Chart.yaml"},
+        "charts/api/values.yaml": {"src": "can://iac/payments", "dst": "can://artifact/payments/charts/api/values.yaml"},
+        "charts/api/templates/deployment.yaml": {"src": "can://iac/payments", "dst": "can://artifact/payments/charts/api/templates/deployment.yaml"}
+      },
+      "defines_config": {
+        "charts/api/values.yaml@key/image.tag": {
+          "src": "can://artifact/payments/charts/api/values.yaml",
+          "dst": "can://artifact/payments/charts/api/values.yaml@key/image.tag"
+        }
+      },
+      "iac_alias_of": {
+        "charts/api/Chart.yaml@helm-chart": {
+          "src": "can://iac/payments/helm/chart/charts/api",
+          "dst": "can://artifact/payments/charts/api/Chart.yaml"
+        }
+      },
       "iac_defines_template": {
         "charts/api/templates/deployment.yaml@12:1": {
           "src": "can://artifact/payments/charts/api/templates/deployment.yaml",
