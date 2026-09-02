@@ -14,6 +14,11 @@ from pathlib import Path
 
 from jsonschema import Draft202012Validator
 
+if __package__:
+    from .check_iac import assert_monotone, check_catalog, check_document
+else:
+    from check_iac import assert_monotone, check_catalog, check_document
+
 ROOT = Path(__file__).resolve().parent.parent
 
 
@@ -43,13 +48,79 @@ def check(schema_path: Path) -> int:
     return failures
 
 
+def selected_iac_root(where: Path) -> Path | None:
+    """Return the IaC contract root only when the selected path includes it."""
+    iac_root = ROOT / "v2/iac"
+    if not iac_root.exists():
+        return None
+    try:
+        iac_root.relative_to(where)
+        return iac_root
+    except ValueError:
+        pass
+    try:
+        where.relative_to(iac_root)
+        return iac_root
+    except ValueError:
+        return None
+
+
+def check_iac_contract(iac_root: Path) -> int:
+    """Run semantic and level-monotonicity checks for the IaC contract."""
+    failures = 0
+    analysis_paths = sorted((iac_root / "json").glob("analysis.l*.sample.json"))
+    analyses: list[tuple[Path, dict]] = []
+
+    for path in analysis_paths:
+        document = json.loads(path.read_text())
+        analyses.append((path, document))
+        errors = check_document(document)
+        if errors:
+            failures += 1
+            print(f"FAIL  {path.relative_to(ROOT)}: {len(errors)} semantic error(s)")
+            for error in errors:
+                print(f"        {error}")
+        else:
+            print(f"ok    {path.relative_to(ROOT)} (semantic)")
+
+    catalog_path = iac_root / "neo4j/schema.neo4j.sample.json"
+    if catalog_path.exists():
+        errors = check_catalog(json.loads(catalog_path.read_text()))
+        if errors:
+            failures += 1
+            print(f"FAIL  {catalog_path.relative_to(ROOT)}: {len(errors)} semantic error(s)")
+            for error in errors:
+                print(f"        {error}")
+        else:
+            print(f"ok    {catalog_path.relative_to(ROOT)} (semantic)")
+
+    for (lower_path, lower), (higher_path, higher) in zip(analyses, analyses[1:]):
+        errors = assert_monotone(lower, higher)
+        label = f"{lower_path.name} <= {higher_path.name}"
+        if errors:
+            failures += 1
+            print(f"FAIL  {label}: {len(errors)} monotonicity error(s)")
+            for error in errors:
+                print(f"        {error}")
+        else:
+            print(f"ok    {label} (monotone)")
+
+    return failures
+
+
 def main() -> int:
     where = ROOT / sys.argv[1] if len(sys.argv) > 1 else ROOT
     schemas = sorted(where.rglob("*.schema.json"))
     if not schemas:
         print(f"no schemas under {where}")
         return 1
-    return min(sum(check(s) for s in schemas), 1)
+    failures = sum(check(schema) for schema in schemas)
+    if failures:
+        return 1
+    iac_root = selected_iac_root(where)
+    if iac_root is not None:
+        failures += check_iac_contract(iac_root)
+    return min(failures, 1)
 
 
 if __name__ == "__main__":
