@@ -81,7 +81,7 @@
       "additionalProperties": false,
       "required": ["id", "kind", "path", "format", "source", "sha256", "size_bytes", "config_keys", "aliases"],
       "properties": {
-        "id": {"type": "string", "pattern": "^can://artifact/[^/]+/.+"},
+        "id": {"type": "string", "pattern": "^can://artifact/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+(?:/(?:[A-Za-z0-9._~-]|%[0-9A-Fa-f]{2})+)*$"},
         "kind": {"const": "artifact"},
         "path": {
           "type": "string",
