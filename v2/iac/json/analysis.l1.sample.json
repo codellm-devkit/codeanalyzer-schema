@@ -185,6 +185,16 @@
           "dst": "can://artifact/payments/charts/api/values.yaml@key/image.tag"
         }
       },
+      "iac_has_alias": {
+        "charts/api/Chart.yaml@helm-chart": {
+          "src": "can://artifact/payments/charts/api/Chart.yaml",
+          "dst": "can://iac/payments/helm/chart/charts/api"
+        },
+        "charts/api/charts/postgresql/Chart.yaml@helm-chart": {
+          "src": "can://artifact/payments/charts/api/charts/postgresql/Chart.yaml",
+          "dst": "can://iac/payments/helm/chart/charts/api/charts/postgresql"
+        }
+      },
       "iac_alias_of": {
         "charts/api/Chart.yaml@helm-chart": {
           "src": "can://iac/payments/helm/chart/charts/api",
@@ -211,6 +221,18 @@
         "charts/api/templates/deployment.yaml@10:16": {
           "src": "can://artifact/payments/charts/api/templates/deployment.yaml",
           "dst": "can://iac/payments/helm/charts/api/templates/deployment.yaml/value-reference@10:16"
+        }
+      },
+      "iac_has_resource_template": {
+        "charts/api/templates/deployment.yaml@1:1": {
+          "src": "can://artifact/payments/charts/api/templates/deployment.yaml",
+          "dst": "can://iac/payments/helm/charts/api/templates/deployment.yaml/resource-template@1:1"
+        }
+      },
+      "iac_has_lookup_reference": {
+        "charts/api/templates/deployment.yaml@11:15": {
+          "src": "can://artifact/payments/charts/api/templates/deployment.yaml",
+          "dst": "can://iac/payments/helm/charts/api/templates/deployment.yaml/lookup-reference@11:15"
         }
       }
     }

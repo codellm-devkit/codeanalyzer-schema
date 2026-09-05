@@ -384,6 +384,9 @@ def _check_containment(
         for config_key in artifact.get("config_keys", {}).values():
             if isinstance(config_key, dict):
                 _require_edge(edge_rows, "defines_config", artifact_id, config_key.get("id"), "config-key containment", errors)
+        for alias in artifact.get("aliases", []):
+            if isinstance(alias, dict):
+                _require_edge(edge_rows, "iac_has_alias", artifact_id, alias.get("id"), "alias containment", errors)
 
         facet = artifact.get("iac")
         if isinstance(facet, dict):
@@ -398,6 +401,12 @@ def _check_containment(
                 for child in facet.get("value_references", {}).values():
                     if isinstance(child, dict):
                         _require_edge(edge_rows, "iac_has_value_reference", artifact_id, child.get("id"), "value-reference containment", errors)
+                for child in facet.get("resource_templates", {}).values():
+                    if isinstance(child, dict):
+                        _require_edge(edge_rows, "iac_has_resource_template", artifact_id, child.get("id"), "resource-template containment", errors)
+                for child in facet.get("lookup_references", {}).values():
+                    if isinstance(child, dict):
+                        _require_edge(edge_rows, "iac_has_lookup_reference", artifact_id, child.get("id"), "lookup-reference containment", errors)
             elif facet_kind == "helm_chart":
                 for child in facet.get("dependencies", {}).values():
                     if isinstance(child, dict):

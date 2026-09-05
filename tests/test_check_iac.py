@@ -401,6 +401,23 @@ class CheckIaCTest(unittest.TestCase):
                 self.assertEqual([], check_document(self.load(level)))
         self.assertEqual([], check_catalog(self.load_catalog()))
 
+    def test_fixtures_carry_containment_edges_from_level_one(self):
+        for level in (1, 2, 3):
+            with self.subTest(level=level):
+                edges = self.load(level)["application"]["edges"]
+                self.assertEqual(
+                    ["charts/api/templates/deployment.yaml@1:1"],
+                    list(edges.get("iac_has_resource_template", {})),
+                )
+                self.assertEqual(
+                    ["charts/api/templates/deployment.yaml@11:15"],
+                    list(edges.get("iac_has_lookup_reference", {})),
+                )
+                self.assertEqual(
+                    sorted(edges.get("iac_alias_of", {})),
+                    sorted(edges.get("iac_has_alias", {})),
+                )
+
     def test_resolved_vendored_chart_uses_canonical_artifact_identity(self):
         document = self.load(2)
         reference = document["application"]["external_chart_references"]["bitnami/postgresql"]
@@ -668,6 +685,76 @@ class CheckIaCTest(unittest.TestCase):
         edges = doc["application"]["edges"]["iac_alias_of"]
         edges["duplicate"] = deepcopy(next(iter(edges.values())))
         self.assertIn("alias must have exactly one matching iac_alias_of edge", "\n".join(check_document(doc)))
+
+    def test_requires_resource_template_containment_edge(self):
+        doc = self.load(1)
+        doc["application"]["edges"]["iac_has_resource_template"].clear()
+        self.assertIn(
+            "resource-template containment must have exactly one matching iac_has_resource_template edge",
+            "\n".join(check_document(doc)),
+        )
+
+    def test_rejects_dangling_resource_template_containment_edge(self):
+        doc = self.load(1)
+        doc["application"]["edges"]["iac_has_resource_template"]["bad"] = {
+            "src": "can://iac/payments/missing",
+            "dst": "can://iac/payments/helm/charts/api/templates/deployment.yaml/resource-template@1:1",
+        }
+        self.assertIn("dangling edge source", "\n".join(check_document(doc)))
+
+    def test_rejects_reversed_resource_template_containment_edge(self):
+        doc = self.load(1)
+        edge = doc["application"]["edges"]["iac_has_resource_template"][
+            "charts/api/templates/deployment.yaml@1:1"
+        ]
+        edge["src"], edge["dst"] = edge["dst"], edge["src"]
+        self.assertIn("edge endpoint type violation", "\n".join(check_document(doc)))
+
+    def test_requires_lookup_reference_containment_edge(self):
+        doc = self.load(1)
+        doc["application"]["edges"]["iac_has_lookup_reference"].clear()
+        self.assertIn(
+            "lookup-reference containment must have exactly one matching iac_has_lookup_reference edge",
+            "\n".join(check_document(doc)),
+        )
+
+    def test_rejects_dangling_lookup_reference_containment_edge(self):
+        doc = self.load(1)
+        doc["application"]["edges"]["iac_has_lookup_reference"]["bad"] = {
+            "src": "can://iac/payments/missing",
+            "dst": "can://iac/payments/helm/charts/api/templates/deployment.yaml/lookup-reference@11:15",
+        }
+        self.assertIn("dangling edge source", "\n".join(check_document(doc)))
+
+    def test_rejects_reversed_lookup_reference_containment_edge(self):
+        doc = self.load(1)
+        edge = doc["application"]["edges"]["iac_has_lookup_reference"][
+            "charts/api/templates/deployment.yaml@11:15"
+        ]
+        edge["src"], edge["dst"] = edge["dst"], edge["src"]
+        self.assertIn("edge endpoint type violation", "\n".join(check_document(doc)))
+
+    def test_requires_alias_containment_edge(self):
+        doc = self.load(1)
+        doc["application"]["edges"]["iac_has_alias"].clear()
+        self.assertIn(
+            "alias containment must have exactly one matching iac_has_alias edge",
+            "\n".join(check_document(doc)),
+        )
+
+    def test_rejects_dangling_alias_containment_edge(self):
+        doc = self.load(1)
+        doc["application"]["edges"]["iac_has_alias"]["bad"] = {
+            "src": "can://iac/payments/missing",
+            "dst": "can://iac/payments/helm/chart/charts/api",
+        }
+        self.assertIn("dangling edge source", "\n".join(check_document(doc)))
+
+    def test_rejects_reversed_alias_containment_edge(self):
+        doc = self.load(1)
+        edge = doc["application"]["edges"]["iac_has_alias"]["charts/api/Chart.yaml@helm-chart"]
+        edge["src"], edge["dst"] = edge["dst"], edge["src"]
+        self.assertIn("edge endpoint type violation", "\n".join(check_document(doc)))
 
     def test_rejects_bad_source_digest(self):
         doc = self.load(1)
