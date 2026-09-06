@@ -1,0 +1,2078 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codellm-devkit.github.io/schema/v1/java/analysis.schema.json",
+  "title": "codeanalyzer-java v1 analysis output",
+  "description": "Generated from the Lombok @Data entity classes of codeanalyzer-java v2.4.1. The repo is on its 2.x version line; the schema it emits is still v1 \u2014 the v2 schema migration has not begun. Property names are the Gson LOWER_CASE_WITH_UNDERSCORES rendering of the Java field names, which CodeAnalyzer configures; each property keeps its Java field under x-java.",
+  "x-cldk": {
+    "schemaVersion": 1,
+    "language": "java",
+    "source": {
+      "repo": "codellm-devkit/codeanalyzer-java",
+      "release": "v2.4.1",
+      "definedIn": "src/main/java/com/ibm/cldk/entities/ (+ SystemDependencyGraph.java)"
+    },
+    "consumers": [
+      {
+        "repo": "codellm-devkit/python-sdk",
+        "release": "v1.5.x"
+      }
+    ]
+  },
+  "type": "object",
+  "required": [
+    "symbol_table"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "symbol_table": {
+      "description": "Per-compilation-unit analysis, keyed by absolute source file path.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/JavaCompilationUnit"
+      }
+    },
+    "call_graph": {
+      "description": "Call graph / system dependency graph edges. Present only at analysis level >= 2.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Dependency"
+      }
+    },
+    "version": {
+      "description": "Analyzer version string, or \"unknown\" / \"error retrieving version\" when it could not be resolved.",
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "AbstractGraphEdge": {
+      "type": "object",
+      "properties": {
+        "context": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The Context. -- GETTER -- Gets context. @return the context",
+          "x-java": {
+            "field": "context",
+            "type": "String"
+          }
+        },
+        "weight": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The Weight. -- GETTER -- Gets weight. @return the weight",
+          "x-java": {
+            "field": "weight",
+            "type": "Integer"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "CRUDOperation": {
+      "type": "object",
+      "properties": {
+        "line_number": {
+          "type": "integer",
+          "x-java": {
+            "field": "lineNumber",
+            "type": "int"
+          }
+        },
+        "operation_type": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/CRUDOperationType"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "x-java": {
+            "field": "operationType",
+            "type": "CRUDOperationType"
+          }
+        },
+        "target_table": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-java": {
+            "field": "targetTable",
+            "type": "String"
+          }
+        },
+        "involved_columns": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x-java": {
+            "field": "involvedColumns",
+            "type": "List<String>"
+          }
+        },
+        "condition": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-java": {
+            "field": "condition",
+            "type": "String"
+          }
+        },
+        "joined_tables": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x-java": {
+            "field": "joinedTables",
+            "type": "List<String>"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "CRUDOperationType": {
+      "type": "string",
+      "enum": [
+        "CREATE",
+        "READ",
+        "UPDATE",
+        "DELETE"
+      ]
+    },
+    "CRUDQuery": {
+      "type": "object",
+      "properties": {
+        "line_number": {
+          "type": "integer",
+          "x-java": {
+            "field": "lineNumber",
+            "type": "int"
+          }
+        },
+        "query_arguments": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x-java": {
+            "field": "queryArguments",
+            "type": "List<String>"
+          }
+        },
+        "query_type": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/CRUDQueryType"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "x-java": {
+            "field": "queryType",
+            "type": "CRUDQueryType"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "CRUDQueryType": {
+      "type": "string",
+      "enum": [
+        "READ",
+        "WRITE",
+        "NAMED"
+      ]
+    },
+    "CallEdge": {
+      "type": "object",
+      "properties": {
+        "context": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The Context. -- GETTER -- Gets context. @return the context",
+          "x-java": {
+            "field": "context",
+            "type": "String"
+          }
+        },
+        "weight": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The Weight. -- GETTER -- Gets weight. @return the weight",
+          "x-java": {
+            "field": "weight",
+            "type": "Integer"
+          }
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The Type.",
+          "x-java": {
+            "field": "type",
+            "type": "String"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "x-java-extends": "AbstractGraphEdge"
+    },
+    "CallSite": {
+      "type": "object",
+      "properties": {
+        "method_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Name of the method being called",
+          "x-java": {
+            "field": "methodName",
+            "type": "String"
+          }
+        },
+        "comment": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Comment"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Comment associated with the call site",
+          "x-java": {
+            "field": "comment",
+            "type": "Comment"
+          }
+        },
+        "receiver_expr": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Expression representing the receiver of the method call",
+          "x-java": {
+            "field": "receiverExpr",
+            "type": "String"
+          }
+        },
+        "receiver_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Type of the receiver object",
+          "x-java": {
+            "field": "receiverType",
+            "type": "String"
+          }
+        },
+        "argument_types": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "List of argument types for the method call",
+          "x-java": {
+            "field": "argumentTypes",
+            "type": "List<String>"
+          }
+        },
+        "argument_expr": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "List of argument expressions for the method call",
+          "x-java": {
+            "field": "argumentExpr",
+            "type": "List<String>"
+          }
+        },
+        "return_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Return type of the called method",
+          "x-java": {
+            "field": "returnType",
+            "type": "String"
+          }
+        },
+        "callee_signature": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Full signature of the callee method",
+          "x-java": {
+            "field": "calleeSignature",
+            "type": "String"
+          }
+        },
+        "is_public": {
+          "type": "boolean",
+          "description": "Flag indicating if the method has public access",
+          "x-java": {
+            "field": "isPublic",
+            "type": "boolean"
+          }
+        },
+        "is_protected": {
+          "type": "boolean",
+          "description": "Flag indicating if the method has protected access",
+          "x-java": {
+            "field": "isProtected",
+            "type": "boolean"
+          }
+        },
+        "is_private": {
+          "type": "boolean",
+          "description": "Flag indicating if the method has private access",
+          "x-java": {
+            "field": "isPrivate",
+            "type": "boolean"
+          }
+        },
+        "is_unspecified": {
+          "type": "boolean",
+          "description": "Flag indicating if the method has unspecified access",
+          "x-java": {
+            "field": "isUnspecified",
+            "type": "boolean"
+          }
+        },
+        "is_static_call": {
+          "type": "boolean",
+          "description": "Flag indicating if this is a static method call",
+          "x-java": {
+            "field": "isStaticCall",
+            "type": "boolean"
+          }
+        },
+        "is_constructor_call": {
+          "type": "boolean",
+          "description": "Flag indicating if this is a constructor call",
+          "x-java": {
+            "field": "isConstructorCall",
+            "type": "boolean"
+          }
+        },
+        "crud_operation": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/CRUDOperation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "CRUD operation associated with this call site, if any",
+          "x-java": {
+            "field": "crudOperation",
+            "type": "CRUDOperation"
+          }
+        },
+        "crud_query": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/CRUDQuery"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "CRUD query associated with this call site, if any",
+          "x-java": {
+            "field": "crudQuery",
+            "type": "CRUDQuery"
+          }
+        },
+        "start_line": {
+          "type": "integer",
+          "description": "Starting line number of the call site in the source file",
+          "x-java": {
+            "field": "startLine",
+            "type": "int"
+          }
+        },
+        "start_column": {
+          "type": "integer",
+          "description": "Starting column number of the call site in the source file",
+          "x-java": {
+            "field": "startColumn",
+            "type": "int"
+          }
+        },
+        "end_line": {
+          "type": "integer",
+          "description": "Ending line number of the call site in the source file",
+          "x-java": {
+            "field": "endLine",
+            "type": "int"
+          }
+        },
+        "end_column": {
+          "type": "integer",
+          "description": "Ending column number of the call site in the source file",
+          "x-java": {
+            "field": "endColumn",
+            "type": "int"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "Callable": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The file path where the callable entity is defined.",
+          "x-java": {
+            "field": "filePath",
+            "type": "String"
+          }
+        },
+        "signature": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The signature of the callable entity.",
+          "x-java": {
+            "field": "signature",
+            "type": "String"
+          }
+        },
+        "comments": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Comment"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": "A list of comments associated with the callable entity.",
+          "x-java": {
+            "field": "comments",
+            "type": "List<Comment>"
+          }
+        },
+        "annotations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "A list of annotations applied to the callable entity.",
+          "x-java": {
+            "field": "annotations",
+            "type": "List<String>"
+          }
+        },
+        "modifiers": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "A list of modifiers applied to the callable entity (e.g., public, private).",
+          "x-java": {
+            "field": "modifiers",
+            "type": "List<String>"
+          }
+        },
+        "thrown_exceptions": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "A list of exceptions thrown by the callable entity.",
+          "x-java": {
+            "field": "thrownExceptions",
+            "type": "List<String>"
+          }
+        },
+        "declaration": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The declaration of the callable entity.",
+          "x-java": {
+            "field": "declaration",
+            "type": "String"
+          }
+        },
+        "parameters": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/ParameterInCallable"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": "A list of parameters for the callable entity.",
+          "x-java": {
+            "field": "parameters",
+            "type": "List<ParameterInCallable>"
+          }
+        },
+        "code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The code of the callable entity.",
+          "x-java": {
+            "field": "code",
+            "type": "String"
+          }
+        },
+        "start_line": {
+          "type": "integer",
+          "description": "The starting line number of the callable entity in the source file.",
+          "x-java": {
+            "field": "startLine",
+            "type": "int"
+          }
+        },
+        "end_line": {
+          "type": "integer",
+          "description": "The ending line number of the callable entity in the source file.",
+          "x-java": {
+            "field": "endLine",
+            "type": "int"
+          }
+        },
+        "code_start_line": {
+          "type": "integer",
+          "description": "The starting line number of the callable code in the source file.",
+          "x-java": {
+            "field": "codeStartLine",
+            "type": "int"
+          }
+        },
+        "return_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The return type of the callable entity.",
+          "x-java": {
+            "field": "returnType",
+            "type": "String"
+          }
+        },
+        "is_implicit": {
+          "type": "boolean",
+          "description": "Indicates whether the callable entity is implicit.",
+          "x-java": {
+            "field": "isImplicit",
+            "type": "boolean"
+          }
+        },
+        "is_constructor": {
+          "type": "boolean",
+          "description": "Indicates whether the callable entity is a constructor.",
+          "x-java": {
+            "field": "isConstructor",
+            "type": "boolean"
+          }
+        },
+        "referenced_types": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "A list of types referenced by the callable entity.",
+          "x-java": {
+            "field": "referencedTypes",
+            "type": "List<String>"
+          }
+        },
+        "accessed_fields": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "A list of fields accessed by the callable entity.",
+          "x-java": {
+            "field": "accessedFields",
+            "type": "List<String>"
+          }
+        },
+        "call_sites": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/CallSite"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": "A list of call sites within the callable entity.",
+          "x-java": {
+            "field": "callSites",
+            "type": "List<CallSite>"
+          }
+        },
+        "variable_declarations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/VariableDeclaration"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": "A list of variable declarations within the callable entity.",
+          "x-java": {
+            "field": "variableDeclarations",
+            "type": "List<VariableDeclaration>"
+          }
+        },
+        "crud_operations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/CRUDOperation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": "A list of CRUD operations associated with the callable entity.",
+          "x-java": {
+            "field": "crudOperations",
+            "type": "List<CRUDOperation>"
+          }
+        },
+        "crud_queries": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/CRUDQuery"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": "A list of CRUD queries associated with the callable entity.",
+          "x-java": {
+            "field": "crudQueries",
+            "type": "List<CRUDQuery>"
+          }
+        },
+        "cyclomatic_complexity": {
+          "type": "integer",
+          "description": "The cyclomatic complexity of the callable entity.",
+          "x-java": {
+            "field": "cyclomaticComplexity",
+            "type": "int"
+          }
+        },
+        "is_entrypoint": {
+          "type": "boolean",
+          "description": "Indicates whether the callable entity is an entry point.",
+          "x-java": {
+            "field": "isEntrypoint",
+            "type": "boolean"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "CallableVertex": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-java": {
+            "field": "filePath",
+            "type": "String"
+          }
+        },
+        "type_declaration": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-java": {
+            "field": "typeDeclaration",
+            "type": "String"
+          }
+        },
+        "signature": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-java": {
+            "field": "signature",
+            "type": "String"
+          }
+        },
+        "callable_declaration": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-java": {
+            "field": "callableDeclaration",
+            "type": "String"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "Comment": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The textual content of the comment.",
+          "x-java": {
+            "field": "content",
+            "type": "String"
+          }
+        },
+        "start_line": {
+          "type": "integer",
+          "description": "The starting line number of the comment in the source file. <p> Defaults to {@code -1} if the position is unknown. </p>",
+          "x-java": {
+            "field": "startLine",
+            "type": "int"
+          }
+        },
+        "end_line": {
+          "type": "integer",
+          "description": "The ending line number of the comment in the source file. <p> Defaults to {@code -1} if the position is unknown. </p>",
+          "x-java": {
+            "field": "endLine",
+            "type": "int"
+          }
+        },
+        "start_column": {
+          "type": "integer",
+          "description": "The starting column number of the comment in the source file. <p> Defaults to {@code -1} if the position is unknown. </p>",
+          "x-java": {
+            "field": "startColumn",
+            "type": "int"
+          }
+        },
+        "end_column": {
+          "type": "integer",
+          "description": "The ending column number of the comment in the source file. <p> Defaults to {@code -1} if the position is unknown. </p>",
+          "x-java": {
+            "field": "endColumn",
+            "type": "int"
+          }
+        },
+        "is_javadoc": {
+          "type": "boolean",
+          "description": "Indicates whether the comment is a Javadoc comment. <p> Javadoc comments are special block comments used for generating documentation and typically start with {@code }. </p>",
+          "x-java": {
+            "field": "isJavadoc",
+            "type": "boolean"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "Dependency": {
+      "description": "One call-graph / SDG edge. Emitted only at analysis level >= 2. SDG edges additionally carry source_kind and destination_kind.",
+      "type": "object",
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/CallableVertex"
+        },
+        "target": {
+          "$ref": "#/$defs/CallableVertex"
+        },
+        "type": {
+          "type": "string"
+        },
+        "weight": {
+          "type": "string",
+          "description": "Stringified edge weight."
+        },
+        "source_kind": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "destination_kind": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "source",
+        "target",
+        "type",
+        "weight"
+      ],
+      "additionalProperties": false,
+      "x-java": {
+        "declaredIn": "src/main/java/com/ibm/cldk/SystemDependencyGraph.java",
+        "classes": [
+          "Dependency",
+          "SDGDependency",
+          "CallDependency"
+        ]
+      }
+    },
+    "EnumConstant": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-java": {
+            "field": "name",
+            "type": "String"
+          }
+        },
+        "arguments": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x-java": {
+            "field": "arguments",
+            "type": "List<String>"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "Field": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Comment"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "x-java": {
+            "field": "comment",
+            "type": "Comment"
+          }
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-java": {
+            "field": "name",
+            "type": "String"
+          }
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-java": {
+            "field": "type",
+            "type": "String"
+          }
+        },
+        "start_line": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "x-java": {
+            "field": "startLine",
+            "type": "Integer"
+          }
+        },
+        "end_line": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "x-java": {
+            "field": "endLine",
+            "type": "Integer"
+          }
+        },
+        "variables": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x-java": {
+            "field": "variables",
+            "type": "List<String>"
+          }
+        },
+        "modifiers": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x-java": {
+            "field": "modifiers",
+            "type": "List<String>"
+          }
+        },
+        "annotations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x-java": {
+            "field": "annotations",
+            "type": "List<String>"
+          }
+        },
+        "variable_initializers": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x-java": {
+            "field": "variableInitializers",
+            "type": "Map<String, String>"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "Import": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-java": {
+            "field": "path",
+            "type": "String"
+          }
+        },
+        "is_static": {
+          "type": "boolean",
+          "x-java": {
+            "field": "isStatic",
+            "type": "boolean"
+          }
+        },
+        "is_wildcard": {
+          "type": "boolean",
+          "x-java": {
+            "field": "isWildcard",
+            "type": "boolean"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "InitializationBlock": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-java": {
+            "field": "filePath",
+            "type": "String"
+          }
+        },
+        "comments": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Comment"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "x-java": {
+            "field": "comments",
+            "type": "List<Comment>"
+          }
+        },
+        "annotations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x-java": {
+            "field": "annotations",
+            "type": "List<String>"
+          }
+        },
+        "thrown_exceptions": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x-java": {
+            "field": "thrownExceptions",
+            "type": "List<String>"
+          }
+        },
+        "code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-java": {
+            "field": "code",
+            "type": "String"
+          }
+        },
+        "start_line": {
+          "type": "integer",
+          "x-java": {
+            "field": "startLine",
+            "type": "int"
+          }
+        },
+        "end_line": {
+          "type": "integer",
+          "x-java": {
+            "field": "endLine",
+            "type": "int"
+          }
+        },
+        "is_static": {
+          "type": "boolean",
+          "x-java": {
+            "field": "isStatic",
+            "type": "boolean"
+          }
+        },
+        "referenced_types": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x-java": {
+            "field": "referencedTypes",
+            "type": "List<String>"
+          }
+        },
+        "accessed_fields": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x-java": {
+            "field": "accessedFields",
+            "type": "List<String>"
+          }
+        },
+        "call_sites": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/CallSite"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "x-java": {
+            "field": "callSites",
+            "type": "List<CallSite>"
+          }
+        },
+        "variable_declarations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/VariableDeclaration"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "x-java": {
+            "field": "variableDeclarations",
+            "type": "List<VariableDeclaration>"
+          }
+        },
+        "cyclomatic_complexity": {
+          "type": "integer",
+          "x-java": {
+            "field": "cyclomaticComplexity",
+            "type": "int"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "JPAQueryMethod": {
+      "type": "string",
+      "enum": [
+        "GET_SINGLE_RESULT",
+        "GET_FIRST_RESULT",
+        "GET_MAX_RESULTS",
+        "GET_HINTS",
+        "GET_LOCK_MODE",
+        "GET_PARAMETER",
+        "GET_PARAMETERS",
+        "GET_PARAMETER_VALUE",
+        "IS_BOUND",
+        "UNWRAP"
+      ]
+    },
+    "JavaCompilationUnit": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-java": {
+            "field": "filePath",
+            "type": "String"
+          }
+        },
+        "package_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-java": {
+            "field": "packageName",
+            "type": "String"
+          }
+        },
+        "comments": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Comment"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "x-java": {
+            "field": "comments",
+            "type": "List<Comment>"
+          }
+        },
+        "imports": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Import"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "x-java": {
+            "field": "imports",
+            "type": "List<Import>"
+          }
+        },
+        "type_declarations": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "x-java": {
+            "field": "typeDeclarations",
+            "type": "Map<String, Type>"
+          }
+        },
+        "is_modified": {
+          "type": "boolean",
+          "x-java": {
+            "field": "isModified",
+            "type": "boolean"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "ParameterInCallable": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The type of the parameter (e.g., int, String).",
+          "x-java": {
+            "field": "type",
+            "type": "String"
+          }
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The name of the parameter.",
+          "x-java": {
+            "field": "name",
+            "type": "String"
+          }
+        },
+        "annotations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "A list of annotations applied to the parameter.",
+          "x-java": {
+            "field": "annotations",
+            "type": "List<String>"
+          }
+        },
+        "modifiers": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "A list of modifiers applied to the parameter (e.g., final, static).",
+          "x-java": {
+            "field": "modifiers",
+            "type": "List<String>"
+          }
+        },
+        "start_line": {
+          "type": "integer",
+          "description": "The starting line number of the parameter in the source file.",
+          "x-java": {
+            "field": "startLine",
+            "type": "int"
+          }
+        },
+        "end_line": {
+          "type": "integer",
+          "description": "The ending line number of the parameter in the source file.",
+          "x-java": {
+            "field": "endLine",
+            "type": "int"
+          }
+        },
+        "start_column": {
+          "type": "integer",
+          "description": "The starting column number of the parameter in the source file.",
+          "x-java": {
+            "field": "startColumn",
+            "type": "int"
+          }
+        },
+        "end_column": {
+          "type": "integer",
+          "description": "The ending column number of the parameter in the source file.",
+          "x-java": {
+            "field": "endColumn",
+            "type": "int"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "RecordComponent": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Comment"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The comment associated with the record component.",
+          "x-java": {
+            "field": "comment",
+            "type": "Comment"
+          }
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The name of the record component.",
+          "x-java": {
+            "field": "name",
+            "type": "String"
+          }
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The type of the record component.",
+          "x-java": {
+            "field": "type",
+            "type": "String"
+          }
+        },
+        "modifiers": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "A list of modifiers applied to the record component (e.g., final, static).",
+          "x-java": {
+            "field": "modifiers",
+            "type": "List<String>"
+          }
+        },
+        "annotations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "A list of annotations applied to the record component.",
+          "x-java": {
+            "field": "annotations",
+            "type": "List<String>"
+          }
+        },
+        "default_value": {
+          "description": "The default value of the record component, stored as a string representation.",
+          "x-java": {
+            "field": "defaultValue",
+            "type": "Object"
+          }
+        },
+        "is_var_args": {
+          "type": "boolean",
+          "description": "Indicates whether the record component is a varargs parameter.",
+          "x-java": {
+            "field": "isVarArgs",
+            "type": "boolean"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "SystemDepEdge": {
+      "type": "object",
+      "properties": {
+        "context": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The Context. -- GETTER -- Gets context. @return the context",
+          "x-java": {
+            "field": "context",
+            "type": "String"
+          }
+        },
+        "weight": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The Weight. -- GETTER -- Gets weight. @return the weight",
+          "x-java": {
+            "field": "weight",
+            "type": "Integer"
+          }
+        },
+        "source_pos": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The Source pos.",
+          "x-java": {
+            "field": "sourcePos",
+            "type": "Integer"
+          }
+        },
+        "destination_pos": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The Destination pos.",
+          "x-java": {
+            "field": "destinationPos",
+            "type": "Integer"
+          }
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The Type.",
+          "x-java": {
+            "field": "type",
+            "type": "String"
+          }
+        },
+        "source_kind": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-java": {
+            "field": "sourceKind",
+            "type": "String"
+          }
+        },
+        "destination_kind": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-java": {
+            "field": "destinationKind",
+            "type": "String"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "x-java-extends": "AbstractGraphEdge"
+    },
+    "Type": {
+      "type": "object",
+      "properties": {
+        "is_nested_type": {
+          "type": "boolean",
+          "description": "Indicates if this type is nested.",
+          "x-java": {
+            "field": "isNestedType",
+            "type": "boolean"
+          }
+        },
+        "is_class_or_interface_declaration": {
+          "type": "boolean",
+          "description": "Indicates if this type is a class or interface declaration.",
+          "x-java": {
+            "field": "isClassOrInterfaceDeclaration",
+            "type": "boolean"
+          }
+        },
+        "is_enum_declaration": {
+          "type": "boolean",
+          "description": "Indicates if this type is an enum declaration.",
+          "x-java": {
+            "field": "isEnumDeclaration",
+            "type": "boolean"
+          }
+        },
+        "is_annotation_declaration": {
+          "type": "boolean",
+          "description": "Indicates if this type is an annotation declaration.",
+          "x-java": {
+            "field": "isAnnotationDeclaration",
+            "type": "boolean"
+          }
+        },
+        "is_record_declaration": {
+          "type": "boolean",
+          "description": "Indicates if this type is a record declaration.",
+          "x-java": {
+            "field": "isRecordDeclaration",
+            "type": "boolean"
+          }
+        },
+        "is_interface": {
+          "type": "boolean",
+          "description": "Indicates if this type is an interface.",
+          "x-java": {
+            "field": "isInterface",
+            "type": "boolean"
+          }
+        },
+        "is_inner_class": {
+          "type": "boolean",
+          "description": "Indicates if this type is an inner class.",
+          "x-java": {
+            "field": "isInnerClass",
+            "type": "boolean"
+          }
+        },
+        "is_local_class": {
+          "type": "boolean",
+          "description": "Indicates if this type is a local class.",
+          "x-java": {
+            "field": "isLocalClass",
+            "type": "boolean"
+          }
+        },
+        "extends_list": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "List of types that this type extends.",
+          "x-java": {
+            "field": "extendsList",
+            "type": "List<String>"
+          }
+        },
+        "comments": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Comment"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": "List of comments associated with this type.",
+          "x-java": {
+            "field": "comments",
+            "type": "List<Comment>"
+          }
+        },
+        "implements_list": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "List of interfaces that this type implements.",
+          "x-java": {
+            "field": "implementsList",
+            "type": "List<String>"
+          }
+        },
+        "modifiers": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "List of modifiers for this type.",
+          "x-java": {
+            "field": "modifiers",
+            "type": "List<String>"
+          }
+        },
+        "annotations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "List of annotations for this type.",
+          "x-java": {
+            "field": "annotations",
+            "type": "List<String>"
+          }
+        },
+        "parent_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The parent type of this type.",
+          "x-java": {
+            "field": "parentType",
+            "type": "String"
+          }
+        },
+        "nested_type_declarations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "List of nested type declarations within this type.",
+          "x-java": {
+            "field": "nestedTypeDeclarations",
+            "type": "List<String>"
+          }
+        },
+        "callable_declarations": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Callable"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": "Map of callable declarations within this type.",
+          "x-java": {
+            "field": "callableDeclarations",
+            "type": "Map<String, Callable>"
+          }
+        },
+        "field_declarations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Field"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": "List of field declarations within this type.",
+          "x-java": {
+            "field": "fieldDeclarations",
+            "type": "List<Field>"
+          }
+        },
+        "enum_constants": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/EnumConstant"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": "List of enum constants within this type.",
+          "x-java": {
+            "field": "enumConstants",
+            "type": "List<EnumConstant>"
+          }
+        },
+        "record_components": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/RecordComponent"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": "List of record components within this type.",
+          "x-java": {
+            "field": "recordComponents",
+            "type": "List<RecordComponent>"
+          }
+        },
+        "initialization_blocks": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/InitializationBlock"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": "List of initialization blocks within this type.",
+          "x-java": {
+            "field": "initializationBlocks",
+            "type": "List<InitializationBlock>"
+          }
+        },
+        "is_entrypoint_class": {
+          "type": "boolean",
+          "description": "Indicates if this type is an entry point class.",
+          "x-java": {
+            "field": "isEntrypointClass",
+            "type": "boolean"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "VariableDeclaration": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Comment"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The comment associated with the variable declaration.",
+          "x-java": {
+            "field": "comment",
+            "type": "Comment"
+          }
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The name of the variable.",
+          "x-java": {
+            "field": "name",
+            "type": "String"
+          }
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The type of the variable.",
+          "x-java": {
+            "field": "type",
+            "type": "String"
+          }
+        },
+        "initializer": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The initializer of the variable, stored as a string representation.",
+          "x-java": {
+            "field": "initializer",
+            "type": "String"
+          }
+        },
+        "start_line": {
+          "type": "integer",
+          "description": "The starting line number of the variable declaration in the source file.",
+          "x-java": {
+            "field": "startLine",
+            "type": "int"
+          }
+        },
+        "start_column": {
+          "type": "integer",
+          "description": "The starting column number of the variable declaration in the source file.",
+          "x-java": {
+            "field": "startColumn",
+            "type": "int"
+          }
+        },
+        "end_line": {
+          "type": "integer",
+          "description": "The ending line number of the variable declaration in the source file.",
+          "x-java": {
+            "field": "endLine",
+            "type": "int"
+          }
+        },
+        "end_column": {
+          "type": "integer",
+          "description": "The ending column number of the variable declaration in the source file.",
+          "x-java": {
+            "field": "endColumn",
+            "type": "int"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

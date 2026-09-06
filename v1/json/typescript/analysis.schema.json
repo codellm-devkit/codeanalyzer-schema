@@ -1,0 +1,1502 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codellm-devkit.github.io/schema/v1/typescript/analysis.schema.json",
+  "title": "codeanalyzer-typescript v1 analysis output",
+  "description": "Generated from the TypeScript interfaces of codeanalyzer-typescript v0.4.3 \u2014 the last release before src/schema/v2 landed, and the release python-sdk pins.",
+  "x-cldk": {
+    "schemaVersion": 1,
+    "language": "typescript",
+    "source": {
+      "repo": "codellm-devkit/codeanalyzer-typescript",
+      "release": "v0.4.3",
+      "definedIn": "src/schema/schema.ts (TSApplication)"
+    },
+    "consumers": [
+      {
+        "repo": "codellm-devkit/python-sdk",
+        "release": "v1.5.x"
+      }
+    ]
+  },
+  "$defs": {
+    "TSCallEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "provenance": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "source": {
+          "type": "string"
+        },
+        "tags": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "target": {
+          "type": "string"
+        },
+        "type": {
+          "const": "CALL_DEP",
+          "type": "string"
+        },
+        "weight": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "source",
+        "target",
+        "type",
+        "weight",
+        "provenance",
+        "tags"
+      ],
+      "type": "object"
+    },
+    "TSCallable": {
+      "additionalProperties": false,
+      "properties": {
+        "accessed_symbols": {
+          "items": {
+            "$ref": "#/$defs/TSSymbol"
+          },
+          "type": "array"
+        },
+        "accessibility": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "accessor_kind": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "call_sites": {
+          "items": {
+            "$ref": "#/$defs/TSCallsite"
+          },
+          "type": "array"
+        },
+        "code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "code_start_line": {
+          "type": "number"
+        },
+        "comments": {
+          "items": {
+            "$ref": "#/$defs/TSComment"
+          },
+          "type": "array"
+        },
+        "cyclomatic_complexity": {
+          "type": "number"
+        },
+        "decorators": {
+          "items": {
+            "$ref": "#/$defs/TSDecorator"
+          },
+          "type": "array"
+        },
+        "end_line": {
+          "type": "number"
+        },
+        "entrypoints": {
+          "items": {
+            "$ref": "#/$defs/TSEntrypoint"
+          },
+          "type": "array"
+        },
+        "inner_callables": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSCallable"
+          },
+          "type": "object"
+        },
+        "inner_classes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSClass"
+          },
+          "type": "object"
+        },
+        "is_abstract": {
+          "type": "boolean"
+        },
+        "is_ambient": {
+          "type": "boolean"
+        },
+        "is_async": {
+          "type": "boolean"
+        },
+        "is_exported": {
+          "type": "boolean"
+        },
+        "is_generator": {
+          "type": "boolean"
+        },
+        "is_implicit": {
+          "type": "boolean"
+        },
+        "is_optional": {
+          "type": "boolean"
+        },
+        "is_readonly": {
+          "type": "boolean"
+        },
+        "is_static": {
+          "type": "boolean"
+        },
+        "kind": {
+          "$ref": "#/$defs/TSCallableKind"
+        },
+        "local_variables": {
+          "items": {
+            "$ref": "#/$defs/TSVariableDeclaration"
+          },
+          "type": "array"
+        },
+        "name": {
+          "type": "string"
+        },
+        "overload_signatures": {
+          "items": {
+            "$ref": "#/$defs/TSOverloadSignature"
+          },
+          "type": "array"
+        },
+        "parameters": {
+          "items": {
+            "$ref": "#/$defs/TSCallableParameter"
+          },
+          "type": "array"
+        },
+        "path": {
+          "type": "string"
+        },
+        "return_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "signature": {
+          "type": "string"
+        },
+        "start_line": {
+          "type": "number"
+        },
+        "type_parameters": {
+          "items": {
+            "$ref": "#/$defs/TSTypeParameter"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "path",
+        "signature",
+        "comments",
+        "decorators",
+        "parameters",
+        "type_parameters",
+        "return_type",
+        "code",
+        "start_line",
+        "end_line",
+        "code_start_line",
+        "accessed_symbols",
+        "call_sites",
+        "inner_callables",
+        "inner_classes",
+        "local_variables",
+        "cyclomatic_complexity",
+        "entrypoints",
+        "kind",
+        "accessibility",
+        "is_static",
+        "is_abstract",
+        "is_async",
+        "is_generator",
+        "is_optional",
+        "is_readonly",
+        "is_exported",
+        "is_ambient",
+        "is_implicit",
+        "accessor_kind",
+        "overload_signatures"
+      ],
+      "type": "object"
+    },
+    "TSCallableKind": {
+      "enum": [
+        "function",
+        "method",
+        "constructor",
+        "getter",
+        "setter",
+        "arrow",
+        "function_expression"
+      ],
+      "type": "string"
+    },
+    "TSCallableParameter": {
+      "additionalProperties": false,
+      "properties": {
+        "accessibility": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "decorators": {
+          "items": {
+            "$ref": "#/$defs/TSDecorator"
+          },
+          "type": "array"
+        },
+        "default_value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "end_column": {
+          "type": "number"
+        },
+        "end_line": {
+          "type": "number"
+        },
+        "is_optional": {
+          "type": "boolean"
+        },
+        "is_readonly": {
+          "type": "boolean"
+        },
+        "is_rest": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "start_column": {
+          "type": "number"
+        },
+        "start_line": {
+          "type": "number"
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "default_value",
+        "is_optional",
+        "is_rest",
+        "is_readonly",
+        "accessibility",
+        "decorators",
+        "start_line",
+        "end_line",
+        "start_column",
+        "end_column"
+      ],
+      "type": "object"
+    },
+    "TSCallsite": {
+      "additionalProperties": false,
+      "properties": {
+        "argument_types": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "callee_signature": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "end_column": {
+          "type": "number"
+        },
+        "end_line": {
+          "type": "number"
+        },
+        "is_constructor_call": {
+          "type": "boolean"
+        },
+        "is_optional_chain": {
+          "type": "boolean"
+        },
+        "method_name": {
+          "type": "string"
+        },
+        "receiver_expr": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "receiver_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "return_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "start_column": {
+          "type": "number"
+        },
+        "start_line": {
+          "type": "number"
+        },
+        "type_arguments": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "method_name",
+        "receiver_expr",
+        "receiver_type",
+        "argument_types",
+        "type_arguments",
+        "return_type",
+        "callee_signature",
+        "is_constructor_call",
+        "is_optional_chain",
+        "start_line",
+        "start_column",
+        "end_line",
+        "end_column"
+      ],
+      "type": "object"
+    },
+    "TSClass": {
+      "additionalProperties": false,
+      "properties": {
+        "attributes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSClassAttribute"
+          },
+          "type": "object"
+        },
+        "base_classes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "comments": {
+          "items": {
+            "$ref": "#/$defs/TSComment"
+          },
+          "type": "array"
+        },
+        "decorators": {
+          "items": {
+            "$ref": "#/$defs/TSDecorator"
+          },
+          "type": "array"
+        },
+        "end_line": {
+          "type": "number"
+        },
+        "entrypoints": {
+          "items": {
+            "$ref": "#/$defs/TSEntrypoint"
+          },
+          "type": "array"
+        },
+        "implements_types": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "inner_classes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSClass"
+          },
+          "type": "object"
+        },
+        "is_abstract": {
+          "type": "boolean"
+        },
+        "is_ambient": {
+          "type": "boolean"
+        },
+        "is_exported": {
+          "type": "boolean"
+        },
+        "methods": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSCallable"
+          },
+          "type": "object"
+        },
+        "name": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "start_line": {
+          "type": "number"
+        },
+        "type_parameters": {
+          "items": {
+            "$ref": "#/$defs/TSTypeParameter"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "signature",
+        "comments",
+        "code",
+        "decorators",
+        "base_classes",
+        "implements_types",
+        "type_parameters",
+        "methods",
+        "attributes",
+        "inner_classes",
+        "entrypoints",
+        "is_abstract",
+        "is_exported",
+        "is_ambient",
+        "start_line",
+        "end_line"
+      ],
+      "type": "object"
+    },
+    "TSClassAttribute": {
+      "additionalProperties": false,
+      "properties": {
+        "accessibility": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "comments": {
+          "items": {
+            "$ref": "#/$defs/TSComment"
+          },
+          "type": "array"
+        },
+        "decorators": {
+          "items": {
+            "$ref": "#/$defs/TSDecorator"
+          },
+          "type": "array"
+        },
+        "end_line": {
+          "type": "number"
+        },
+        "initializer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "is_abstract": {
+          "type": "boolean"
+        },
+        "is_optional": {
+          "type": "boolean"
+        },
+        "is_readonly": {
+          "type": "boolean"
+        },
+        "is_static": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "start_line": {
+          "type": "number"
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "comments",
+        "decorators",
+        "initializer",
+        "accessibility",
+        "is_static",
+        "is_readonly",
+        "is_optional",
+        "is_abstract",
+        "start_line",
+        "end_line"
+      ],
+      "type": "object"
+    },
+    "TSComment": {
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+        "end_column": {
+          "type": "number"
+        },
+        "end_line": {
+          "type": "number"
+        },
+        "is_docstring": {
+          "type": "boolean"
+        },
+        "start_column": {
+          "type": "number"
+        },
+        "start_line": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "content",
+        "is_docstring",
+        "start_line",
+        "end_line",
+        "start_column",
+        "end_column"
+      ],
+      "type": "object"
+    },
+    "TSDecorator": {
+      "additionalProperties": false,
+      "properties": {
+        "end_column": {
+          "type": "number"
+        },
+        "end_line": {
+          "type": "number"
+        },
+        "keyword_arguments": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "name": {
+          "type": "string"
+        },
+        "positional_arguments": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "qualified_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "start_column": {
+          "type": "number"
+        },
+        "start_line": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "qualified_name",
+        "positional_arguments",
+        "keyword_arguments",
+        "start_line",
+        "end_line",
+        "start_column",
+        "end_column"
+      ],
+      "type": "object"
+    },
+    "TSEntrypoint": {
+      "additionalProperties": false,
+      "properties": {
+        "detection_source": {
+          "type": "string"
+        },
+        "framework": {
+          "type": "string"
+        },
+        "http_methods": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "route_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tags": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "framework",
+        "detection_source",
+        "route_path",
+        "http_methods",
+        "tags"
+      ],
+      "type": "object"
+    },
+    "TSEnum": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "comments": {
+          "items": {
+            "$ref": "#/$defs/TSComment"
+          },
+          "type": "array"
+        },
+        "end_line": {
+          "type": "number"
+        },
+        "is_ambient": {
+          "type": "boolean"
+        },
+        "is_const": {
+          "type": "boolean"
+        },
+        "is_exported": {
+          "type": "boolean"
+        },
+        "members": {
+          "items": {
+            "$ref": "#/$defs/TSEnumMember"
+          },
+          "type": "array"
+        },
+        "name": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "start_line": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "signature",
+        "comments",
+        "code",
+        "members",
+        "is_const",
+        "is_exported",
+        "is_ambient",
+        "start_line",
+        "end_line"
+      ],
+      "type": "object"
+    },
+    "TSEnumMember": {
+      "additionalProperties": false,
+      "properties": {
+        "end_line": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "start_line": {
+          "type": "number"
+        },
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "start_line",
+        "end_line"
+      ],
+      "type": "object"
+    },
+    "TSExport": {
+      "additionalProperties": false,
+      "properties": {
+        "alias": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "end_column": {
+          "type": "number"
+        },
+        "end_line": {
+          "type": "number"
+        },
+        "export_kind": {
+          "enum": [
+            "named",
+            "default",
+            "namespace",
+            "re_export"
+          ],
+          "type": "string"
+        },
+        "is_type_only": {
+          "type": "boolean"
+        },
+        "module": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "start_column": {
+          "type": "number"
+        },
+        "start_line": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "module",
+        "name",
+        "alias",
+        "is_type_only",
+        "export_kind",
+        "start_line",
+        "end_line",
+        "start_column",
+        "end_column"
+      ],
+      "type": "object"
+    },
+    "TSExternalSymbol": {
+      "additionalProperties": false,
+      "properties": {
+        "module": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "module"
+      ],
+      "type": "object"
+    },
+    "TSImport": {
+      "additionalProperties": false,
+      "description": "The canonical CLDK analysis schema for TypeScript.\n\nMirrors the identity-only Python schema (codeanalyzer-python/.../py_schema.py) field for field on the invariant spine \u2014 `TSApplication { symbol_table, call_graph, entrypoints }`, `Module \u2192 Class/Callable` nesting, identity-only `TSCallEdge` whose `source`/`target` are bare signature strings \u2014 and extends it at the leaves with TypeScript-native node kinds (interface / type-alias / enum / namespace) and typed fields (generics, modifiers, ...). See SCHEMA_DECISIONS.md.\n\nAll field names are snake_case so `JSON.stringify` emits keys the SDK Pydantic models parse. The matching Pydantic models live in python-sdk/cldk/models/typescript/models.py and MUST be co-evolved with this file.",
+      "properties": {
+        "alias": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "end_column": {
+          "type": "number"
+        },
+        "end_line": {
+          "type": "number"
+        },
+        "import_kind": {
+          "enum": [
+            "named",
+            "default",
+            "namespace",
+            "side_effect"
+          ],
+          "type": "string"
+        },
+        "is_type_only": {
+          "type": "boolean"
+        },
+        "module": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "start_column": {
+          "type": "number"
+        },
+        "start_line": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "module",
+        "name",
+        "alias",
+        "is_type_only",
+        "import_kind",
+        "start_line",
+        "end_line",
+        "start_column",
+        "end_column"
+      ],
+      "type": "object"
+    },
+    "TSInterface": {
+      "additionalProperties": false,
+      "properties": {
+        "base_classes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "call_signatures": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "comments": {
+          "items": {
+            "$ref": "#/$defs/TSComment"
+          },
+          "type": "array"
+        },
+        "end_line": {
+          "type": "number"
+        },
+        "index_signatures": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "is_ambient": {
+          "type": "boolean"
+        },
+        "is_exported": {
+          "type": "boolean"
+        },
+        "methods": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSCallable"
+          },
+          "type": "object"
+        },
+        "name": {
+          "type": "string"
+        },
+        "properties": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSClassAttribute"
+          },
+          "type": "object"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "start_line": {
+          "type": "number"
+        },
+        "type_parameters": {
+          "items": {
+            "$ref": "#/$defs/TSTypeParameter"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "signature",
+        "comments",
+        "code",
+        "base_classes",
+        "type_parameters",
+        "methods",
+        "properties",
+        "call_signatures",
+        "index_signatures",
+        "is_exported",
+        "is_ambient",
+        "start_line",
+        "end_line"
+      ],
+      "type": "object"
+    },
+    "TSModule": {
+      "additionalProperties": false,
+      "properties": {
+        "classes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSClass"
+          },
+          "type": "object"
+        },
+        "comments": {
+          "items": {
+            "$ref": "#/$defs/TSComment"
+          },
+          "type": "array"
+        },
+        "content_hash": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "enums": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSEnum"
+          },
+          "type": "object"
+        },
+        "exports": {
+          "items": {
+            "$ref": "#/$defs/TSExport"
+          },
+          "type": "array"
+        },
+        "file_path": {
+          "type": "string"
+        },
+        "file_size": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "functions": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSCallable"
+          },
+          "type": "object"
+        },
+        "imports": {
+          "items": {
+            "$ref": "#/$defs/TSImport"
+          },
+          "type": "array"
+        },
+        "interfaces": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSInterface"
+          },
+          "type": "object"
+        },
+        "is_declaration_file": {
+          "type": "boolean"
+        },
+        "is_tsx": {
+          "type": "boolean"
+        },
+        "last_modified": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "module_name": {
+          "type": "string"
+        },
+        "namespaces": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSNamespace"
+          },
+          "type": "object"
+        },
+        "type_aliases": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSTypeAlias"
+          },
+          "type": "object"
+        },
+        "variables": {
+          "items": {
+            "$ref": "#/$defs/TSVariableDeclaration"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "file_path",
+        "module_name",
+        "imports",
+        "exports",
+        "comments",
+        "classes",
+        "interfaces",
+        "enums",
+        "type_aliases",
+        "functions",
+        "namespaces",
+        "variables",
+        "is_tsx",
+        "is_declaration_file",
+        "content_hash",
+        "last_modified",
+        "file_size"
+      ],
+      "type": "object"
+    },
+    "TSNamespace": {
+      "additionalProperties": false,
+      "properties": {
+        "classes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSClass"
+          },
+          "type": "object"
+        },
+        "comments": {
+          "items": {
+            "$ref": "#/$defs/TSComment"
+          },
+          "type": "array"
+        },
+        "end_line": {
+          "type": "number"
+        },
+        "enums": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSEnum"
+          },
+          "type": "object"
+        },
+        "functions": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSCallable"
+          },
+          "type": "object"
+        },
+        "interfaces": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSInterface"
+          },
+          "type": "object"
+        },
+        "is_ambient": {
+          "type": "boolean"
+        },
+        "is_exported": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespaces": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSNamespace"
+          },
+          "type": "object"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "start_line": {
+          "type": "number"
+        },
+        "type_aliases": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TSTypeAlias"
+          },
+          "type": "object"
+        },
+        "variables": {
+          "items": {
+            "$ref": "#/$defs/TSVariableDeclaration"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "signature",
+        "comments",
+        "classes",
+        "interfaces",
+        "enums",
+        "type_aliases",
+        "functions",
+        "variables",
+        "namespaces",
+        "is_exported",
+        "is_ambient",
+        "start_line",
+        "end_line"
+      ],
+      "type": "object"
+    },
+    "TSOverloadSignature": {
+      "additionalProperties": false,
+      "properties": {
+        "end_line": {
+          "type": "number"
+        },
+        "parameters": {
+          "items": {
+            "$ref": "#/$defs/TSCallableParameter"
+          },
+          "type": "array"
+        },
+        "return_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "start_line": {
+          "type": "number"
+        },
+        "type_parameters": {
+          "items": {
+            "$ref": "#/$defs/TSTypeParameter"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "parameters",
+        "return_type",
+        "type_parameters",
+        "start_line",
+        "end_line"
+      ],
+      "type": "object"
+    },
+    "TSSymbol": {
+      "additionalProperties": false,
+      "properties": {
+        "col_offset": {
+          "type": "number"
+        },
+        "is_builtin": {
+          "type": "boolean"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "lineno": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "qualified_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scope": {
+          "type": "string"
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "scope",
+        "kind",
+        "type",
+        "qualified_name",
+        "is_builtin",
+        "lineno",
+        "col_offset"
+      ],
+      "type": "object"
+    },
+    "TSSynthesizedCallable": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "start_column": {
+          "type": "number"
+        },
+        "start_line": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "path",
+        "start_line",
+        "start_column"
+      ],
+      "type": "object"
+    },
+    "TSTypeAlias": {
+      "additionalProperties": false,
+      "properties": {
+        "aliased_type": {
+          "type": "string"
+        },
+        "code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "comments": {
+          "items": {
+            "$ref": "#/$defs/TSComment"
+          },
+          "type": "array"
+        },
+        "end_line": {
+          "type": "number"
+        },
+        "is_ambient": {
+          "type": "boolean"
+        },
+        "is_exported": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "start_line": {
+          "type": "number"
+        },
+        "type_parameters": {
+          "items": {
+            "$ref": "#/$defs/TSTypeParameter"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "signature",
+        "comments",
+        "code",
+        "aliased_type",
+        "type_parameters",
+        "is_exported",
+        "is_ambient",
+        "start_line",
+        "end_line"
+      ],
+      "type": "object"
+    },
+    "TSTypeParameter": {
+      "additionalProperties": false,
+      "properties": {
+        "constraint": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "default": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "constraint",
+        "default"
+      ],
+      "type": "object"
+    },
+    "TSVariableDeclaration": {
+      "additionalProperties": false,
+      "properties": {
+        "declaration_kind": {
+          "enum": [
+            "const",
+            "let",
+            "var",
+            "using",
+            "unknown"
+          ],
+          "type": "string"
+        },
+        "end_column": {
+          "type": "number"
+        },
+        "end_line": {
+          "type": "number"
+        },
+        "initializer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "is_exported": {
+          "type": "boolean"
+        },
+        "is_readonly": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "module",
+            "namespace",
+            "class",
+            "function",
+            "block"
+          ],
+          "type": "string"
+        },
+        "start_column": {
+          "type": "number"
+        },
+        "start_line": {
+          "type": "number"
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "value": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "initializer",
+        "value",
+        "scope",
+        "declaration_kind",
+        "is_readonly",
+        "is_exported",
+        "start_line",
+        "end_line",
+        "start_column",
+        "end_column"
+      ],
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "call_graph": {
+      "items": {
+        "$ref": "#/$defs/TSCallEdge"
+      },
+      "type": "array"
+    },
+    "external_symbols": {
+      "additionalProperties": {
+        "$ref": "#/$defs/TSExternalSymbol"
+      },
+      "type": "object"
+    },
+    "symbol_table": {
+      "additionalProperties": {
+        "$ref": "#/$defs/TSModule"
+      },
+      "type": "object"
+    },
+    "synthesized_callables": {
+      "additionalProperties": {
+        "$ref": "#/$defs/TSSynthesizedCallable"
+      },
+      "type": "object"
+    }
+  },
+  "required": [
+    "symbol_table",
+    "call_graph",
+    "external_symbols",
+    "synthesized_callables"
+  ],
+  "type": "object"
+}

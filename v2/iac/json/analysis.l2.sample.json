@@ -1,0 +1,279 @@
+{
+  "schema_version": "2.0.0",
+  "language": "iac",
+  "max_level": 2,
+  "analyzer": {"name": "codeanalyzer-iac", "version": "0.1.0"},
+  "application": {
+    "id": "can://iac/payments",
+    "kind": "application",
+    "artifacts": {
+      "README.md": {
+        "id": "can://artifact/payments/README.md",
+        "kind": "artifact",
+        "path": "README.md",
+        "format": "text",
+        "source": "payments infrastructure\n",
+        "sha256": "79accdf71a72e00a8b25fe1284094368e885e2fe55db0cf686a83c5359bf43df",
+        "size_bytes": 24,
+        "config_keys": {},
+        "aliases": []
+      },
+      "charts/api/Chart.yaml": {
+        "id": "can://artifact/payments/charts/api/Chart.yaml",
+        "kind": "artifact",
+        "path": "charts/api/Chart.yaml",
+        "format": "yaml",
+        "source": "apiVersion: v2\nname: api\nversion: 1.2.3\ntype: application\n",
+        "sha256": "4a0bf85edced2838bb82ae1a52bf8830a718462ff54f4c6fb11ce539fabb53af",
+        "size_bytes": 58,
+        "config_keys": {},
+        "aliases": [{
+          "id": "can://iac/payments/helm/chart/charts/api",
+          "kind": "helm_chart",
+          "target": "can://artifact/payments/charts/api/Chart.yaml"
+        }],
+        "iac": {
+          "dialect": "helm",
+          "kind": "helm_chart",
+          "status": "complete",
+          "api_version": "v2",
+          "name": "api",
+          "version": "1.2.3",
+          "chart_type": "application",
+          "maintainers": [],
+          "keywords": [],
+          "sources": [],
+          "annotations": {},
+          "dependencies": {},
+          "renders": {}
+        }
+      },
+      "charts/api/charts/postgresql/Chart.yaml": {
+        "id": "can://artifact/payments/charts/api/charts/postgresql/Chart.yaml",
+        "kind": "artifact",
+        "path": "charts/api/charts/postgresql/Chart.yaml",
+        "format": "yaml",
+        "source": "apiVersion: v2\nname: postgresql\nversion: 12.1.0\ntype: application\n",
+        "sha256": "57ea5ae02fdfc54e1a02eac39e9b1d98d289c6f182c77d90d80d7a9124d11161",
+        "size_bytes": 66,
+        "config_keys": {},
+        "aliases": [{
+          "id": "can://iac/payments/helm/chart/charts/api/charts/postgresql",
+          "kind": "helm_chart",
+          "target": "can://artifact/payments/charts/api/charts/postgresql/Chart.yaml"
+        }],
+        "iac": {
+          "dialect": "helm",
+          "kind": "helm_chart",
+          "status": "complete",
+          "api_version": "v2",
+          "name": "postgresql",
+          "version": "12.1.0",
+          "chart_type": "application",
+          "maintainers": [],
+          "keywords": [],
+          "sources": [],
+          "annotations": {},
+          "dependencies": {},
+          "renders": {}
+        }
+      },
+      "charts/api/values.yaml": {
+        "id": "can://artifact/payments/charts/api/values.yaml",
+        "kind": "artifact",
+        "path": "charts/api/values.yaml",
+        "format": "yaml",
+        "source": "image:\n  tag: 1.2.3x\n",
+        "sha256": "3d3ecdd860e9d3e2fedf29a4fb6e1667c8295ed8e500aae00901ce43e79bf497",
+        "size_bytes": 21,
+        "config_keys": {
+          "image.tag": {
+            "id": "can://artifact/payments/charts/api/values.yaml@key/image.tag",
+            "kind": "config_key",
+            "name": "tag",
+            "path": "image.tag",
+            "span": {"start": [2, 3], "end": [2, 14], "bytes": [9, 20]},
+            "iac": {"kind": "helm_value"}
+          }
+        },
+        "aliases": [],
+        "iac": {
+          "dialect": "helm",
+          "kind": "helm_values",
+          "status": "complete",
+          "roles": ["default"]
+        }
+      },
+      "charts/api/templates/deployment.yaml": {
+        "id": "can://artifact/payments/charts/api/templates/deployment.yaml",
+        "kind": "artifact",
+        "path": "charts/api/templates/deployment.yaml",
+        "format": "yaml",
+        "source": "apiVersion: v1\nkind: Deployment\nmetadata:\n  a: \n    x: hello!!\n    name: {{include \"api.fullname\" .}}\nspec:\n  template:\n    containers: # comment!\n      image: {{.Values.image.tag }}\n      lookup: {{lookup \"\" \"v1\" \"ConfigMap\" \"default\" \"settings\"}}\n{{define \"api.fullname\"}}api{{end}}\n",
+        "sha256": "e8367060ea9d4118f7bf38113b4fdccf7ea2d5f24442c580b07e487dbcdb103e",
+        "size_bytes": 285,
+        "config_keys": {},
+        "aliases": [],
+        "iac": {
+          "dialect": "helm",
+          "kind": "helm_template",
+          "status": "complete",
+          "roles": ["resource"],
+          "named_templates": {
+            "12:1": {
+              "id": "can://iac/payments/helm/charts/api/templates/deployment.yaml/named-template/api.fullname",
+              "kind": "helm_named_template",
+              "name": "api.fullname",
+              "span": {"start": [12, 1], "end": [12, 36], "bytes": [249, 284]}
+            }
+          },
+          "template_calls": {
+            "6:11": {
+              "id": "can://iac/payments/helm/charts/api/templates/deployment.yaml/template-call@6:11",
+              "kind": "helm_template_call",
+              "call_kind": "include",
+              "name_expression": "api.fullname",
+              "target_id": "can://iac/payments/helm/charts/api/templates/deployment.yaml/named-template/api.fullname",
+              "span": {"start": [6, 11], "end": [6, 39], "bytes": [73, 101]}
+            }
+          },
+          "value_references": {
+            "10:16": {
+              "id": "can://iac/payments/helm/charts/api/templates/deployment.yaml/value-reference@10:16",
+              "kind": "helm_value_reference",
+              "path_expression": "image.tag",
+              "target_id": "can://artifact/payments/charts/api/values.yaml@key/image.tag",
+              "span": {"start": [10, 16], "end": [10, 33], "bytes": [162, 179]}
+            }
+          },
+          "resource_templates": {
+            "1:1": {
+              "id": "can://iac/payments/helm/charts/api/templates/deployment.yaml/resource-template@1:1",
+              "kind": "helm_resource_template",
+              "document_index": 0,
+              "span": {"start": [1, 1], "end": [12, 1], "bytes": [0, 249]}
+            }
+          },
+          "lookup_references": {
+            "11:15": {
+              "id": "can://iac/payments/helm/charts/api/templates/deployment.yaml/lookup-reference@11:15",
+              "kind": "helm_lookup_reference",
+              "group_expression": "\"\"",
+              "version_expression": "\"v1\"",
+              "resource_kind_expression": "\"ConfigMap\"",
+              "namespace_expression": "\"default\"",
+              "name_expression": "\"settings\"",
+              "span": {"start": [11, 15], "end": [11, 66], "bytes": [197, 248]}
+            }
+          }
+        }
+      }
+    },
+    "packages": {},
+    "external_chart_references": {
+      "bitnami/postgresql": {
+        "id": "can://iac/payments/helm/chart-reference/bitnami/postgresql",
+        "kind": "helm_chart_reference",
+        "name": "postgresql",
+        "version_constraint": "12.1.0",
+        "repository": "https://charts.bitnami.com/bitnami",
+        "resolved_chart_id": "can://artifact/payments/charts/api/charts/postgresql/Chart.yaml"
+      }
+    },
+    "kubernetes_resource_addresses": {},
+    "diagnostics": {},
+    "edges": {
+      "has_artifact": {
+        "README.md": {"src": "can://iac/payments", "dst": "can://artifact/payments/README.md"},
+        "charts/api/Chart.yaml": {"src": "can://iac/payments", "dst": "can://artifact/payments/charts/api/Chart.yaml"},
+        "charts/api/charts/postgresql/Chart.yaml": {"src": "can://iac/payments", "dst": "can://artifact/payments/charts/api/charts/postgresql/Chart.yaml"},
+        "charts/api/values.yaml": {"src": "can://iac/payments", "dst": "can://artifact/payments/charts/api/values.yaml"},
+        "charts/api/templates/deployment.yaml": {"src": "can://iac/payments", "dst": "can://artifact/payments/charts/api/templates/deployment.yaml"}
+      },
+      "defines_config": {
+        "charts/api/values.yaml@key/image.tag": {
+          "src": "can://artifact/payments/charts/api/values.yaml",
+          "dst": "can://artifact/payments/charts/api/values.yaml@key/image.tag"
+        }
+      },
+      "iac_has_alias": {
+        "charts/api/Chart.yaml@helm-chart": {
+          "src": "can://artifact/payments/charts/api/Chart.yaml",
+          "dst": "can://iac/payments/helm/chart/charts/api"
+        },
+        "charts/api/charts/postgresql/Chart.yaml@helm-chart": {
+          "src": "can://artifact/payments/charts/api/charts/postgresql/Chart.yaml",
+          "dst": "can://iac/payments/helm/chart/charts/api/charts/postgresql"
+        }
+      },
+      "iac_alias_of": {
+        "charts/api/Chart.yaml@helm-chart": {
+          "src": "can://iac/payments/helm/chart/charts/api",
+          "dst": "can://artifact/payments/charts/api/Chart.yaml"
+        },
+        "charts/api/charts/postgresql/Chart.yaml@helm-chart": {
+          "src": "can://iac/payments/helm/chart/charts/api/charts/postgresql",
+          "dst": "can://artifact/payments/charts/api/charts/postgresql/Chart.yaml"
+        }
+      },
+      "iac_part_of_chart": {
+        "charts/api/values.yaml": {
+          "src": "can://artifact/payments/charts/api/values.yaml",
+          "dst": "can://artifact/payments/charts/api/Chart.yaml"
+        },
+        "charts/api/templates/deployment.yaml": {
+          "src": "can://artifact/payments/charts/api/templates/deployment.yaml",
+          "dst": "can://artifact/payments/charts/api/Chart.yaml"
+        }
+      },
+      "iac_resolves_to_chart": {
+        "bitnami/postgresql": {
+          "src": "can://iac/payments/helm/chart-reference/bitnami/postgresql",
+          "dst": "can://artifact/payments/charts/api/charts/postgresql/Chart.yaml"
+        }
+      },
+      "iac_defines_template": {
+        "charts/api/templates/deployment.yaml@12:1": {
+          "src": "can://artifact/payments/charts/api/templates/deployment.yaml",
+          "dst": "can://iac/payments/helm/charts/api/templates/deployment.yaml/named-template/api.fullname"
+        }
+      },
+      "iac_has_template_call": {
+        "charts/api/templates/deployment.yaml@6:11": {
+          "src": "can://artifact/payments/charts/api/templates/deployment.yaml",
+          "dst": "can://iac/payments/helm/charts/api/templates/deployment.yaml/template-call@6:11"
+        }
+      },
+      "iac_calls_template": {
+        "charts/api/templates/deployment.yaml@6:11": {
+          "src": "can://iac/payments/helm/charts/api/templates/deployment.yaml/template-call@6:11",
+          "dst": "can://iac/payments/helm/charts/api/templates/deployment.yaml/named-template/api.fullname"
+        }
+      },
+      "iac_has_value_reference": {
+        "charts/api/templates/deployment.yaml@10:16": {
+          "src": "can://artifact/payments/charts/api/templates/deployment.yaml",
+          "dst": "can://iac/payments/helm/charts/api/templates/deployment.yaml/value-reference@10:16"
+        }
+      },
+      "iac_references_value": {
+        "charts/api/templates/deployment.yaml@10:16": {
+          "src": "can://iac/payments/helm/charts/api/templates/deployment.yaml/value-reference@10:16",
+          "dst": "can://artifact/payments/charts/api/values.yaml@key/image.tag"
+        }
+      },
+      "iac_has_resource_template": {
+        "charts/api/templates/deployment.yaml@1:1": {
+          "src": "can://artifact/payments/charts/api/templates/deployment.yaml",
+          "dst": "can://iac/payments/helm/charts/api/templates/deployment.yaml/resource-template@1:1"
+        }
+      },
+      "iac_has_lookup_reference": {
+        "charts/api/templates/deployment.yaml@11:15": {
+          "src": "can://artifact/payments/charts/api/templates/deployment.yaml",
+          "dst": "can://iac/payments/helm/charts/api/templates/deployment.yaml/lookup-reference@11:15"
+        }
+      }
+    }
+  }
+}

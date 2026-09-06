@@ -1,0 +1,481 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codellm-devkit.github.io/schema/neo4j/contract.schema.json",
+  "title": "codeanalyzer Neo4j graph contract",
+  "description": "Meta-schema for the schema.neo4j.json document each codeanalyzer emits with `--emit schema`. The document describes the graph an analyzer writes \u2014 node labels, relationship types, and the constraints and indexes the loader creates \u2014 so it is a contract about a graph, not a JSON Schema for analysis.json. Its schema_version is an independent line from the analysis schema version: an analyzer can sit on analysis schema v1 while its graph contract is on 2.x. Every label and relationship type must carry its language prefix \u2014 J/J_ for Java, Py/PY_ for Python, TS/TS_ for TypeScript \u2014 everywhere it appears, including inside the Cypher constraint and index statements.",
+  "x-cldk": {
+    "kind": "neo4j-graph-contract",
+    "sources": [
+      {
+        "repo": "codellm-devkit/codeanalyzer-java",
+        "release": "v2.4.1",
+        "schemaVersion": "1.0.0",
+        "path": "schema.neo4j.json"
+      },
+      {
+        "repo": "codellm-devkit/codeanalyzer-python",
+        "release": "v0.3.2",
+        "schemaVersion": "1.2.0",
+        "path": "schema.neo4j.json"
+      },
+      {
+        "repo": "codellm-devkit/codeanalyzer-typescript",
+        "release": "v0.4.3",
+        "schemaVersion": "1.0.0",
+        "path": "schema.neo4j.json",
+        "normalized": true
+      }
+    ],
+    "note": "The copies under v1/neo4j/<lang>/ are byte-identical to the tagged release, so `diff` against the analyzer repo is the drift check. Each is pinned to the same release as the v1 analysis schema for that language: the graph contract an analyzer emitted while it was still on analysis schema v1. The contract's own schema_version runs on an independent line and does not track v1/v2. One exception: the TypeScript copy is normalized rather than byte-identical, because v0.4.3 predates prefixing on that line. It carries an x-cldk block saying so.",
+    "validates": [
+      "*/schema.neo4j.json"
+    ]
+  },
+  "type": "object",
+  "required": [
+    "schema_version",
+    "generator",
+    "node_labels",
+    "relationship_types"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "description": "Version of the graph contract itself, independent of the analysis schema version.",
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "generator": {
+      "description": "Analyzer that emitted this contract. Closed set \u2014 a new analyzer must register its label prefix under $defs/prefixRules before its contract can validate.",
+      "type": "string",
+      "enum": [
+        "codeanalyzer-java",
+        "codeanalyzer-python",
+        "codeanalyzer-typescript"
+      ]
+    },
+    "marker_labels": {
+      "description": "Extra labels attached to nodes that satisfy some property (e.g. JEntrypoint), rather than to a node kind.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "node_labels": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NodeLabel"
+      },
+      "minItems": 1
+    },
+    "relationship_types": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/RelationshipType"
+      },
+      "minItems": 1
+    },
+    "constraints": {
+      "description": "Cypher CREATE CONSTRAINT statements the loader runs before ingest.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^CREATE CONSTRAINT "
+      }
+    },
+    "indexes": {
+      "description": "Cypher CREATE INDEX statements the loader runs before ingest.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^CREATE (INDEX|FULLTEXT INDEX|VECTOR INDEX) "
+      }
+    },
+    "x-cldk": {
+      "description": "Provenance annotation carried by a tracked copy, not something an analyzer emits. Present only on a copy that is not byte-identical to its release, where it records the origin and what was changed.",
+      "type": "object",
+      "required": [
+        "normalized",
+        "origin"
+      ],
+      "properties": {
+        "normalized": {
+          "type": "boolean"
+        },
+        "origin": {
+          "type": "object",
+          "required": [
+            "repo",
+            "release"
+          ],
+          "properties": {
+            "repo": {
+              "type": "string"
+            },
+            "release": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            },
+            "schemaVersion": {
+              "type": "string"
+            }
+          }
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "NodeLabel": {
+      "type": "object",
+      "required": [
+        "label",
+        "key",
+        "properties"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "description": "Neo4j label written on the node.",
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+        },
+        "merge_label": {
+          "description": "Label used in the MERGE that upserts the node, when it differs from `label`. Java and Python spell this merge_label; TypeScript spells it mergeLabel. Either is accepted here \u2014 the divergence is real in the shipped contracts.",
+          "type": "string"
+        },
+        "mergeLabel": {
+          "description": "TypeScript's spelling of merge_label. See the note on merge_label.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Property that uniquely identifies a node with this label.",
+          "type": "string"
+        },
+        "properties": {
+          "description": "Property name to property type. Values are contract type names, not JSON Schema types.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PropertyType"
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "merge_label"
+          ]
+        },
+        {
+          "required": [
+            "mergeLabel"
+          ]
+        }
+      ]
+    },
+    "RelationshipType": {
+      "type": "object",
+      "required": [
+        "type",
+        "from",
+        "to"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "description": "Relationship type written on the edge, e.g. PY_HAS_MODULE.",
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "from": {
+          "description": "Node labels this edge may start at.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "to": {
+          "description": "Node labels this edge may end at.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PropertyType"
+          }
+        }
+      }
+    },
+    "PropertyType": {
+      "description": "Contract-level property type. This is the set the three shipped contracts use; extend it when an analyzer starts emitting a new one.",
+      "type": "string",
+      "enum": [
+        "string",
+        "integer",
+        "float",
+        "boolean",
+        "string[]",
+        "integer[]",
+        "float[]",
+        "boolean[]"
+      ]
+    },
+    "prefixRules": {
+      "description": "Per-language naming rules. Every label an analyzer writes \u2014 node label, merge label, marker label, relationship endpoint, and every label referenced from a Cypher constraint or index \u2014 carries that language's prefix, and every relationship type carries the uppercase form of it. No exceptions: a shared or generic label is a contract violation, because two analyzers loading into one database would collide on it.",
+      "java": {
+        "properties": {
+          "marker_labels": {
+            "items": {
+              "type": "string",
+              "pattern": "^J[A-Z][A-Za-z0-9_]*$"
+            }
+          },
+          "node_labels": {
+            "items": {
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "pattern": "^J[A-Z][A-Za-z0-9_]*$"
+                },
+                "merge_label": {
+                  "type": "string",
+                  "pattern": "^J[A-Z][A-Za-z0-9_]*$"
+                },
+                "mergeLabel": {
+                  "type": "string",
+                  "pattern": "^J[A-Z][A-Za-z0-9_]*$"
+                }
+              }
+            }
+          },
+          "relationship_types": {
+            "items": {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "pattern": "^J_[A-Z][A-Z0-9_]*$"
+                },
+                "from": {
+                  "items": {
+                    "type": "string",
+                    "pattern": "^J[A-Z][A-Za-z0-9_]*$"
+                  }
+                },
+                "to": {
+                  "items": {
+                    "type": "string",
+                    "pattern": "^J[A-Z][A-Za-z0-9_]*$"
+                  }
+                }
+              }
+            }
+          },
+          "constraints": {
+            "items": {
+              "type": "string",
+              "not": {
+                "pattern": "\\([A-Za-z_][A-Za-z0-9_]*:(?!J[A-Z])"
+              }
+            }
+          },
+          "indexes": {
+            "items": {
+              "type": "string",
+              "not": {
+                "pattern": "\\([A-Za-z_][A-Za-z0-9_]*:(?!J[A-Z])"
+              }
+            }
+          }
+        }
+      },
+      "python": {
+        "properties": {
+          "marker_labels": {
+            "items": {
+              "type": "string",
+              "pattern": "^Py[A-Z][A-Za-z0-9_]*$"
+            }
+          },
+          "node_labels": {
+            "items": {
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "pattern": "^Py[A-Z][A-Za-z0-9_]*$"
+                },
+                "merge_label": {
+                  "type": "string",
+                  "pattern": "^Py[A-Z][A-Za-z0-9_]*$"
+                },
+                "mergeLabel": {
+                  "type": "string",
+                  "pattern": "^Py[A-Z][A-Za-z0-9_]*$"
+                }
+              }
+            }
+          },
+          "relationship_types": {
+            "items": {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "pattern": "^PY_[A-Z][A-Z0-9_]*$"
+                },
+                "from": {
+                  "items": {
+                    "type": "string",
+                    "pattern": "^Py[A-Z][A-Za-z0-9_]*$"
+                  }
+                },
+                "to": {
+                  "items": {
+                    "type": "string",
+                    "pattern": "^Py[A-Z][A-Za-z0-9_]*$"
+                  }
+                }
+              }
+            }
+          },
+          "constraints": {
+            "items": {
+              "type": "string",
+              "not": {
+                "pattern": "\\([A-Za-z_][A-Za-z0-9_]*:(?!Py[A-Z])"
+              }
+            }
+          },
+          "indexes": {
+            "items": {
+              "type": "string",
+              "not": {
+                "pattern": "\\([A-Za-z_][A-Za-z0-9_]*:(?!Py[A-Z])"
+              }
+            }
+          }
+        }
+      },
+      "typescript": {
+        "properties": {
+          "marker_labels": {
+            "items": {
+              "type": "string",
+              "pattern": "^TS[A-Z][A-Za-z0-9_]*$"
+            }
+          },
+          "node_labels": {
+            "items": {
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "pattern": "^TS[A-Z][A-Za-z0-9_]*$"
+                },
+                "merge_label": {
+                  "type": "string",
+                  "pattern": "^TS[A-Z][A-Za-z0-9_]*$"
+                },
+                "mergeLabel": {
+                  "type": "string",
+                  "pattern": "^TS[A-Z][A-Za-z0-9_]*$"
+                }
+              }
+            }
+          },
+          "relationship_types": {
+            "items": {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "pattern": "^TS_[A-Z][A-Z0-9_]*$"
+                },
+                "from": {
+                  "items": {
+                    "type": "string",
+                    "pattern": "^TS[A-Z][A-Za-z0-9_]*$"
+                  }
+                },
+                "to": {
+                  "items": {
+                    "type": "string",
+                    "pattern": "^TS[A-Z][A-Za-z0-9_]*$"
+                  }
+                }
+              }
+            }
+          },
+          "constraints": {
+            "items": {
+              "type": "string",
+              "not": {
+                "pattern": "\\([A-Za-z_][A-Za-z0-9_]*:(?!TS[A-Z])"
+              }
+            }
+          },
+          "indexes": {
+            "items": {
+              "type": "string",
+              "not": {
+                "pattern": "\\([A-Za-z_][A-Za-z0-9_]*:(?!TS[A-Z])"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "generator": {
+            "const": "codeanalyzer-java"
+          }
+        },
+        "required": [
+          "generator"
+        ]
+      },
+      "then": {
+        "$ref": "#/$defs/prefixRules/java"
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "generator": {
+            "const": "codeanalyzer-python"
+          }
+        },
+        "required": [
+          "generator"
+        ]
+      },
+      "then": {
+        "$ref": "#/$defs/prefixRules/python"
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "generator": {
+            "const": "codeanalyzer-typescript"
+          }
+        },
+        "required": [
+          "generator"
+        ]
+      },
+      "then": {
+        "$ref": "#/$defs/prefixRules/typescript"
+      }
+    }
+  ]
+}
