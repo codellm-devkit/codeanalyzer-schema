@@ -1,0 +1,661 @@
+{
+  "schema_version": "2.0.0",
+  "generator": "codeanalyzer-typescript",
+  "marker_labels": [
+    "TSCanNode",
+    "JSCanNode"
+  ],
+  "node_labels": [
+    {
+      "label": "TSApplication",
+      "mergeLabel": "Application",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "schema_version": "string",
+        "language": "string",
+        "max_level": "integer",
+        "k_limit": "integer",
+        "analyzer_name": "string",
+        "analyzer_version": "string",
+        "entrypoint_frameworks": "string[]",
+        "entrypoint_report_json": "string"
+      }
+    },
+    {
+      "label": "Artifact",
+      "mergeLabel": "Artifact",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "kind": "string",
+        "path": "string",
+        "format": "string",
+        "roles": "string[]",
+        "size_bytes": "integer",
+        "sha256": "string",
+        "extraction": "string",
+        "source": "string"
+      }
+    },
+    {
+      "label": "Package",
+      "mergeLabel": "Package",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "ecosystem": "string",
+        "name": "string"
+      }
+    },
+    {
+      "label": "TSDecorator",
+      "mergeLabel": "TSDecorator",
+      "key": "name",
+      "properties": {
+        "name": "string",
+        "qualified_name": "string"
+      }
+    },
+    {
+      "label": "ConfigKey",
+      "mergeLabel": "ConfigKey",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "key": "string",
+        "namespace": "string",
+        "value": "string",
+        "references": "string[]"
+      }
+    },
+    {
+      "label": "TSModule",
+      "mergeLabel": "CanNode",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "kind": "string",
+        "name": "string",
+        "is_tsx": "boolean",
+        "is_declaration_file": "boolean",
+        "content_hash": "string",
+        "exports_json": "string",
+        "source": "string",
+        "start_line": "integer",
+        "end_line": "integer",
+        "start_column": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer"
+      }
+    },
+    {
+      "label": "TSClass",
+      "mergeLabel": "CanNode",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "kind": "string",
+        "signature": "string",
+        "name": "string",
+        "base_classes": "string[]",
+        "implements_types": "string[]",
+        "is_abstract": "boolean",
+        "is_exported": "boolean",
+        "is_ambient": "boolean",
+        "code": "string",
+        "start_line": "integer",
+        "end_line": "integer",
+        "start_column": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer",
+        "is_entrypoint": "boolean",
+        "entrypoint_frameworks": "string[]"
+      }
+    },
+    {
+      "label": "TSInterface",
+      "mergeLabel": "CanNode",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "kind": "string",
+        "signature": "string",
+        "name": "string",
+        "base_classes": "string[]",
+        "is_exported": "boolean",
+        "is_ambient": "boolean",
+        "code": "string",
+        "start_line": "integer",
+        "end_line": "integer",
+        "start_column": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer"
+      }
+    },
+    {
+      "label": "TSEnum",
+      "mergeLabel": "CanNode",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "kind": "string",
+        "signature": "string",
+        "name": "string",
+        "is_const": "boolean",
+        "is_exported": "boolean",
+        "is_ambient": "boolean",
+        "code": "string",
+        "start_line": "integer",
+        "end_line": "integer",
+        "start_column": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer"
+      }
+    },
+    {
+      "label": "TSTypeAlias",
+      "mergeLabel": "CanNode",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "kind": "string",
+        "signature": "string",
+        "name": "string",
+        "aliased_type": "string",
+        "is_exported": "boolean",
+        "is_ambient": "boolean",
+        "code": "string",
+        "start_line": "integer",
+        "end_line": "integer",
+        "start_column": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer"
+      }
+    },
+    {
+      "label": "TSNamespace",
+      "mergeLabel": "CanNode",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "kind": "string",
+        "signature": "string",
+        "name": "string",
+        "is_exported": "boolean",
+        "is_ambient": "boolean",
+        "code": "string",
+        "start_line": "integer",
+        "end_line": "integer",
+        "start_column": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer"
+      }
+    },
+    {
+      "label": "TSCallable",
+      "mergeLabel": "CanNode",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "kind": "string",
+        "signature": "string",
+        "name": "string",
+        "return_type": "string",
+        "cyclomatic_complexity": "integer",
+        "accessibility": "string",
+        "accessor_kind": "string",
+        "is_static": "boolean",
+        "is_abstract": "boolean",
+        "is_async": "boolean",
+        "is_generator": "boolean",
+        "is_exported": "boolean",
+        "is_ambient": "boolean",
+        "is_implicit": "boolean",
+        "code": "string",
+        "start_line": "integer",
+        "end_line": "integer",
+        "start_column": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer",
+        "is_entrypoint": "boolean",
+        "entrypoint_frameworks": "string[]",
+        "parameters_json": "string"
+      }
+    },
+    {
+      "label": "TSField",
+      "mergeLabel": "CanNode",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "kind": "string",
+        "name": "string",
+        "type": "string",
+        "start_line": "integer",
+        "end_line": "integer",
+        "start_column": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer"
+      }
+    },
+    {
+      "label": "TSBodyNode",
+      "mergeLabel": "CanNode",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "kind": "string",
+        "of": "string",
+        "parent": "string",
+        "callee": "string",
+        "start_line": "integer",
+        "end_line": "integer",
+        "start_column": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer"
+      }
+    },
+    {
+      "label": "TSExternal",
+      "mergeLabel": "CanNode",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "kind": "string",
+        "name": "string",
+        "module": "string"
+      }
+    },
+    {
+      "label": "TSAnonymousCallable",
+      "mergeLabel": "CanNode",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "kind": "string",
+        "signature": "string",
+        "name": "string",
+        "return_type": "string",
+        "cyclomatic_complexity": "integer",
+        "accessibility": "string",
+        "accessor_kind": "string",
+        "is_static": "boolean",
+        "is_abstract": "boolean",
+        "is_async": "boolean",
+        "is_generator": "boolean",
+        "is_exported": "boolean",
+        "is_ambient": "boolean",
+        "is_implicit": "boolean",
+        "path": "string",
+        "start_line": "integer",
+        "end_line": "integer",
+        "start_column": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer"
+      }
+    }
+  ],
+  "relationship_types": [
+    {
+      "type": "TS_HAS_MODULE",
+      "from": [
+        "TSApplication"
+      ],
+      "to": [
+        "TSModule"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "HAS_ARTIFACT",
+      "from": [
+        "TSApplication"
+      ],
+      "to": [
+        "Artifact"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "DECLARES_DEPENDENCY",
+      "from": [
+        "Artifact"
+      ],
+      "to": [
+        "Package"
+      ],
+      "properties": {
+        "spec": "string",
+        "kind": "string",
+        "direct": "boolean",
+        "extras": "string[]",
+        "prov": "string[]"
+      }
+    },
+    {
+      "type": "LOCKS",
+      "from": [
+        "Artifact"
+      ],
+      "to": [
+        "Package"
+      ],
+      "properties": {
+        "version": "string"
+      }
+    },
+    {
+      "type": "TS_PROVIDES",
+      "from": [
+        "Package"
+      ],
+      "to": [
+        "TSExternal"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_UNRESOLVED_IMPORT",
+      "from": [
+        "TSApplication"
+      ],
+      "to": [
+        "TSExternal"
+      ],
+      "properties": {
+        "prov": "string[]"
+      }
+    },
+    {
+      "type": "DEFINES_CONFIG",
+      "from": [
+        "Artifact"
+      ],
+      "to": [
+        "ConfigKey"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_USES_CONFIG",
+      "from": [
+        "TSBodyNode"
+      ],
+      "to": [
+        "ConfigKey"
+      ],
+      "properties": {
+        "prov": "string[]"
+      }
+    },
+    {
+      "type": "TS_READS_CONFIG_UNRESOLVED",
+      "from": [
+        "TSApplication"
+      ],
+      "to": [
+        "TSExternal",
+        "TSCallable"
+      ],
+      "properties": {
+        "key": "string",
+        "reason": "string",
+        "prov": "string[]",
+        "_k": "string"
+      }
+    },
+    {
+      "type": "TS_IMPORTS",
+      "from": [
+        "TSModule"
+      ],
+      "to": [
+        "TSModule",
+        "TSExternal"
+      ],
+      "properties": {
+        "spellings": "string[]",
+        "imported_names": "string[]",
+        "aliases": "string[]",
+        "type_only_names": "string[]"
+      }
+    },
+    {
+      "type": "TS_RE_EXPORTS",
+      "from": [
+        "TSModule"
+      ],
+      "to": [
+        "TSModule",
+        "TSExternal"
+      ],
+      "properties": {
+        "spellings": "string[]",
+        "exported_names": "string[]",
+        "aliases": "string[]",
+        "type_only_names": "string[]"
+      }
+    },
+    {
+      "type": "TS_DECLARES",
+      "from": [
+        "TSModule",
+        "TSNamespace",
+        "TSCallable"
+      ],
+      "to": [
+        "TSClass",
+        "TSInterface",
+        "TSEnum",
+        "TSTypeAlias",
+        "TSNamespace",
+        "TSCallable"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_HAS_METHOD",
+      "from": [
+        "TSClass",
+        "TSInterface"
+      ],
+      "to": [
+        "TSCallable"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_HAS_FIELD",
+      "from": [
+        "TSModule",
+        "TSClass",
+        "TSInterface",
+        "TSEnum",
+        "TSNamespace"
+      ],
+      "to": [
+        "TSField"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_DECORATED_BY",
+      "from": [
+        "TSClass",
+        "TSInterface",
+        "TSEnum",
+        "TSNamespace",
+        "TSCallable",
+        "TSField"
+      ],
+      "to": [
+        "TSDecorator"
+      ],
+      "properties": {
+        "positional_arguments": "string[]",
+        "keyword_arguments_json": "string"
+      }
+    },
+    {
+      "type": "TS_HAS_BODY_NODE",
+      "from": [
+        "TSCallable",
+        "TSAnonymousCallable"
+      ],
+      "to": [
+        "TSBodyNode"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_RESOLVES_TO",
+      "from": [
+        "TSBodyNode"
+      ],
+      "to": [
+        "TSCallable",
+        "TSExternal",
+        "TSAnonymousCallable"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_CALLS",
+      "from": [
+        "TSCallable",
+        "TSAnonymousCallable"
+      ],
+      "to": [
+        "TSCallable",
+        "TSExternal",
+        "TSAnonymousCallable"
+      ],
+      "properties": {
+        "weight": "integer",
+        "prov": "string[]"
+      }
+    },
+    {
+      "type": "TS_CFG_NEXT",
+      "from": [
+        "TSBodyNode"
+      ],
+      "to": [
+        "TSBodyNode"
+      ],
+      "properties": {
+        "kind": "string",
+        "_k": "string"
+      }
+    },
+    {
+      "type": "TS_CDG",
+      "from": [
+        "TSBodyNode"
+      ],
+      "to": [
+        "TSBodyNode"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_DDG",
+      "from": [
+        "TSBodyNode"
+      ],
+      "to": [
+        "TSBodyNode"
+      ],
+      "properties": {
+        "var": "string",
+        "prov": "string[]",
+        "_k": "string"
+      }
+    },
+    {
+      "type": "TS_SUMMARY",
+      "from": [
+        "TSBodyNode"
+      ],
+      "to": [
+        "TSBodyNode"
+      ],
+      "properties": {
+        "var": "string"
+      }
+    },
+    {
+      "type": "TS_PARAM_IN",
+      "from": [
+        "TSBodyNode"
+      ],
+      "to": [
+        "TSBodyNode"
+      ],
+      "properties": {
+        "var": "string"
+      }
+    },
+    {
+      "type": "TS_PARAM_OUT",
+      "from": [
+        "TSBodyNode"
+      ],
+      "to": [
+        "TSBodyNode"
+      ],
+      "properties": {
+        "var": "string"
+      }
+    },
+    {
+      "type": "TS_EXTENDS",
+      "from": [
+        "TSClass",
+        "TSInterface"
+      ],
+      "to": [
+        "TSClass",
+        "TSInterface"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "TS_IMPLEMENTS",
+      "from": [
+        "TSClass"
+      ],
+      "to": [
+        "TSInterface",
+        "TSClass"
+      ],
+      "properties": {}
+    }
+  ],
+  "constraints": [
+    "CREATE CONSTRAINT application_id IF NOT EXISTS FOR (x:Application) REQUIRE x.id IS UNIQUE",
+    "CREATE CONSTRAINT artifact_id IF NOT EXISTS FOR (x:Artifact) REQUIRE x.id IS UNIQUE",
+    "CREATE CONSTRAINT package_id IF NOT EXISTS FOR (x:Package) REQUIRE x.id IS UNIQUE",
+    "CREATE CONSTRAINT tsdecorator_name IF NOT EXISTS FOR (x:TSDecorator) REQUIRE x.name IS UNIQUE",
+    "CREATE CONSTRAINT configkey_id IF NOT EXISTS FOR (x:ConfigKey) REQUIRE x.id IS UNIQUE",
+    "CREATE CONSTRAINT cannode_id IF NOT EXISTS FOR (x:CanNode) REQUIRE x.id IS UNIQUE"
+  ],
+  "indexes": [
+    "CREATE INDEX callable_name IF NOT EXISTS FOR (c:TSCallable) ON (c.name)",
+    "CREATE FULLTEXT INDEX ts_code_fts IF NOT EXISTS FOR (c:TSCallable) ON EACH [c.code]",
+    "CREATE INDEX cannode_kind IF NOT EXISTS FOR (n:CanNode) ON (n.kind)",
+    "CREATE INDEX tscannode_id IF NOT EXISTS FOR (n:TSCanNode) ON (n.id)",
+    "CREATE INDEX jscannode_id IF NOT EXISTS FOR (n:JSCanNode) ON (n.id)"
+  ]
+}
