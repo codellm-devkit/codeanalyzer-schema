@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 
 from jsonschema import Draft202012Validator
+from referencing import Registry, Resource
 
 if __package__:
     from .check_iac import assert_monotone, check_catalog, check_document
@@ -20,6 +21,24 @@ else:
     from check_iac import assert_monotone, check_catalog, check_document
 
 ROOT = Path(__file__).resolve().parent.parent
+
+
+def registry() -> Registry:
+    """Resolve cross-file $refs against the schemas in this repo, by their $id.
+
+    The v2 per-language schemas $ref the canonical spine by its published URL,
+    which is not fetchable offline (and must not be fetched: the file on disk is
+    the thing under test).
+    """
+    resources = []
+    for path in ROOT.rglob("*.schema.json"):
+        schema = json.loads(path.read_text())
+        if "$id" in schema:
+            resources.append((schema["$id"], Resource.from_contents(schema)))
+    return Registry().with_resources(resources)
+
+
+REGISTRY = registry()
 
 
 def check(schema_path: Path) -> int:
@@ -33,7 +52,7 @@ def check(schema_path: Path) -> int:
         covered += schema_path.parent.glob(pattern)
 
     failures = 0
-    validator = Draft202012Validator(schema)
+    validator = Draft202012Validator(schema, registry=REGISTRY)
     for sample in sorted(set(covered)):
         errors = sorted(validator.iter_errors(json.loads(sample.read_text())),
                         key=lambda e: list(e.absolute_path))

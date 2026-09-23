@@ -1,0 +1,1424 @@
+{
+  "schema_version": "2.0.0",
+  "language": "java",
+  "max_level": 2,
+  "analyzer": {
+    "name": "codeanalyzer-java",
+    "version": "3.3.3"
+  },
+  "application": {
+    "id": "can://enum-record-bodies-test",
+    "kind": "application",
+    "symbol_table": {
+      "src/main/java/org/example/Money.java": {
+        "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Money.java",
+        "kind": "module",
+        "span": {
+          "start": [
+            1,
+            1
+          ],
+          "end": [
+            22,
+            1
+          ],
+          "bytes": [
+            0,
+            568
+          ]
+        },
+        "package": "org.example",
+        "source": "package org.example;\n\nimport java.util.List;\n\n/**\n * A record whose canonical constructor is written in compact form. Its parameters come from the record\n * components, not from the (empty) compact parameter list, so its signature is what a {@code new\n * Money(...)} call site resolves to.\n */\npublic record Money(List<String> tags, int cents) {\n\n    public Money {\n        if (cents < 0) {\n            throw new IllegalArgumentException(\"negative\");\n        }\n    }\n\n    public Money plus(Money other) {\n        return new Money(tags, cents + other.cents());\n    }\n}\n",
+        "comments": [],
+        "imports": [
+          {
+            "name": "List",
+            "path": "java.util.List",
+            "span": {
+              "start": [
+                3,
+                1
+              ],
+              "end": [
+                3,
+                22
+              ],
+              "bytes": [
+                22,
+                44
+              ]
+            },
+            "is_static": false,
+            "is_wildcard": false
+          }
+        ],
+        "types": {
+          "Money": {
+            "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Money.java/Money",
+            "kind": "record",
+            "span": {
+              "start": [
+                10,
+                1
+              ],
+              "end": [
+                21,
+                1
+              ],
+              "bytes": [
+                294,
+                567
+              ]
+            },
+            "comments": [
+              {
+                "content": "\n * A record whose canonical constructor is written in compact form. Its parameters come from the record\n * components, not from the (empty) compact parameter list, so its signature is what a {@code new\n * Money(...)} call site resolves to.\n ",
+                "span": {
+                  "start": [
+                    5,
+                    1
+                  ],
+                  "end": [
+                    9,
+                    3
+                  ],
+                  "bytes": [
+                    46,
+                    293
+                  ]
+                },
+                "is_javadoc": true
+              }
+            ],
+            "modifiers": [
+              "public"
+            ],
+            "base_types": [],
+            "interfaces": [],
+            "decorators": [],
+            "type_parameters": [],
+            "is_entrypoint_class": false,
+            "entrypoint_frameworks": [],
+            "enum_constants": [],
+            "record_components": [
+              {
+                "name": "tags",
+                "type": "java.util.List<java.lang.String>",
+                "span": {
+                  "start": [
+                    10,
+                    21
+                  ],
+                  "end": [
+                    10,
+                    37
+                  ],
+                  "bytes": [
+                    314,
+                    331
+                  ]
+                },
+                "modifiers": [],
+                "decorators": [],
+                "comments": [],
+                "is_variadic": false
+              },
+              {
+                "name": "cents",
+                "type": "int",
+                "span": {
+                  "start": [
+                    10,
+                    40
+                  ],
+                  "end": [
+                    10,
+                    48
+                  ],
+                  "bytes": [
+                    333,
+                    342
+                  ]
+                },
+                "modifiers": [],
+                "decorators": [],
+                "comments": [],
+                "is_variadic": false
+              }
+            ],
+            "fields": {},
+            "callables": {
+              "<init>(java.util.List, int)": {
+                "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Money.java/Money/<init>(java.util.List, int)",
+                "kind": "constructor",
+                "signature": "<init>(java.util.List, int)",
+                "span": {
+                  "start": [
+                    12,
+                    5
+                  ],
+                  "end": [
+                    16,
+                    5
+                  ],
+                  "bytes": [
+                    351,
+                    466
+                  ]
+                },
+                "parameters": [],
+                "error_channel": [],
+                "modifiers": [
+                  "public"
+                ],
+                "decorators": [],
+                "type_parameters": [],
+                "body_span": {
+                  "start": [
+                    12,
+                    18
+                  ],
+                  "end": [
+                    16,
+                    5
+                  ],
+                  "bytes": [
+                    364,
+                    466
+                  ]
+                },
+                "declaration": "public Money()",
+                "is_implicit": false,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "metrics": {
+                  "cyclomatic": 2
+                },
+                "refs": {
+                  "types": [
+                    "java.lang.IllegalArgumentException"
+                  ],
+                  "fields": []
+                },
+                "local_variables": [],
+                "body": {
+                  "14:23": {
+                    "kind": "call",
+                    "span": {
+                      "start": [
+                        14,
+                        19
+                      ],
+                      "end": [
+                        14,
+                        58
+                      ],
+                      "bytes": [
+                        409,
+                        449
+                      ]
+                    },
+                    "arguments": [
+                      "14:48"
+                    ],
+                    "receiver_type": "java.lang.IllegalArgumentException",
+                    "argument_types": [
+                      "java.lang.String"
+                    ],
+                    "argument_expr": [
+                      "\"negative\""
+                    ],
+                    "callee_signature": "<init>(java.lang.String)",
+                    "method_name": "<init>",
+                    "return_type": "java.lang.IllegalArgumentException",
+                    "accessibility": "public",
+                    "is_constructor_call": true
+                  }
+                },
+                "types": {}
+              },
+              "cents()": {
+                "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Money.java/Money/cents()",
+                "kind": "method",
+                "signature": "cents()",
+                "parameters": [],
+                "return_type": "int",
+                "error_channel": [],
+                "modifiers": [
+                  "public"
+                ],
+                "decorators": [],
+                "type_parameters": [],
+                "is_implicit": true,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "local_variables": [],
+                "body": {},
+                "types": {}
+              },
+              "plus(org.example.Money)": {
+                "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Money.java/Money/plus(org.example.Money)",
+                "kind": "method",
+                "signature": "plus(org.example.Money)",
+                "span": {
+                  "start": [
+                    18,
+                    5
+                  ],
+                  "end": [
+                    20,
+                    5
+                  ],
+                  "bytes": [
+                    472,
+                    565
+                  ]
+                },
+                "parameters": [
+                  {
+                    "name": "other",
+                    "type": "org.example.Money",
+                    "span": {
+                      "start": [
+                        18,
+                        23
+                      ],
+                      "end": [
+                        18,
+                        33
+                      ],
+                      "bytes": [
+                        490,
+                        501
+                      ]
+                    },
+                    "modifiers": [],
+                    "decorators": [],
+                    "is_variadic": false
+                  }
+                ],
+                "return_type": "org.example.Money",
+                "error_channel": [],
+                "modifiers": [
+                  "public"
+                ],
+                "decorators": [],
+                "type_parameters": [],
+                "body_span": {
+                  "start": [
+                    18,
+                    36
+                  ],
+                  "end": [
+                    20,
+                    5
+                  ],
+                  "bytes": [
+                    503,
+                    565
+                  ]
+                },
+                "declaration": "public Money plus(Money other)",
+                "is_implicit": false,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "metrics": {
+                  "cyclomatic": 1
+                },
+                "refs": {
+                  "types": [
+                    "org.example.Money"
+                  ],
+                  "fields": []
+                },
+                "local_variables": [],
+                "body": {
+                  "19:20": {
+                    "kind": "call",
+                    "span": {
+                      "start": [
+                        19,
+                        16
+                      ],
+                      "end": [
+                        19,
+                        53
+                      ],
+                      "bytes": [
+                        520,
+                        558
+                      ]
+                    },
+                    "callee": "can://enum-record-bodies-test/java/src/main/java/org/example/Money.java/Money/<init>(java.util.List, int)",
+                    "arguments": [
+                      "19:26",
+                      "19:32"
+                    ],
+                    "receiver_type": "org.example.Money",
+                    "argument_types": [
+                      "java.util.List<java.lang.String>",
+                      "int"
+                    ],
+                    "argument_expr": [
+                      "tags",
+                      "cents + other.cents()"
+                    ],
+                    "callee_signature": "<init>(java.util.List, int)",
+                    "method_name": "<init>",
+                    "return_type": "org.example.Money",
+                    "accessibility": "public",
+                    "is_constructor_call": true
+                  },
+                  "19:46": {
+                    "kind": "call",
+                    "span": {
+                      "start": [
+                        19,
+                        40
+                      ],
+                      "end": [
+                        19,
+                        52
+                      ],
+                      "bytes": [
+                        544,
+                        557
+                      ]
+                    },
+                    "callee": "can://enum-record-bodies-test/java/src/main/java/org/example/Money.java/Money/cents()",
+                    "arguments": [],
+                    "receiver_expr": "other",
+                    "receiver_type": "org.example.Money",
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "callee_signature": "cents()",
+                    "method_name": "cents",
+                    "return_type": "int",
+                    "accessibility": "public",
+                    "is_static_call": false,
+                    "is_constructor_call": false
+                  }
+                },
+                "types": {}
+              },
+              "tags()": {
+                "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Money.java/Money/tags()",
+                "kind": "method",
+                "signature": "tags()",
+                "parameters": [],
+                "return_type": "java.util.List<java.lang.String>",
+                "error_channel": [],
+                "modifiers": [
+                  "public"
+                ],
+                "decorators": [],
+                "type_parameters": [],
+                "is_implicit": true,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "local_variables": [],
+                "body": {},
+                "types": {}
+              }
+            },
+            "types": {}
+          }
+        },
+        "content_hash": "d2ccf46f7bc54c2dbca3a4dce5634d2ff1ec0b0a0513833c2af6c043c97fac94"
+      },
+      "src/main/java/org/example/Op.java": {
+        "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java",
+        "kind": "module",
+        "span": {
+          "start": [
+            1,
+            1
+          ],
+          "end": [
+            42,
+            1
+          ],
+          "bytes": [
+            0,
+            873
+          ]
+        },
+        "package": "org.example",
+        "source": "package org.example;\n\n/**\n * An enum whose constants carry class bodies. Each such body is an anonymous subclass of the enum, so\n * its methods are real callables that a call graph must be able to reach.\n */\npublic enum Op {\n    PLUS(\"+\") {\n        @Override\n        public int apply(int a, int b) {\n            return record(a + b);\n        }\n    },\n    MINUS(\"-\") {\n        @Override\n        public int apply(int a, int b) {\n            return record(a - b);\n        }\n    },\n    /** A constant with no body: it specialises nothing and gets no type of its own. */\n    @Deprecated\n    NOOP(\"\");\n\n    private final String symbol;\n\n    Op(String symbol) {\n        this.symbol = symbol;\n    }\n\n    public String symbol() {\n        return symbol;\n    }\n\n    public int apply(int a, int b) {\n        return 0;\n    }\n\n    int record(int result) {\n        return result;\n    }\n}\n",
+        "comments": [],
+        "imports": [],
+        "types": {
+          "Op": {
+            "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java/Op",
+            "kind": "enum",
+            "span": {
+              "start": [
+                7,
+                1
+              ],
+              "end": [
+                41,
+                1
+              ],
+              "bytes": [
+                208,
+                872
+              ]
+            },
+            "comments": [
+              {
+                "content": "\n * An enum whose constants carry class bodies. Each such body is an anonymous subclass of the enum, so\n * its methods are real callables that a call graph must be able to reach.\n ",
+                "span": {
+                  "start": [
+                    3,
+                    1
+                  ],
+                  "end": [
+                    6,
+                    3
+                  ],
+                  "bytes": [
+                    22,
+                    207
+                  ]
+                },
+                "is_javadoc": true
+              }
+            ],
+            "modifiers": [
+              "public"
+            ],
+            "base_types": [],
+            "interfaces": [],
+            "decorators": [],
+            "type_parameters": [],
+            "is_entrypoint_class": false,
+            "entrypoint_frameworks": [],
+            "enum_constants": [
+              {
+                "name": "PLUS",
+                "arguments": [
+                  "\"+\""
+                ],
+                "span": {
+                  "start": [
+                    8,
+                    5
+                  ],
+                  "end": [
+                    13,
+                    5
+                  ],
+                  "bytes": [
+                    229,
+                    349
+                  ]
+                },
+                "comments": [],
+                "decorators": []
+              },
+              {
+                "name": "MINUS",
+                "arguments": [
+                  "\"-\""
+                ],
+                "span": {
+                  "start": [
+                    14,
+                    5
+                  ],
+                  "end": [
+                    19,
+                    5
+                  ],
+                  "bytes": [
+                    355,
+                    476
+                  ]
+                },
+                "comments": [],
+                "decorators": []
+              },
+              {
+                "name": "NOOP",
+                "arguments": [
+                  "\"\""
+                ],
+                "span": {
+                  "start": [
+                    21,
+                    5
+                  ],
+                  "end": [
+                    22,
+                    12
+                  ],
+                  "bytes": [
+                    570,
+                    594
+                  ]
+                },
+                "comments": [
+                  {
+                    "content": " A constant with no body: it specialises nothing and gets no type of its own. ",
+                    "span": {
+                      "start": [
+                        20,
+                        5
+                      ],
+                      "end": [
+                        20,
+                        87
+                      ],
+                      "bytes": [
+                        482,
+                        565
+                      ]
+                    },
+                    "is_javadoc": true
+                  }
+                ],
+                "decorators": [
+                  {
+                    "name": "Deprecated",
+                    "args": [],
+                    "span": {
+                      "start": [
+                        21,
+                        5
+                      ],
+                      "end": [
+                        21,
+                        15
+                      ],
+                      "bytes": [
+                        570,
+                        581
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "record_components": [],
+            "fields": {
+              "symbol": {
+                "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java/Op/symbol",
+                "kind": "field",
+                "name": "symbol",
+                "type": "java.lang.String",
+                "span": {
+                  "start": [
+                    24,
+                    5
+                  ],
+                  "end": [
+                    24,
+                    32
+                  ],
+                  "bytes": [
+                    601,
+                    629
+                  ]
+                },
+                "modifiers": [
+                  "private",
+                  "final"
+                ],
+                "comments": [],
+                "decorators": []
+              }
+            },
+            "callables": {
+              "<init>(java.lang.String)": {
+                "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java/Op/<init>(java.lang.String)",
+                "kind": "constructor",
+                "signature": "<init>(java.lang.String)",
+                "span": {
+                  "start": [
+                    26,
+                    5
+                  ],
+                  "end": [
+                    28,
+                    5
+                  ],
+                  "bytes": [
+                    635,
+                    690
+                  ]
+                },
+                "parameters": [
+                  {
+                    "name": "symbol",
+                    "type": "java.lang.String",
+                    "span": {
+                      "start": [
+                        26,
+                        8
+                      ],
+                      "end": [
+                        26,
+                        20
+                      ],
+                      "bytes": [
+                        638,
+                        651
+                      ]
+                    },
+                    "modifiers": [],
+                    "decorators": [],
+                    "is_variadic": false
+                  }
+                ],
+                "error_channel": [],
+                "modifiers": [],
+                "decorators": [],
+                "type_parameters": [],
+                "body_span": {
+                  "start": [
+                    26,
+                    23
+                  ],
+                  "end": [
+                    28,
+                    5
+                  ],
+                  "bytes": [
+                    653,
+                    690
+                  ]
+                },
+                "declaration": "Op(String symbol)",
+                "is_implicit": false,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "metrics": {
+                  "cyclomatic": 1
+                },
+                "refs": {
+                  "types": [],
+                  "fields": [
+                    "org.example.Op.symbol"
+                  ]
+                },
+                "local_variables": [],
+                "body": {},
+                "types": {}
+              },
+              "apply(int, int)": {
+                "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java/Op/apply(int, int)",
+                "kind": "method",
+                "signature": "apply(int, int)",
+                "span": {
+                  "start": [
+                    34,
+                    5
+                  ],
+                  "end": [
+                    36,
+                    5
+                  ],
+                  "bytes": [
+                    755,
+                    811
+                  ]
+                },
+                "parameters": [
+                  {
+                    "name": "a",
+                    "type": "int",
+                    "span": {
+                      "start": [
+                        34,
+                        22
+                      ],
+                      "end": [
+                        34,
+                        26
+                      ],
+                      "bytes": [
+                        772,
+                        777
+                      ]
+                    },
+                    "modifiers": [],
+                    "decorators": [],
+                    "is_variadic": false
+                  },
+                  {
+                    "name": "b",
+                    "type": "int",
+                    "span": {
+                      "start": [
+                        34,
+                        29
+                      ],
+                      "end": [
+                        34,
+                        33
+                      ],
+                      "bytes": [
+                        779,
+                        784
+                      ]
+                    },
+                    "modifiers": [],
+                    "decorators": [],
+                    "is_variadic": false
+                  }
+                ],
+                "return_type": "int",
+                "error_channel": [],
+                "modifiers": [
+                  "public"
+                ],
+                "decorators": [],
+                "type_parameters": [],
+                "body_span": {
+                  "start": [
+                    34,
+                    36
+                  ],
+                  "end": [
+                    36,
+                    5
+                  ],
+                  "bytes": [
+                    786,
+                    811
+                  ]
+                },
+                "declaration": "public int apply(int a, int b)",
+                "is_implicit": false,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "metrics": {
+                  "cyclomatic": 1
+                },
+                "refs": {
+                  "types": [],
+                  "fields": []
+                },
+                "local_variables": [],
+                "body": {},
+                "types": {}
+              },
+              "record(int)": {
+                "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java/Op/record(int)",
+                "kind": "method",
+                "signature": "record(int)",
+                "span": {
+                  "start": [
+                    38,
+                    5
+                  ],
+                  "end": [
+                    40,
+                    5
+                  ],
+                  "bytes": [
+                    817,
+                    870
+                  ]
+                },
+                "parameters": [
+                  {
+                    "name": "result",
+                    "type": "int",
+                    "span": {
+                      "start": [
+                        38,
+                        16
+                      ],
+                      "end": [
+                        38,
+                        25
+                      ],
+                      "bytes": [
+                        828,
+                        838
+                      ]
+                    },
+                    "modifiers": [],
+                    "decorators": [],
+                    "is_variadic": false
+                  }
+                ],
+                "return_type": "int",
+                "error_channel": [],
+                "modifiers": [],
+                "decorators": [],
+                "type_parameters": [],
+                "body_span": {
+                  "start": [
+                    38,
+                    28
+                  ],
+                  "end": [
+                    40,
+                    5
+                  ],
+                  "bytes": [
+                    840,
+                    870
+                  ]
+                },
+                "declaration": "int record(int result)",
+                "is_implicit": false,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "metrics": {
+                  "cyclomatic": 1
+                },
+                "refs": {
+                  "types": [],
+                  "fields": []
+                },
+                "local_variables": [],
+                "body": {},
+                "types": {}
+              },
+              "symbol()": {
+                "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java/Op/symbol()",
+                "kind": "method",
+                "signature": "symbol()",
+                "span": {
+                  "start": [
+                    30,
+                    5
+                  ],
+                  "end": [
+                    32,
+                    5
+                  ],
+                  "bytes": [
+                    696,
+                    749
+                  ]
+                },
+                "parameters": [],
+                "return_type": "java.lang.String",
+                "error_channel": [],
+                "modifiers": [
+                  "public"
+                ],
+                "decorators": [],
+                "type_parameters": [],
+                "body_span": {
+                  "start": [
+                    30,
+                    28
+                  ],
+                  "end": [
+                    32,
+                    5
+                  ],
+                  "bytes": [
+                    719,
+                    749
+                  ]
+                },
+                "declaration": "public String symbol()",
+                "is_implicit": false,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "metrics": {
+                  "cyclomatic": 1
+                },
+                "refs": {
+                  "types": [],
+                  "fields": [
+                    "org.example.Op.symbol"
+                  ]
+                },
+                "local_variables": [],
+                "body": {},
+                "types": {}
+              },
+              "valueOf(java.lang.String)": {
+                "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java/Op/valueOf(java.lang.String)",
+                "kind": "method",
+                "signature": "valueOf(java.lang.String)",
+                "parameters": [
+                  {
+                    "name": "name",
+                    "type": "java.lang.String",
+                    "modifiers": [],
+                    "decorators": [],
+                    "is_variadic": false
+                  }
+                ],
+                "return_type": "org.example.Op",
+                "error_channel": [],
+                "modifiers": [
+                  "public",
+                  "static"
+                ],
+                "decorators": [],
+                "type_parameters": [],
+                "is_implicit": true,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "local_variables": [],
+                "body": {},
+                "types": {}
+              },
+              "values()": {
+                "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java/Op/values()",
+                "kind": "method",
+                "signature": "values()",
+                "parameters": [],
+                "return_type": "org.example.Op[]",
+                "error_channel": [],
+                "modifiers": [
+                  "public",
+                  "static"
+                ],
+                "decorators": [],
+                "type_parameters": [],
+                "is_implicit": true,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "local_variables": [],
+                "body": {},
+                "types": {}
+              }
+            },
+            "types": {
+              "$enum$PLUS": {
+                "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java/Op/$enum$PLUS",
+                "kind": "class",
+                "span": {
+                  "start": [
+                    8,
+                    5
+                  ],
+                  "end": [
+                    13,
+                    5
+                  ],
+                  "bytes": [
+                    229,
+                    349
+                  ]
+                },
+                "comments": [],
+                "modifiers": [],
+                "base_types": [
+                  "org.example.Op"
+                ],
+                "interfaces": [],
+                "decorators": [],
+                "type_parameters": [],
+                "is_entrypoint_class": false,
+                "entrypoint_frameworks": [],
+                "enum_constants": [],
+                "record_components": [],
+                "fields": {},
+                "callables": {
+                  "apply(int, int)": {
+                    "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java/Op/$enum$PLUS/apply(int, int)",
+                    "kind": "method",
+                    "signature": "apply(int, int)",
+                    "span": {
+                      "start": [
+                        9,
+                        9
+                      ],
+                      "end": [
+                        12,
+                        9
+                      ],
+                      "bytes": [
+                        249,
+                        343
+                      ]
+                    },
+                    "parameters": [
+                      {
+                        "name": "a",
+                        "type": "int",
+                        "span": {
+                          "start": [
+                            10,
+                            26
+                          ],
+                          "end": [
+                            10,
+                            30
+                          ],
+                          "bytes": [
+                            284,
+                            289
+                          ]
+                        },
+                        "modifiers": [],
+                        "decorators": [],
+                        "is_variadic": false
+                      },
+                      {
+                        "name": "b",
+                        "type": "int",
+                        "span": {
+                          "start": [
+                            10,
+                            33
+                          ],
+                          "end": [
+                            10,
+                            37
+                          ],
+                          "bytes": [
+                            291,
+                            296
+                          ]
+                        },
+                        "modifiers": [],
+                        "decorators": [],
+                        "is_variadic": false
+                      }
+                    ],
+                    "return_type": "int",
+                    "error_channel": [],
+                    "modifiers": [
+                      "public"
+                    ],
+                    "decorators": [
+                      {
+                        "name": "Override",
+                        "args": [],
+                        "span": {
+                          "start": [
+                            9,
+                            9
+                          ],
+                          "end": [
+                            9,
+                            17
+                          ],
+                          "bytes": [
+                            249,
+                            258
+                          ]
+                        }
+                      }
+                    ],
+                    "type_parameters": [],
+                    "body_span": {
+                      "start": [
+                        10,
+                        40
+                      ],
+                      "end": [
+                        12,
+                        9
+                      ],
+                      "bytes": [
+                        298,
+                        343
+                      ]
+                    },
+                    "declaration": "public int apply(int a, int b)",
+                    "is_implicit": false,
+                    "comments": [],
+                    "is_entrypoint": false,
+                    "entrypoint_frameworks": [],
+                    "metrics": {
+                      "cyclomatic": 1
+                    },
+                    "refs": {
+                      "types": [],
+                      "fields": []
+                    },
+                    "local_variables": [],
+                    "body": {
+                      "11:20": {
+                        "kind": "call",
+                        "span": {
+                          "start": [
+                            11,
+                            20
+                          ],
+                          "end": [
+                            11,
+                            32
+                          ],
+                          "bytes": [
+                            319,
+                            332
+                          ]
+                        },
+                        "callee": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java/Op/record(int)",
+                        "arguments": [
+                          "11:27"
+                        ],
+                        "argument_types": [
+                          "int"
+                        ],
+                        "argument_expr": [
+                          "a + b"
+                        ],
+                        "callee_signature": "record(int)",
+                        "method_name": "record",
+                        "return_type": "int",
+                        "accessibility": "package_private",
+                        "is_static_call": false,
+                        "is_constructor_call": false
+                      }
+                    },
+                    "types": {}
+                  }
+                },
+                "types": {}
+              },
+              "$enum$MINUS": {
+                "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java/Op/$enum$MINUS",
+                "kind": "class",
+                "span": {
+                  "start": [
+                    14,
+                    5
+                  ],
+                  "end": [
+                    19,
+                    5
+                  ],
+                  "bytes": [
+                    355,
+                    476
+                  ]
+                },
+                "comments": [],
+                "modifiers": [],
+                "base_types": [
+                  "org.example.Op"
+                ],
+                "interfaces": [],
+                "decorators": [],
+                "type_parameters": [],
+                "is_entrypoint_class": false,
+                "entrypoint_frameworks": [],
+                "enum_constants": [],
+                "record_components": [],
+                "fields": {},
+                "callables": {
+                  "apply(int, int)": {
+                    "id": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java/Op/$enum$MINUS/apply(int, int)",
+                    "kind": "method",
+                    "signature": "apply(int, int)",
+                    "span": {
+                      "start": [
+                        15,
+                        9
+                      ],
+                      "end": [
+                        18,
+                        9
+                      ],
+                      "bytes": [
+                        376,
+                        470
+                      ]
+                    },
+                    "parameters": [
+                      {
+                        "name": "a",
+                        "type": "int",
+                        "span": {
+                          "start": [
+                            16,
+                            26
+                          ],
+                          "end": [
+                            16,
+                            30
+                          ],
+                          "bytes": [
+                            411,
+                            416
+                          ]
+                        },
+                        "modifiers": [],
+                        "decorators": [],
+                        "is_variadic": false
+                      },
+                      {
+                        "name": "b",
+                        "type": "int",
+                        "span": {
+                          "start": [
+                            16,
+                            33
+                          ],
+                          "end": [
+                            16,
+                            37
+                          ],
+                          "bytes": [
+                            418,
+                            423
+                          ]
+                        },
+                        "modifiers": [],
+                        "decorators": [],
+                        "is_variadic": false
+                      }
+                    ],
+                    "return_type": "int",
+                    "error_channel": [],
+                    "modifiers": [
+                      "public"
+                    ],
+                    "decorators": [
+                      {
+                        "name": "Override",
+                        "args": [],
+                        "span": {
+                          "start": [
+                            15,
+                            9
+                          ],
+                          "end": [
+                            15,
+                            17
+                          ],
+                          "bytes": [
+                            376,
+                            385
+                          ]
+                        }
+                      }
+                    ],
+                    "type_parameters": [],
+                    "body_span": {
+                      "start": [
+                        16,
+                        40
+                      ],
+                      "end": [
+                        18,
+                        9
+                      ],
+                      "bytes": [
+                        425,
+                        470
+                      ]
+                    },
+                    "declaration": "public int apply(int a, int b)",
+                    "is_implicit": false,
+                    "comments": [],
+                    "is_entrypoint": false,
+                    "entrypoint_frameworks": [],
+                    "metrics": {
+                      "cyclomatic": 1
+                    },
+                    "refs": {
+                      "types": [],
+                      "fields": []
+                    },
+                    "local_variables": [],
+                    "body": {
+                      "17:20": {
+                        "kind": "call",
+                        "span": {
+                          "start": [
+                            17,
+                            20
+                          ],
+                          "end": [
+                            17,
+                            32
+                          ],
+                          "bytes": [
+                            446,
+                            459
+                          ]
+                        },
+                        "callee": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java/Op/record(int)",
+                        "arguments": [
+                          "17:27"
+                        ],
+                        "argument_types": [
+                          "int"
+                        ],
+                        "argument_expr": [
+                          "a - b"
+                        ],
+                        "callee_signature": "record(int)",
+                        "method_name": "record",
+                        "return_type": "int",
+                        "accessibility": "package_private",
+                        "is_static_call": false,
+                        "is_constructor_call": false
+                      }
+                    },
+                    "types": {}
+                  }
+                },
+                "types": {}
+              }
+            }
+          }
+        },
+        "content_hash": "08951da5283cc85272ae5604ccd5510847deb83b576fc029fa231c2ca439795c"
+      }
+    },
+    "call_graph": [
+      {
+        "src": "can://enum-record-bodies-test/java/src/main/java/org/example/Money.java/Money/plus(org.example.Money)",
+        "dst": "can://enum-record-bodies-test/java/src/main/java/org/example/Money.java/Money/<init>(java.util.List, int)",
+        "prov": [
+          "declared"
+        ],
+        "weight": 1
+      },
+      {
+        "src": "can://enum-record-bodies-test/java/src/main/java/org/example/Money.java/Money/plus(org.example.Money)",
+        "dst": "can://enum-record-bodies-test/java/src/main/java/org/example/Money.java/Money/cents()",
+        "prov": [
+          "declared"
+        ],
+        "weight": 1
+      },
+      {
+        "src": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java/Op/$enum$MINUS/apply(int, int)",
+        "dst": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java/Op/record(int)",
+        "prov": [
+          "declared"
+        ],
+        "weight": 1
+      },
+      {
+        "src": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java/Op/$enum$PLUS/apply(int, int)",
+        "dst": "can://enum-record-bodies-test/java/src/main/java/org/example/Op.java/Op/record(int)",
+        "prov": [
+          "declared"
+        ],
+        "weight": 1
+      }
+    ],
+    "entrypoint_report": {
+      "frameworks_detected": [],
+      "rulesets": [
+        "jakarta",
+        "struts",
+        "spring",
+        "camel",
+        "jaxrs"
+      ],
+      "unresolved": {},
+      "errors": []
+    }
+  }
+}

@@ -1,0 +1,901 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codellm-devkit.github.io/schema/v2/typescript/analysis.schema.json",
+  "title": "codeanalyzer-typescript v2 analysis output",
+  "description": "What codeanalyzer-typescript (cants) v1.6.3 emits for `--emit json`. Every node $refs the canonical v2 spine and closes with `unevaluatedProperties: false`, so this file is exhaustive by construction. Field names are the snake_case interface members of src/schema/schema.ts; the emitter strips the internal join fields (call_sites, config_accesses, abs_path) and the module cache metadata (last_modified, file_size) from the wire, keeping content_hash.",
+  "x-cldk": {
+    "schemaVersion": "2.0.0",
+    "language": "typescript",
+    "source": {
+      "repo": "codellm-devkit/codeanalyzer-typescript",
+      "release": "v1.2.0",
+      "definedIn": "src/schema/schema.ts (+ src/schema/homing.ts)"
+    },
+    "canonical": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json",
+    "extends": [
+      "type kinds: interface, enum, type_alias, namespace (a namespace carries the same buckets as a module)",
+      "callable kinds: getter, setter, arrow, function_expression; plus overload_signatures and the is_* declaration flags",
+      "type: implements_types, extends_ids/implements_ids (resolved heritage), call_signatures, index_signatures, aliased_type, is_const, type_parameters",
+      "module: exports, is_tsx, is_declaration_file, fields",
+      "body node: config_access nodes (root, key) and call facts (argument_types, type_arguments, is_optional_chain)",
+      "application: synthesized_callables (the anonymous-callable compatibility index), config_reads",
+      "edges: summary carries an optional `var` (param_in / param_out carry the spine's required `var`)",
+      "entrypoints: callables and types carry `entrypoints` / `is_entrypoint`, and the application an `entrypoint_report`"
+    ],
+    "diverges": [
+      "supertypes are `base_classes` (not the canonical `base_types`) - the union of extends + implements, with implements_types the typed split",
+      "leaf nodes (import, export, comment, parameter, decorator) carry flat start_line/start_column/end_line/end_column instead of a span",
+      "span.bytes are UTF-16 char offsets into module.source (java and python use UTF-8 byte offsets)",
+      "an unresolved call node emits `callee: null` rather than omitting the key",
+      "unresolved config reads are `config_reads` (python calls the same list `config_reads_unresolved`)",
+      "the L3 syntactic ddg provenance token is `reaching-defs` (java uses `ssa`)"
+    ]
+  },
+  "allOf": [
+    {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json"
+    }
+  ],
+  "properties": {
+    "language": {
+      "const": "typescript"
+    },
+    "application": {
+      "$ref": "#/$defs/TSApplication"
+    }
+  },
+  "unevaluatedProperties": false,
+  "$defs": {
+    "TSApplication": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Application",
+      "properties": {
+        "symbol_table": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/TSModule"
+          }
+        },
+        "external_symbols": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/TSExternalNode"
+          }
+        },
+        "synthesized_callables": {
+          "description": "L2 compatibility index: an older anonymous-callable id mapped onto the tree id that replaced it. Entries whose key equals their own id are residual fallback nodes for signatures no provider could name.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/TSSynthesizedNode"
+          }
+        },
+        "artifacts": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/TSArtifact"
+          }
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSDependency"
+          }
+        },
+        "param_in": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSParamEdge"
+          }
+        },
+        "param_out": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSParamEdge"
+          }
+        },
+        "config_reads": {
+          "type": "array",
+          "items": {
+            "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/ConfigRead"
+          }
+        },
+        "entrypoint_report": {
+          "$ref": "#/$defs/TSEntrypointReport"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "TSModule": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Module",
+      "required": [
+        "span"
+      ],
+      "properties": {
+        "imports": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSImport"
+          }
+        },
+        "exports": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSExport"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSComment"
+          }
+        },
+        "types": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/TSType"
+          }
+        },
+        "functions": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/TSCallable"
+          }
+        },
+        "fields": {
+          "description": "Module-level const/let/var bindings.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/TSField"
+          }
+        },
+        "is_tsx": {
+          "type": "boolean"
+        },
+        "is_declaration_file": {
+          "type": "boolean"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "TSType": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Type",
+      "required": [
+        "name",
+        "signature"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "class",
+            "interface",
+            "enum",
+            "type_alias",
+            "namespace"
+          ]
+        },
+        "base_classes": {
+          "description": "The spine's supertype list: extends + implements, as signature strings.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "implements_types": {
+          "description": "The typed split: just the implemented interfaces.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "extends_ids": {
+          "description": "Resolved can:// ids of the extended class/interface(s), stamped by the heritage pass.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "implements_ids": {
+          "description": "Resolved can:// ids of implemented interfaces (classes only).",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "callables": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/TSCallable"
+          }
+        },
+        "functions": {
+          "description": "Namespace-level callables (a namespace has a module's buckets).",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/TSCallable"
+          }
+        },
+        "fields": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/TSField"
+          }
+        },
+        "types": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/TSType"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSComment"
+          }
+        },
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSDecorator"
+          }
+        },
+        "type_parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSTypeParameter"
+          }
+        },
+        "call_signatures": {
+          "description": "Raw text of an interface's call/construct signatures.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "index_signatures": {
+          "description": "Raw text of `[key: string]: T` members.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "aliased_type": {
+          "description": "type_alias only: the right-hand-side type text.",
+          "type": "string"
+        },
+        "is_const": {
+          "description": "enum only.",
+          "type": "boolean"
+        },
+        "is_abstract": {
+          "type": "boolean"
+        },
+        "is_exported": {
+          "type": "boolean"
+        },
+        "is_ambient": {
+          "description": "Declared with `declare`.",
+          "type": "boolean"
+        },
+        "entrypoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSEntrypoint"
+          }
+        },
+        "is_entrypoint": {
+          "type": "boolean"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "TSCallable": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Callable",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "function",
+            "method",
+            "constructor",
+            "getter",
+            "setter",
+            "arrow",
+            "function_expression"
+          ]
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSCallableParameter"
+          }
+        },
+        "type_parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSTypeParameter"
+          }
+        },
+        "overload_signatures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSOverloadSignature"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSComment"
+          }
+        },
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSDecorator"
+          }
+        },
+        "cyclomatic_complexity": {
+          "type": "integer"
+        },
+        "accessibility": {
+          "enum": [
+            "public",
+            "private",
+            "protected"
+          ]
+        },
+        "accessor_kind": {
+          "enum": [
+            "getter",
+            "setter"
+          ]
+        },
+        "is_static": {
+          "type": "boolean"
+        },
+        "is_abstract": {
+          "type": "boolean"
+        },
+        "is_async": {
+          "type": "boolean"
+        },
+        "is_generator": {
+          "type": "boolean"
+        },
+        "is_optional": {
+          "type": "boolean"
+        },
+        "is_readonly": {
+          "type": "boolean"
+        },
+        "is_exported": {
+          "type": "boolean"
+        },
+        "is_ambient": {
+          "type": "boolean"
+        },
+        "is_implicit": {
+          "description": "A synthesized default constructor.",
+          "type": "boolean"
+        },
+        "body": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/TSBodyNode"
+          }
+        },
+        "callables": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/TSCallable"
+          }
+        },
+        "types": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/TSType"
+          }
+        },
+        "cdg": {
+          "type": "array",
+          "items": {
+            "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/IdEdge"
+          }
+        },
+        "summary": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSSummaryEdge"
+          }
+        },
+        "entrypoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSEntrypoint"
+          }
+        },
+        "is_entrypoint": {
+          "type": "boolean"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "TSBodyNode": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/BodyNode",
+      "properties": {
+        "kind": {
+          "enum": [
+            "call",
+            "config_access",
+            "statement",
+            "entry",
+            "exit",
+            "formal_in",
+            "formal_out",
+            "actual_in",
+            "actual_out"
+          ],
+          "description": "What this analyzer actually emits: `call` and `config_access` at L1, `statement` plus the synthetic `entry`/`exit` at L3, and the param vertices at L4. Branching and returns are carried by the `cfg` edge kinds, not by distinct body-node kinds (src/schema/graphs.ts GraphNodeKind)."
+        },
+        "method_name": {
+          "type": "string"
+        },
+        "receiver_expr": {
+          "type": "string"
+        },
+        "receiver_type": {
+          "type": "string"
+        },
+        "argument_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type_arguments": {
+          "description": "Explicit call type arguments, foo<T>().",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "return_type": {
+          "type": "string"
+        },
+        "is_constructor_call": {
+          "type": "boolean"
+        },
+        "is_optional_chain": {
+          "type": "boolean"
+        },
+        "root": {
+          "description": "config_access nodes: the read root - process.env | import.meta.env | Bun.env.",
+          "type": "string"
+        },
+        "key": {
+          "description": "config_access nodes: the key, when statically known.",
+          "type": "string"
+        },
+        "id": {
+          "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/BodyNode/properties/id"
+        }
+      },
+      "unevaluatedProperties": false,
+      "required": [
+        "id"
+      ]
+    },
+    "TSField": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Field",
+      "properties": {
+        "scope": {
+          "enum": [
+            "module",
+            "namespace"
+          ]
+        },
+        "declaration_kind": {
+          "enum": [
+            "const",
+            "let",
+            "var",
+            "using",
+            "unknown"
+          ]
+        },
+        "value": {
+          "description": "enum member: initializer text or computed const value.",
+          "type": "string"
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSComment"
+          }
+        },
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSDecorator"
+          }
+        },
+        "accessibility": {
+          "enum": [
+            "public",
+            "private",
+            "protected"
+          ]
+        },
+        "is_exported": {
+          "type": "boolean"
+        },
+        "is_static": {
+          "type": "boolean"
+        },
+        "is_readonly": {
+          "type": "boolean"
+        },
+        "is_optional": {
+          "type": "boolean"
+        },
+        "is_abstract": {
+          "type": "boolean"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "TSCallableParameter": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Parameter",
+      "properties": {
+        "is_optional": {
+          "type": "boolean"
+        },
+        "is_rest": {
+          "type": "boolean"
+        },
+        "is_readonly": {
+          "description": "A parameter property, constructor(readonly x: T).",
+          "type": "boolean"
+        },
+        "accessibility": {
+          "description": "Parameter-property visibility (TS shorthand / NestJS DI).",
+          "enum": [
+            "public",
+            "private",
+            "protected"
+          ]
+        },
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSDecorator"
+          }
+        },
+        "start_line": {
+          "type": "integer"
+        },
+        "end_line": {
+          "type": "integer"
+        },
+        "start_column": {
+          "type": "integer"
+        },
+        "end_column": {
+          "type": "integer"
+        },
+        "id": {
+          "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Parameter/properties/id"
+        }
+      },
+      "unevaluatedProperties": false,
+      "required": [
+        "id"
+      ]
+    },
+    "TSOverloadSignature": {
+      "description": "One declared overload of an implementation signature.",
+      "type": "object",
+      "properties": {
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSCallableParameter"
+          }
+        },
+        "return_type": {
+          "type": "string"
+        },
+        "type_parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSTypeParameter"
+          }
+        },
+        "start_line": {
+          "type": "integer"
+        },
+        "end_line": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "TSTypeParameter": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "constraint": {
+          "description": "The `extends ...` clause text.",
+          "type": "string"
+        },
+        "default": {
+          "description": "The `= ...` clause text.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "TSImport": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Import",
+      "required": [
+        "module"
+      ],
+      "properties": {
+        "module": {
+          "description": "The module specifier, e.g. ./user or @nestjs/common.",
+          "type": "string"
+        },
+        "name": {
+          "description": "The imported binding: \"\" for a side-effect import, \"*\" for a namespace import.",
+          "type": "string"
+        },
+        "is_type_only": {
+          "type": "boolean"
+        },
+        "import_kind": {
+          "enum": [
+            "named",
+            "default",
+            "namespace",
+            "side_effect"
+          ]
+        },
+        "start_line": {
+          "type": "integer"
+        },
+        "end_line": {
+          "type": "integer"
+        },
+        "start_column": {
+          "type": "integer"
+        },
+        "end_column": {
+          "type": "integer"
+        },
+        "resolved_module": {
+          "description": "The module the import resolved to, when it could be resolved.",
+          "type": "string"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "TSExport": {
+      "description": "One export declaration.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "module": {
+          "description": "Re-export source; absent for `export { x }`.",
+          "type": "string"
+        },
+        "name": {
+          "description": "The exported name; \"*\" for `export * from`.",
+          "type": "string"
+        },
+        "alias": {
+          "type": "string"
+        },
+        "is_type_only": {
+          "type": "boolean"
+        },
+        "export_kind": {
+          "enum": [
+            "named",
+            "default",
+            "namespace",
+            "re_export"
+          ]
+        },
+        "start_line": {
+          "type": "integer"
+        },
+        "end_line": {
+          "type": "integer"
+        },
+        "start_column": {
+          "type": "integer"
+        },
+        "end_column": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "TSComment": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Comment",
+      "properties": {
+        "is_docstring": {
+          "description": "A JSDoc block attached to a declaration.",
+          "type": "boolean"
+        },
+        "start_line": {
+          "type": "integer"
+        },
+        "end_line": {
+          "type": "integer"
+        },
+        "start_column": {
+          "type": "integer"
+        },
+        "end_column": {
+          "type": "integer"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "TSDecorator": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Decorator",
+      "properties": {
+        "positional_arguments": {
+          "description": "Raw source fragments.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "keyword_arguments": {
+          "description": "Object-literal arguments flattened to key -> source.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "start_line": {
+          "type": "integer"
+        },
+        "end_line": {
+          "type": "integer"
+        },
+        "start_column": {
+          "type": "integer"
+        },
+        "end_column": {
+          "type": "integer"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "TSParamEdge": {
+      "description": "A param_in / param_out edge: the spine ParamEdge, `var` required (the bound formal, `$ret`, or a global path).",
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/ParamEdge",
+      "unevaluatedProperties": false
+    },
+    "TSExternalNode": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/ExternalSymbol",
+      "required": [
+        "id",
+        "module",
+        "name"
+      ],
+      "properties": {
+        "kind": {
+          "const": "external"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "TSSynthesizedNode": {
+      "description": "A pointer node in the anonymous-callable compatibility index, or a residual fallback node.",
+      "type": "object",
+      "required": [
+        "id",
+        "kind"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "span": {
+          "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Span"
+        }
+      },
+      "additionalProperties": false
+    },
+    "TSArtifact": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Artifact",
+      "properties": {
+        "config_keys": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TSConfigKey"
+          }
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "TSConfigKey": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/ConfigKey",
+      "properties": {
+        "namespace": {
+          "description": "env | json | yaml | toml | ini | properties | dockerfile.",
+          "type": "string"
+        },
+        "value": {
+          "type": [
+            "string",
+            "number",
+            "boolean"
+          ]
+        },
+        "span": {
+          "description": "Best-effort: exact for yaml, line-based for env/ini/dockerfile, ABSENT for json/jsonc (JSON.parse discards positions, and a re-derived one would be a lie).",
+          "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Span"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "TSDependency": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Dependency",
+      "properties": {
+        "name": {
+          "description": "npm-native, @scope kept.",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "runtime",
+            "dev",
+            "optional",
+            "peer",
+            "build"
+          ]
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "TSSummaryEdge": {
+      "description": "A summary edge (callable scope, local endpoints). TypeScript carries the flowed name on it when known.",
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/IdEdge",
+      "properties": {
+        "var": {
+          "type": "string"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "TSEntrypoint": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Entrypoint",
+      "unevaluatedProperties": false
+    },
+    "TSEntrypointReport": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/EntrypointReport",
+      "unevaluatedProperties": false
+    }
+  }
+}

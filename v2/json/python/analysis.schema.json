@@ -1,0 +1,708 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codellm-devkit.github.io/schema/v2/python/analysis.schema.json",
+  "title": "codeanalyzer-python v2 analysis output",
+  "description": "What codeanalyzer-python (canpy) v1.5.4 emits for `--emit json`. Every node $refs the canonical v2 spine and closes with `unevaluatedProperties: false`, so this file is exhaustive by construction. Property names are the Pydantic field names; the payload is dumped with exclude_none, so an optional fact is absent rather than null, and the internal `call_sites` list is stripped at emit time.",
+  "x-cldk": {
+    "schemaVersion": "2.0.0",
+    "language": "python",
+    "source": {
+      "repo": "codellm-devkit/codeanalyzer-python",
+      "release": "v1.4.0",
+      "definedIn": "codeanalyzer/schema/py_schema.py"
+    },
+    "canonical": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json",
+    "extends": [
+      "application: entrypoint_report, repository, config_reads_unresolved",
+      "module: file_path, module_name, variables, last_modified, file_size",
+      "type: base_classes (canonical base_types), attributes (canonical fields), entrypoints, is_entrypoint, start_line/end_line",
+      "callable: name, path, accessed_symbols, local_variables, cyclomatic_complexity, entrypoints, is_entrypoint, start_line/end_line/code_start_line",
+      "body node: call-site facts (method_name, receiver_expr, receiver_type, return_type, is_constructor_call) and `arguments` as structured call-argument records",
+      "decorator: positional_arguments, keyword_arguments, expression; comment: is_docstring; import: resolved_module"
+    ],
+    "diverges": [
+      "class members are `attributes` (not the canonical `fields`) and supertypes are `base_classes` (not `base_types`)",
+      "module-level bindings are a `variables` list (not the canonical `fields` map)",
+      "leaf nodes (import, comment, parameter, variable, symbol) carry flat start_line/start_column/end_line/end_column instead of a span",
+      "span columns are 0-based (ast semantics); lines are 1-based",
+      "unresolved config reads are `config_reads_unresolved` (typescript calls the same list `config_reads`)"
+    ]
+  },
+  "allOf": [
+    {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json"
+    }
+  ],
+  "properties": {
+    "language": {
+      "const": "python"
+    },
+    "application": {
+      "$ref": "#/$defs/PyApplication"
+    }
+  },
+  "unevaluatedProperties": false,
+  "$defs": {
+    "PyApplication": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Application",
+      "properties": {
+        "symbol_table": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PyModule"
+          }
+        },
+        "external_symbols": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PyExternalSymbol"
+          }
+        },
+        "call_graph": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PyCallEdge"
+          }
+        },
+        "artifacts": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PyArtifact"
+          }
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PyDependency"
+          }
+        },
+        "entrypoint_report": {
+          "$ref": "#/$defs/PyEntrypointReport"
+        },
+        "repository": {
+          "$ref": "#/$defs/PyRepositoryInfo"
+        },
+        "config_reads_unresolved": {
+          "type": "array",
+          "items": {
+            "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/ConfigRead"
+          }
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "PyModule": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Module",
+      "required": [
+        "file_path",
+        "module_name"
+      ],
+      "properties": {
+        "file_path": {
+          "type": "string"
+        },
+        "module_name": {
+          "description": "Dotted module name.",
+          "type": "string"
+        },
+        "imports": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PyImport"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PyComment"
+          }
+        },
+        "types": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PyClass"
+          }
+        },
+        "functions": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PyCallable"
+          }
+        },
+        "variables": {
+          "description": "Module-level bindings. Python's list form of the canonical module `fields` map.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PyVariableDeclaration"
+          }
+        },
+        "last_modified": {
+          "description": "Cache metadata kept on the wire.",
+          "type": "number"
+        },
+        "file_size": {
+          "type": "integer"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "PyClass": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Type",
+      "required": [
+        "name",
+        "signature"
+      ],
+      "properties": {
+        "kind": {
+          "const": "class"
+        },
+        "base_classes": {
+          "description": "Python's name for the canonical `base_types`.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "attributes": {
+          "description": "Class attributes. Python's name for the canonical `fields` map.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PyClassAttribute"
+          }
+        },
+        "callables": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PyCallable"
+          }
+        },
+        "types": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PyClass"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PyComment"
+          }
+        },
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PyDecorator"
+          }
+        },
+        "entrypoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PyEntrypoint"
+          }
+        },
+        "is_entrypoint": {
+          "type": "boolean"
+        },
+        "start_line": {
+          "type": "integer"
+        },
+        "end_line": {
+          "type": "integer"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "PyCallable": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Callable",
+      "required": [
+        "name",
+        "path"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "function",
+            "method",
+            "lambda"
+          ]
+        },
+        "path": {
+          "description": "File the callable is declared in.",
+          "type": "string"
+        },
+        "modifiers": {
+          "description": "Declaration-level modifiers; `async` is the only one Python has today.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PyCallableParameter"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PyComment"
+          }
+        },
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PyDecorator"
+          }
+        },
+        "entrypoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PyEntrypoint"
+          }
+        },
+        "is_entrypoint": {
+          "type": "boolean"
+        },
+        "accessed_symbols": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PySymbol"
+          }
+        },
+        "local_variables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PyVariableDeclaration"
+          }
+        },
+        "cyclomatic_complexity": {
+          "type": "integer"
+        },
+        "start_line": {
+          "type": "integer"
+        },
+        "end_line": {
+          "type": "integer"
+        },
+        "code_start_line": {
+          "type": "integer"
+        },
+        "body": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PyBodyNode"
+          }
+        },
+        "callables": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PyCallable"
+          }
+        },
+        "types": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PyClass"
+          }
+        },
+        "cdg": {
+          "type": "array",
+          "items": {
+            "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/IdEdge"
+          }
+        },
+        "summary": {
+          "type": "array",
+          "items": {
+            "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/IdEdge"
+          }
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "PyBodyNode": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/BodyNode",
+      "properties": {
+        "kind": {
+          "enum": [
+            "call",
+            "statement",
+            "return",
+            "raise",
+            "branch",
+            "loop",
+            "handler",
+            "entry",
+            "exit",
+            "formal_in",
+            "formal_out",
+            "actual_in",
+            "actual_out"
+          ],
+          "description": "The kinds the CFG builder emits (codeanalyzer/dataflow/cfg.py) plus the L1 `call` node and the L4 synthetic vertices. Python has no `switch` node; `raise` and `handler` are its exception-construct additions."
+        },
+        "method_name": {
+          "description": "Carried rather than derived from `callee`: about a quarter of call sites never resolve one.",
+          "type": "string"
+        },
+        "receiver_expr": {
+          "type": "string"
+        },
+        "receiver_type": {
+          "type": "string"
+        },
+        "return_type": {
+          "type": "string"
+        },
+        "is_constructor_call": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "description": "call nodes: one record per argument. Python's structured form of the canonical `arguments` list.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PyCallArgument"
+          }
+        },
+        "id": {
+          "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/BodyNode/properties/id"
+        }
+      },
+      "unevaluatedProperties": false,
+      "required": [
+        "id"
+      ]
+    },
+    "PyCallArgument": {
+      "description": "One call-site argument: AST category and inferred type kept apart.",
+      "type": "object",
+      "required": [
+        "ast_kind"
+      ],
+      "properties": {
+        "ast_kind": {
+          "type": "string"
+        },
+        "inferred_type": {
+          "type": "string"
+        },
+        "value": {
+          "description": "JSON-encoded literal, for an ast.Constant argument of type str/int/float/bool/None. Decode with json.loads.",
+          "type": "string"
+        },
+        "name": {
+          "description": "The identifier of a bare ast.Name argument - the dataflow tier's join point back to its definitions.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PyClassAttribute": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Field",
+      "properties": {
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PyComment"
+          }
+        },
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PyDecorator"
+          }
+        },
+        "start_line": {
+          "type": "integer"
+        },
+        "end_line": {
+          "type": "integer"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "PyCallableParameter": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Parameter",
+      "properties": {
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PyDecorator"
+          }
+        },
+        "start_line": {
+          "type": "integer"
+        },
+        "end_line": {
+          "type": "integer"
+        },
+        "start_column": {
+          "type": "integer"
+        },
+        "end_column": {
+          "type": "integer"
+        },
+        "id": {
+          "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Parameter/properties/id"
+        }
+      },
+      "unevaluatedProperties": false,
+      "required": [
+        "id"
+      ]
+    },
+    "PyImport": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Import",
+      "required": [
+        "module"
+      ],
+      "properties": {
+        "resolved_module": {
+          "description": "The module the import resolved to, when it could be resolved.",
+          "type": "string"
+        },
+        "start_line": {
+          "type": "integer"
+        },
+        "end_line": {
+          "type": "integer"
+        },
+        "start_column": {
+          "type": "integer"
+        },
+        "end_column": {
+          "type": "integer"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "PyComment": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Comment",
+      "properties": {
+        "is_docstring": {
+          "type": "boolean"
+        },
+        "start_line": {
+          "type": "integer"
+        },
+        "end_line": {
+          "type": "integer"
+        },
+        "start_column": {
+          "type": "integer"
+        },
+        "end_column": {
+          "type": "integer"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "PyDecorator": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Decorator",
+      "properties": {
+        "positional_arguments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "keyword_arguments": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "expression": {
+          "description": "The full unparsed source, so nothing is lost for decorators too complex to decompose.",
+          "type": "string"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "PySymbol": {
+      "description": "A symbol used or declared inside a callable.",
+      "type": "object",
+      "required": [
+        "name",
+        "scope",
+        "kind"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "local",
+            "nonlocal",
+            "global",
+            "class",
+            "module"
+          ]
+        },
+        "kind": {
+          "enum": [
+            "variable",
+            "parameter",
+            "attribute",
+            "function",
+            "class",
+            "module"
+          ]
+        },
+        "type": {
+          "type": "string"
+        },
+        "qualified_name": {
+          "type": "string"
+        },
+        "is_builtin": {
+          "type": "boolean"
+        },
+        "lineno": {
+          "type": "integer"
+        },
+        "col_offset": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PyVariableDeclaration": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "initializer": {
+          "type": "string"
+        },
+        "value": true,
+        "scope": {
+          "enum": [
+            "module",
+            "class",
+            "function"
+          ]
+        },
+        "start_line": {
+          "type": "integer"
+        },
+        "end_line": {
+          "type": "integer"
+        },
+        "start_column": {
+          "type": "integer"
+        },
+        "end_column": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PyEntrypoint": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Entrypoint",
+      "unevaluatedProperties": false
+    },
+    "PyEntrypointReport": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/EntrypointReport",
+      "unevaluatedProperties": false
+    },
+    "PyRepositoryInfo": {
+      "description": "Git provenance of the analyzed checkout, captured at analysis time.",
+      "type": "object",
+      "required": [
+        "revision"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "dirty": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PyCallEdge": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/CallEdge",
+      "properties": {
+        "prov": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "jedi",
+              "defuse"
+            ]
+          }
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "PyExternalSymbol": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/ExternalSymbol",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "kind": {
+          "const": "external"
+        },
+        "id": {
+          "description": "can://python/<app>/@external/<module>/<name>",
+          "type": "string"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "PyArtifact": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Artifact",
+      "properties": {
+        "config_keys": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PyConfigKey"
+          }
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "PyConfigKey": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/ConfigKey",
+      "properties": {
+        "namespace": {
+          "description": "env | yaml | json | toml | ini | properties | dockerfile.",
+          "type": "string"
+        },
+        "value": {
+          "description": "Populated only when artifact text capture is on.",
+          "type": "string"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "PyDependency": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Dependency",
+      "properties": {
+        "name": {
+          "description": "PEP 503 normalized.",
+          "type": "string"
+        },
+        "ecosystem": {
+          "const": "pypi"
+        }
+      },
+      "unevaluatedProperties": false
+    }
+  }
+}

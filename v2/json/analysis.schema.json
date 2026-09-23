@@ -1,0 +1,1060 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json",
+  "title": "codeanalyzer canonical v2 analysis output",
+  "description": "The canonical CLDK analysis schema (v2): the invariant spine every codeanalyzer emits and every SDK consumes. One additive containment tree (application -> module -> type -> callable -> body) with typed edge overlays (call_graph, cfg, cdg, ddg, summary, param_in, param_out). This document is PERMISSIVE by construction: it states what must be present and what a shared field means, and leaves every node open so a language may add its own fields. The per-language schemas under v2/json/<lang>/ $ref these definitions and close them with `unevaluatedProperties: false`, so a field an analyzer emits but nobody recorded fails validation there rather than here. Levels: L1 tree + call sites, L2 callee refinement + call_graph, L3 full body + cfg/cdg/ddg, L4 synthetic param vertices + param_in/param_out/summary. Absence means 'no fact'; the only sanctioned null is a call node's `callee` before L2.",
+  "x-cldk": {
+    "schemaVersion": "2.0.0",
+    "kind": "canonical-spine",
+    "sources": [
+      {
+        "repo": "codellm-devkit/codeanalyzer-java",
+        "release": "v3.3.3",
+        "definedIn": "src/main/java/com/ibm/cldk/schema/"
+      },
+      {
+        "repo": "codellm-devkit/codeanalyzer-python",
+        "release": "v1.5.4",
+        "definedIn": "codeanalyzer/schema/py_schema.py"
+      },
+      {
+        "repo": "codellm-devkit/codeanalyzer-typescript",
+        "release": "v1.6.3",
+        "definedIn": "src/schema/schema.ts"
+      }
+    ],
+    "consumers": [
+      {
+        "repo": "codellm-devkit/python-sdk",
+        "release": "v1.x"
+      }
+    ],
+    "note": "Derived from the three analyzer model sources named above and cross-checked against real output of each analyzer at its released version (the *.sample.json files beside the per-language schemas). Where the three disagree, the canonical schema states the intersection and the disagreement is recorded under x-cldk.divergences rather than papered over.",
+    "divergences": [
+      "import: java names the imported path `path`; python and typescript name it `module`.",
+      "decorator arguments: java emits `args` (flat list); python and typescript emit `positional_arguments` + `keyword_arguments`.",
+      "leaf positions: java gives comments/imports/parameters/decorators a `span`; python and typescript give them flat start_line/start_column/end_line/end_column.",
+      "span offsets: java and python `span.bytes` are UTF-8 byte offsets; typescript `span.bytes` are UTF-16 char offsets into module.source.",
+      "span columns: java and typescript columns are 1-based; python columns are 0-based (ast semantics), lines are 1-based everywhere.",
+      "module node: python has no `span` and adds `file_path`/`module_name`; java and typescript carry `span` and key identity off the symbol_table key.",
+      "module cache metadata: python emits `last_modified` and `file_size` on the wire; typescript strips them (keeping `content_hash`); java emits `content_hash` only.",
+      "external_symbols values: python and typescript emit {id, kind, module, name}; java emits {kind, signature, declaring_type} and leaves the id to the map key.",
+      "unresolved config reads: python calls the list `config_reads_unresolved`; typescript calls it `config_reads`; java emits neither (it emits config keys under artifacts only).",
+      "ddg L3 provenance token: java tags syntactic edges `ssa`, typescript tags them `reaching-defs`, python emits both tokens.",
+      "callee refinement slot: typescript writes `callee: null` on an unresolved call node; java and python omit the key.",
+      "envelope k_limit: python and typescript emit it at L3+; java has no such field.",
+      "python-only application sections: `repository`, `entrypoint_report`, `unresolved_imports` are emitted by python (typescript emits `unresolved_imports` too, java neither)."
+    ]
+  },
+  "type": "object",
+  "required": [
+    "schema_version",
+    "language",
+    "max_level",
+    "analyzer",
+    "application"
+  ],
+  "properties": {
+    "schema_version": {
+      "description": "Version of this canonical schema line. All three analyzers ship 2.0.0.",
+      "type": "string",
+      "pattern": "^2\\.\\d+\\.\\d+$"
+    },
+    "language": {
+      "description": "The analyzed language; also the `<lang>` segment of every can:// id.",
+      "type": "string"
+    },
+    "max_level": {
+      "description": "Highest analysis level populated. Consumers read this rather than sniffing for keys.",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4
+    },
+    "k_limit": {
+      "description": "Access-path depth bound of the L3/L4 dataflow. Present at L3+ on the analyzers that bound it.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "analyzer": {
+      "$ref": "#/$defs/AnalyzerInfo"
+    },
+    "application": {
+      "$ref": "#/$defs/Application"
+    }
+  },
+  "$defs": {
+    "AnalyzerInfo": {
+      "description": "Which analyzer produced this payload, and how it was configured.",
+      "type": "object",
+      "required": [
+        "name",
+        "version"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "config": {
+          "description": "Analyzer options in effect. Open map; not every analyzer emits it.",
+          "type": "object"
+        }
+      }
+    },
+    "Span": {
+      "description": "Where a node lives in source. `start`/`end` are [line, column]; `bytes` are [from, to) offsets into the owning module's `source`, so source[bytes[0]:bytes[1]] reproduces the node's text.",
+      "type": "object",
+      "required": [
+        "start",
+        "end",
+        "bytes"
+      ],
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/Position"
+        },
+        "end": {
+          "$ref": "#/$defs/Position"
+        },
+        "bytes": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      }
+    },
+    "Position": {
+      "description": "[line, column]. Lines are 1-based everywhere; column base is language-specific (see x-cldk.divergences).",
+      "type": "array",
+      "items": {
+        "type": "integer"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "Application": {
+      "description": "The root node: the containment tree plus the application-scope edge overlays. Every id in every edge list must resolve to a node reachable from here (no dangling endpoints).",
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "symbol_table"
+      ],
+      "properties": {
+        "id": {
+          "description": "can://<lang>/<app>",
+          "type": "string"
+        },
+        "name": {
+          "description": "The resolved application name the id is built from: a non-blank --app-name, else the input directory's basename. Optional until codeanalyzer-java and codeanalyzer-python emit it, then required (codellm-devkit/.github#93).",
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "const": "application"
+        },
+        "symbol_table": {
+          "description": "Per-file analysis, keyed by repo-relative POSIX path (no absolute paths, no '..').",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/Module"
+          }
+        },
+        "call_graph": {
+          "description": "L2. Callable -> callable edges, endpoints are can:// ids.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CallEdge"
+          }
+        },
+        "external_symbols": {
+          "description": "L2. Id homes for call-graph endpoints outside the project, keyed by their @external id.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/ExternalSymbol"
+          }
+        },
+        "param_in": {
+          "description": "L4. actual_in -> formal_in, endpoints are global ordinal ids.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ParamEdge"
+          }
+        },
+        "param_out": {
+          "description": "L4. formal_out -> actual_out, endpoints are global ordinal ids.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ParamEdge"
+          }
+        },
+        "artifacts": {
+          "description": "The repository-artifact layer: recognized non-code files, keyed by repo-relative path. Level-free (identical at every -a level).",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/Artifact"
+          }
+        },
+        "dependencies": {
+          "description": "Declared third-party dependencies, evidence-tagged via `prov`. Level-free.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Dependency"
+          }
+        },
+        "unresolved_imports": {
+          "description": "Imports no declared dependency accounts for (the dependency-hygiene signal).",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ImportBinding"
+          }
+        },
+        "config_uses": {
+          "description": "Resolved config reads: a recognized read joined to the ConfigKey it names.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ConfigUseEdge"
+          }
+        },
+        "entrypoint_report": {
+          "$ref": "#/$defs/EntrypointReport"
+        }
+      }
+    },
+    "Module": {
+      "description": "One source file / compilation unit. Holds the file's text once; every node's text is a slice of it.",
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "source",
+        "types"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "module"
+        },
+        "span": {
+          "$ref": "#/$defs/Span"
+        },
+        "source": {
+          "description": "The whole file's text, stored once.",
+          "type": "string"
+        },
+        "content_hash": {
+          "description": "Hash of `source`, for incremental caching and per-module diffing in the Neo4j push. Not identity.",
+          "type": "string"
+        },
+        "imports": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Import"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Comment"
+          }
+        },
+        "types": {
+          "description": "Top-level types declared in this file, keyed by name.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/Type"
+          }
+        },
+        "functions": {
+          "description": "Module-level callables, keyed by signature. Absent or empty for class-only languages.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/Callable"
+          }
+        },
+        "fields": {
+          "description": "Module-level bindings, keyed by name.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/Field"
+          }
+        }
+      }
+    },
+    "Type": {
+      "description": "A type node. `kind` is the specific type kind (class | struct | interface | enum | record | trait | type_alias | namespace | ...), never a pile of is_* booleans.",
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "span"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/Span"
+        },
+        "name": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Comment"
+          }
+        },
+        "modifiers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Decorator"
+          }
+        },
+        "callables": {
+          "description": "Methods and constructors, keyed by signature.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/Callable"
+          }
+        },
+        "fields": {
+          "description": "Declared fields / attributes / enum members, keyed by name.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/Field"
+          }
+        },
+        "types": {
+          "description": "Member / inner types, keyed by name. Nesting is encoded by this containment position.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/Type"
+          }
+        }
+      }
+    },
+    "Callable": {
+      "description": "A function, method, constructor, accessor or lambda. `span.bytes` slices the whole declaration out of module.source; it is present for every callable the source declares and absent only on a compiler-synthesized member (e.g. java's implicit default constructor, discovered at L2).",
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "signature",
+        "body"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "signature": {
+          "description": "Human-readable signature; the last path segment of `id`, from the one signatureOf().",
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/Span"
+        },
+        "name": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Parameter"
+          }
+        },
+        "return_type": {
+          "type": "string"
+        },
+        "modifiers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Decorator"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Comment"
+          }
+        },
+        "body": {
+          "description": "L1 holds the call nodes; L3 completes it with the rest of the statements. Keyed by local ordinal id (`line:col`, or `@tag` for a synthetic vertex).",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/BodyNode"
+          }
+        },
+        "callables": {
+          "description": "Nested callables (closures / local functions), keyed by signature.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/Callable"
+          }
+        },
+        "types": {
+          "description": "Local (body-declared) types, keyed by name.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/Type"
+          }
+        },
+        "cfg": {
+          "description": "L3. Control-flow edges over this callable's body nodes.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CfgEdge"
+          }
+        },
+        "cdg": {
+          "description": "L3. Control-dependence edges.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/IdEdge"
+          }
+        },
+        "ddg": {
+          "description": "L3 (syntactic) widened at L4 (alias-aware). Data-dependence edges.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DdgEdge"
+          }
+        },
+        "summary": {
+          "description": "L4. actual_in -> actual_out transitive intra-caller shortcuts.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/IdEdge"
+          }
+        }
+      }
+    },
+    "BodyNode": {
+      "description": "A node inside a callable's `body`: an AST region (statement | call | return | branch | loop | switch) or a synthetic analysis vertex (entry | exit | formal_in | formal_out | actual_in | actual_out). The map key is its local id, so a body node carries no `id` of its own.",
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "id": {
+          "description": "The GLOBAL ordinal id of this body node: `<callable-id>@<local>`, the same value the Neo4j projection merges its body-node label on. Optional on the spine only because an analyzer may not have adopted it yet; a language that emits it requires it (codeanalyzer-python#176).",
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/Span"
+        },
+        "callee": {
+          "description": "call nodes only: the callee's id. The one sanctioned refinement slot - absent (or null) at L1, an id from L2 on.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "of": {
+          "description": "Synthetic param vertices: the value this vertex stands for (a parameter name, `argN`, `$ret`).",
+          "type": "string"
+        },
+        "parent": {
+          "description": "actual_in / actual_out: the local id of the call site the vertex belongs to.",
+          "type": "string"
+        }
+      }
+    },
+    "Field": {
+      "description": "A declared binding: a module-level variable, a class attribute / interface property, or an enum member.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "field"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/Span"
+        },
+        "initializer": {
+          "type": "string"
+        },
+        "modifiers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Comment"
+          }
+        },
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Decorator"
+          }
+        }
+      }
+    },
+    "Parameter": {
+      "description": "One declared parameter, in declaration order.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "description": "`<callable-id>@formal_in:<i>` for this parameter's position: the L4 formal_in vertex that carries it. A forward reference below level 4 - the vertex it names does not exist in `body` until `-a 4` (codeanalyzer-python#176).",
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/Span"
+        },
+        "default_value": {
+          "type": "string"
+        },
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Decorator"
+          }
+        }
+      }
+    },
+    "Import": {
+      "description": "One import declaration. The imported path is `path` in java and `module` in python/typescript (see x-cldk.divergences).",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "module": {
+          "type": "string"
+        },
+        "alias": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "span": {
+          "$ref": "#/$defs/Span"
+        }
+      }
+    },
+    "Comment": {
+      "description": "One comment or doc block.",
+      "type": "object",
+      "required": [
+        "content"
+      ],
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/Span"
+        }
+      }
+    },
+    "Decorator": {
+      "description": "One decorator / annotation application, structured rather than a source string. Argument capture differs per language (see x-cldk.divergences).",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "qualified_name": {
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/Span"
+        }
+      }
+    },
+    "IdEdge": {
+      "description": "The bare edge shape: two node ids and nothing else. The list name IS the edge type, so there is no `type` field.",
+      "type": "object",
+      "required": [
+        "src",
+        "dst"
+      ],
+      "properties": {
+        "src": {
+          "type": "string"
+        },
+        "dst": {
+          "type": "string"
+        }
+      }
+    },
+    "ParamEdge": {
+      "description": "A param_in (actual_in -> formal_in) or param_out (formal_out -> actual_out) edge at application scope. `var` is the callee-side formal the edge binds: the parameter name, `$ret` for the return port, or a global's access path on a global read/write. Set on every such edge - a property present on some edges and not others is a three-valued trap for any predicate on it (codeanalyzer-python#195).",
+      "type": "object",
+      "required": [
+        "src",
+        "dst",
+        "var"
+      ],
+      "properties": {
+        "src": {
+          "type": "string"
+        },
+        "dst": {
+          "type": "string"
+        },
+        "var": {
+          "type": "string"
+        }
+      }
+    },
+    "CallEdge": {
+      "description": "L2. One call-graph edge, callable -> callable, identity-only.",
+      "type": "object",
+      "required": [
+        "src",
+        "dst"
+      ],
+      "properties": {
+        "src": {
+          "type": "string"
+        },
+        "dst": {
+          "type": "string"
+        },
+        "prov": {
+          "description": "Open-vocabulary provenance of the edge (e.g. `tsc`, `jedi`, `wala`, `defuse`, `import`).",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "weight": {
+          "description": "Number of call sites merged into this edge.",
+          "type": "integer"
+        }
+      }
+    },
+    "CfgEdge": {
+      "description": "L3. One control-flow edge between body nodes of the same callable.",
+      "type": "object",
+      "required": [
+        "src",
+        "dst",
+        "kind"
+      ],
+      "properties": {
+        "src": {
+          "type": "string"
+        },
+        "dst": {
+          "type": "string"
+        },
+        "kind": {
+          "description": "fallthrough | true | false | switch_case | loop_back | exception | return | break | continue, plus language additions.",
+          "type": "string"
+        }
+      }
+    },
+    "DdgEdge": {
+      "description": "L3 (syntactic) / L4 (alias-aware). One data-dependence edge between body nodes of the same callable.",
+      "type": "object",
+      "required": [
+        "src",
+        "dst"
+      ],
+      "properties": {
+        "src": {
+          "type": "string"
+        },
+        "dst": {
+          "type": "string"
+        },
+        "var": {
+          "description": "The k-limited access path the dependence carries.",
+          "type": "string"
+        },
+        "prov": {
+          "description": "`ssa` / `reaching-defs` = syntactic (L3); `points-to` = semantic (L4).",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ExternalSymbol": {
+      "description": "An id home for a call target outside the analyzed project - an edge endpoint, not a tree node. Keyed by its @external id.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "module": {
+          "type": "string"
+        }
+      }
+    },
+    "Artifact": {
+      "description": "A recognized non-code file (config, manifest, CI, container spec, data). Ids are language-neutral (can://artifact/<app>/<path>) so sibling-language analyzers land on the same node.",
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "path",
+        "format"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "artifact"
+        },
+        "path": {
+          "description": "Repo-relative POSIX path; also the map key.",
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "roles": {
+          "description": "Open vocabulary: dependency-manifest | tool-config | container-image | service-topology | iac | ci | env | packaging | legal | docs | script | unknown.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "size_bytes": {
+          "type": "integer"
+        },
+        "sha256": {
+          "type": "string"
+        },
+        "source": {
+          "description": "The whole file's text when captured, else \"\" - never a prefix.",
+          "type": "string"
+        },
+        "extraction": {
+          "enum": [
+            "none",
+            "partial",
+            "full"
+          ]
+        },
+        "config_keys": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ConfigKey"
+          }
+        }
+      }
+    },
+    "ConfigKey": {
+      "description": "One configuration key flattened out of a config-bearing artifact. Contained by its artifact; containment mirrors the DEFINES_CONFIG relationship in the graph projection.",
+      "type": "object",
+      "required": [
+        "id",
+        "key",
+        "namespace"
+      ],
+      "properties": {
+        "id": {
+          "description": "<artifact-id>@key/<dotted.key>",
+          "type": "string"
+        },
+        "key": {
+          "description": "Dotted path; numeric segments for arrays (services.web.ports.0).",
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "value": {
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "null"
+          ]
+        },
+        "span": {
+          "$ref": "#/$defs/Span"
+        },
+        "references": {
+          "description": "Recognized ${VAR}/$VAR tokens, deduplicated, in order of appearance.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Dependency": {
+      "description": "One declared third-party dependency (or a lockfile-only transitive pin).",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "ecosystem": {
+          "type": "string"
+        },
+        "spec": {
+          "type": "string"
+        },
+        "kind": {
+          "description": "runtime | dev | optional | build, plus language additions (npm `peer`).",
+          "type": "string"
+        },
+        "extras": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "declared_in": {
+          "description": "Id of the Artifact that declares it.",
+          "type": "string"
+        },
+        "direct": {
+          "description": "false = lockfile-only transitive pin.",
+          "type": "boolean"
+        },
+        "locked_version": {
+          "type": "string"
+        },
+        "provides_imports": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "prov": {
+          "description": "declared | lockfile | installed-metadata | heuristic.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ImportBinding": {
+      "description": "A top-level import no declared dependency accounts for.",
+      "type": "object",
+      "required": [
+        "module"
+      ],
+      "properties": {
+        "module": {
+          "type": "string"
+        },
+        "bound_to": {
+          "type": "string"
+        },
+        "prov": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ConfigUseEdge": {
+      "description": "One resolved config read: a recognized read whose key closed on exactly one literal matching a declared ConfigKey. `src` is the read's global ordinal id, `dst` the ConfigKey id.",
+      "type": "object",
+      "required": [
+        "src",
+        "dst"
+      ],
+      "properties": {
+        "src": {
+          "type": "string"
+        },
+        "dst": {
+          "type": "string"
+        },
+        "prov": {
+          "description": "literal (L2) | dataflow (L3/L4).",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ConfigRead": {
+      "description": "A recognized config read that resolved to no declared key - first-class, so an untraceable read is as visible as a traced one. This list shrinks as levels rise; it is the one deliberately non-monotonic section.",
+      "type": "object",
+      "required": [
+        "site",
+        "reason"
+      ],
+      "properties": {
+        "site": {
+          "description": "Global ordinal id of the read.",
+          "type": "string"
+        },
+        "callee": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "non-literal",
+            "undefined-key"
+          ]
+        },
+        "prov": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "EntrypointReport": {
+      "description": "Coverage and failure record for the entrypoint pass. The pass under-approximates by design, so silence is its failure mode: this is what distinguishes 'this application has no entrypoints' from 'the pass found nothing'. Always present once an analyzer runs the pass.",
+      "type": "object",
+      "properties": {
+        "frameworks_detected": {
+          "description": "Frameworks the detector recognized in this application.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rulesets": {
+          "description": "Rule sources consulted: `shipped`, or `user:<path>`.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "unresolved": {
+          "description": "Written spelling -> count, for decorators and base classes the pass could not name.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "errors": {
+          "description": "Failures during the pass. The pass is additive: a failure loses flags, never the analysis.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Entrypoint": {
+      "description": "One way a callable or type is invoked from outside the application - a route, a CLI command, a scheduled task. A node may carry several. `confidence` lets a consumer threshold on evidence quality: `declared` (a manifest says so), `certain` (a framework rule matched a resolved name), `heuristic` (the written spelling reads like an entrypoint).",
+      "type": "object",
+      "required": [
+        "framework"
+      ],
+      "properties": {
+        "framework": {
+          "type": "string"
+        },
+        "confidence": {
+          "enum": [
+            "declared",
+            "certain",
+            "heuristic"
+          ]
+        },
+        "rule": {
+          "description": "A rules.yml `id:`, or an engine name.",
+          "type": "string"
+        },
+        "ruleset": {
+          "description": "`shipped` or `user:<path>`.",
+          "type": "string"
+        },
+        "evidence": {
+          "type": "string"
+        },
+        "route": {
+          "type": "string"
+        },
+        "http_methods": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "via": {
+          "description": "can:// id of the routed node dispatching here.",
+          "type": "string"
+        }
+      }
+    }
+  }
+}
