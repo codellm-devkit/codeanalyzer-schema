@@ -1,0 +1,2627 @@
+{
+  "schema_version": "2.0.0",
+  "language": "java",
+  "max_level": 4,
+  "analyzer": {
+    "name": "codeanalyzer-java",
+    "version": "3.1.2"
+  },
+  "application": {
+    "id": "can://dataflow-test",
+    "kind": "application",
+    "symbol_table": {
+      "src/main/java/org/example/Dataflow.java": {
+        "id": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java",
+        "kind": "module",
+        "span": {
+          "start": [
+            1,
+            1
+          ],
+          "end": [
+            72,
+            1
+          ],
+          "bytes": [
+            0,
+            1248
+          ]
+        },
+        "package": "org.example",
+        "source": "package org.example;\n\n/**\n * A fixture exercising the L3 dataflow constructs: a loop-carried def-use, if/else, an early return,\n * try/catch/finally, and a shadowed variable in a nested block.\n */\npublic class Dataflow {\n\n    int compute(int n) {\n        int sum = 0;\n        int other = n + 1;\n        log(other);\n        for (int i = 0; i < n; i++) {\n            sum = sum + i;\n        }\n        return sum;\n    }\n\n    String classify(int x) {\n        String r;\n        if (x > 0) {\n            r = \"pos\";\n        } else {\n            r = \"nonpos\";\n        }\n        return r;\n    }\n\n    int guarded(int x) {\n        if (x < 0) {\n            return -1;\n        }\n        return x;\n    }\n\n    int risky(int x) {\n        int r;\n        try {\n            r = parse(x);\n        } catch (NumberFormatException e) {\n            r = 0;\n        } finally {\n            log(x);\n        }\n        return r;\n    }\n\n    int parse(int x) {\n        return x;\n    }\n\n    int viaFinally(int x) {\n        try {\n            return parse(x);\n        } finally {\n            log(x);\n        }\n    }\n\n    int shadowed(int x) {\n        int y = x;\n        {\n            int z = y + 1;\n            y = z;\n        }\n        return y;\n    }\n\n    void log(int v) {\n    }\n}\n",
+        "comments": [],
+        "imports": [],
+        "types": {
+          "Dataflow": {
+            "id": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow",
+            "kind": "class",
+            "span": {
+              "start": [
+                7,
+                1
+              ],
+              "end": [
+                71,
+                1
+              ],
+              "bytes": [
+                197,
+                1247
+              ]
+            },
+            "comments": [
+              {
+                "content": "\n * A fixture exercising the L3 dataflow constructs: a loop-carried def-use, if/else, an early return,\n * try/catch/finally, and a shadowed variable in a nested block.\n ",
+                "span": {
+                  "start": [
+                    3,
+                    1
+                  ],
+                  "end": [
+                    6,
+                    3
+                  ],
+                  "bytes": [
+                    22,
+                    196
+                  ]
+                },
+                "is_javadoc": true
+              }
+            ],
+            "modifiers": [
+              "public"
+            ],
+            "base_types": [],
+            "interfaces": [],
+            "decorators": [],
+            "type_parameters": [],
+            "is_entrypoint_class": false,
+            "entrypoint_frameworks": [],
+            "enum_constants": [],
+            "record_components": [],
+            "fields": {},
+            "callables": {
+              "<init>()": {
+                "id": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/<init>()",
+                "kind": "constructor",
+                "signature": "<init>()",
+                "parameters": [],
+                "error_channel": [],
+                "modifiers": [],
+                "decorators": [],
+                "type_parameters": [],
+                "is_implicit": true,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "local_variables": [],
+                "body": {},
+                "types": {}
+              },
+              "classify(int)": {
+                "id": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/classify(int)",
+                "kind": "method",
+                "signature": "classify(int)",
+                "span": {
+                  "start": [
+                    19,
+                    5
+                  ],
+                  "end": [
+                    27,
+                    5
+                  ],
+                  "bytes": [
+                    421,
+                    584
+                  ]
+                },
+                "parameters": [
+                  {
+                    "name": "x",
+                    "type": "int",
+                    "span": {
+                      "start": [
+                        19,
+                        21
+                      ],
+                      "end": [
+                        19,
+                        25
+                      ],
+                      "bytes": [
+                        437,
+                        442
+                      ]
+                    },
+                    "modifiers": [],
+                    "decorators": [],
+                    "is_variadic": false
+                  }
+                ],
+                "return_type": "java.lang.String",
+                "error_channel": [],
+                "modifiers": [],
+                "decorators": [],
+                "type_parameters": [],
+                "body_span": {
+                  "start": [
+                    19,
+                    28
+                  ],
+                  "end": [
+                    27,
+                    5
+                  ],
+                  "bytes": [
+                    444,
+                    584
+                  ]
+                },
+                "declaration": "String classify(int x)",
+                "is_implicit": false,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "metrics": {
+                  "cyclomatic": 2
+                },
+                "refs": {
+                  "types": [
+                    "java.lang.String"
+                  ],
+                  "fields": []
+                },
+                "local_variables": [
+                  {
+                    "name": "r",
+                    "type": "java.lang.String",
+                    "span": {
+                      "start": [
+                        20,
+                        16
+                      ],
+                      "end": [
+                        20,
+                        16
+                      ],
+                      "bytes": [
+                        461,
+                        462
+                      ]
+                    },
+                    "comments": []
+                  }
+                ],
+                "body": {
+                  "@entry": {
+                    "kind": "entry",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "@exit": {
+                    "kind": "exit",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "20:9": {
+                    "kind": "statement",
+                    "span": {
+                      "start": [
+                        20,
+                        9
+                      ],
+                      "end": [
+                        20,
+                        17
+                      ],
+                      "bytes": [
+                        454,
+                        463
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "21:9": {
+                    "kind": "branch",
+                    "span": {
+                      "start": [
+                        21,
+                        9
+                      ],
+                      "end": [
+                        25,
+                        9
+                      ],
+                      "bytes": [
+                        472,
+                        560
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "22:13": {
+                    "kind": "statement",
+                    "span": {
+                      "start": [
+                        22,
+                        13
+                      ],
+                      "end": [
+                        22,
+                        22
+                      ],
+                      "bytes": [
+                        497,
+                        507
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "24:13": {
+                    "kind": "statement",
+                    "span": {
+                      "start": [
+                        24,
+                        13
+                      ],
+                      "end": [
+                        24,
+                        25
+                      ],
+                      "bytes": [
+                        537,
+                        550
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "26:9": {
+                    "kind": "return",
+                    "span": {
+                      "start": [
+                        26,
+                        9
+                      ],
+                      "end": [
+                        26,
+                        17
+                      ],
+                      "bytes": [
+                        569,
+                        578
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "@formal_in:0": {
+                    "kind": "formal_in",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "x"
+                  },
+                  "@formal_out": {
+                    "kind": "formal_out",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "$ret"
+                  }
+                },
+                "cfg": [
+                  {
+                    "src": "20:9",
+                    "dst": "21:9",
+                    "kind": "fallthrough"
+                  },
+                  {
+                    "src": "21:9",
+                    "dst": "22:13",
+                    "kind": "true"
+                  },
+                  {
+                    "src": "21:9",
+                    "dst": "24:13",
+                    "kind": "false"
+                  },
+                  {
+                    "src": "22:13",
+                    "dst": "26:9",
+                    "kind": "fallthrough"
+                  },
+                  {
+                    "src": "24:13",
+                    "dst": "26:9",
+                    "kind": "fallthrough"
+                  },
+                  {
+                    "src": "26:9",
+                    "dst": "@exit",
+                    "kind": "return"
+                  },
+                  {
+                    "src": "@entry",
+                    "dst": "20:9",
+                    "kind": "fallthrough"
+                  }
+                ],
+                "cdg": [
+                  {
+                    "src": "21:9",
+                    "dst": "22:13"
+                  },
+                  {
+                    "src": "21:9",
+                    "dst": "24:13"
+                  }
+                ],
+                "ddg": [
+                  {
+                    "src": "22:13",
+                    "dst": "26:9",
+                    "var": "r",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "24:13",
+                    "dst": "26:9",
+                    "var": "r",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "26:9",
+                    "dst": "@formal_out",
+                    "var": "$ret",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@entry",
+                    "dst": "21:9",
+                    "var": "x",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@formal_in:0",
+                    "dst": "21:9",
+                    "var": "x",
+                    "prov": [
+                      "ssa"
+                    ]
+                  }
+                ],
+                "types": {}
+              },
+              "compute(int)": {
+                "id": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/compute(int)",
+                "kind": "method",
+                "signature": "compute(int)",
+                "span": {
+                  "start": [
+                    9,
+                    5
+                  ],
+                  "end": [
+                    17,
+                    5
+                  ],
+                  "bytes": [
+                    226,
+                    415
+                  ]
+                },
+                "parameters": [
+                  {
+                    "name": "n",
+                    "type": "int",
+                    "span": {
+                      "start": [
+                        9,
+                        17
+                      ],
+                      "end": [
+                        9,
+                        21
+                      ],
+                      "bytes": [
+                        238,
+                        243
+                      ]
+                    },
+                    "modifiers": [],
+                    "decorators": [],
+                    "is_variadic": false
+                  }
+                ],
+                "return_type": "int",
+                "error_channel": [],
+                "modifiers": [],
+                "decorators": [],
+                "type_parameters": [],
+                "body_span": {
+                  "start": [
+                    9,
+                    24
+                  ],
+                  "end": [
+                    17,
+                    5
+                  ],
+                  "bytes": [
+                    245,
+                    415
+                  ]
+                },
+                "declaration": "int compute(int n)",
+                "is_implicit": false,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "metrics": {
+                  "cyclomatic": 2
+                },
+                "refs": {
+                  "types": [],
+                  "fields": []
+                },
+                "local_variables": [
+                  {
+                    "name": "sum",
+                    "type": "int",
+                    "initializer": "0",
+                    "span": {
+                      "start": [
+                        10,
+                        13
+                      ],
+                      "end": [
+                        10,
+                        19
+                      ],
+                      "bytes": [
+                        259,
+                        266
+                      ]
+                    },
+                    "comments": []
+                  },
+                  {
+                    "name": "other",
+                    "type": "int",
+                    "initializer": "n + 1",
+                    "span": {
+                      "start": [
+                        11,
+                        13
+                      ],
+                      "end": [
+                        11,
+                        25
+                      ],
+                      "bytes": [
+                        280,
+                        293
+                      ]
+                    },
+                    "comments": []
+                  },
+                  {
+                    "name": "i",
+                    "type": "int",
+                    "initializer": "0",
+                    "span": {
+                      "start": [
+                        13,
+                        18
+                      ],
+                      "end": [
+                        13,
+                        22
+                      ],
+                      "bytes": [
+                        332,
+                        337
+                      ]
+                    },
+                    "comments": []
+                  }
+                ],
+                "body": {
+                  "@entry": {
+                    "kind": "entry",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "@exit": {
+                    "kind": "exit",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "12:9": {
+                    "kind": "call",
+                    "span": {
+                      "start": [
+                        12,
+                        9
+                      ],
+                      "end": [
+                        12,
+                        18
+                      ],
+                      "bytes": [
+                        303,
+                        313
+                      ]
+                    },
+                    "callee": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/log(int)",
+                    "arguments": [
+                      "12:13"
+                    ],
+                    "argument_types": [
+                      "int"
+                    ],
+                    "argument_expr": [
+                      "other"
+                    ],
+                    "callee_signature": "log(int)",
+                    "method_name": "log",
+                    "return_type": "void",
+                    "accessibility": "package_private",
+                    "is_static_call": false,
+                    "is_constructor_call": false
+                  },
+                  "10:9": {
+                    "kind": "statement",
+                    "span": {
+                      "start": [
+                        10,
+                        9
+                      ],
+                      "end": [
+                        10,
+                        20
+                      ],
+                      "bytes": [
+                        255,
+                        267
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "11:9": {
+                    "kind": "statement",
+                    "span": {
+                      "start": [
+                        11,
+                        9
+                      ],
+                      "end": [
+                        11,
+                        26
+                      ],
+                      "bytes": [
+                        276,
+                        294
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "13:9": {
+                    "kind": "loop",
+                    "span": {
+                      "start": [
+                        13,
+                        9
+                      ],
+                      "end": [
+                        15,
+                        9
+                      ],
+                      "bytes": [
+                        323,
+                        389
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "14:13": {
+                    "kind": "statement",
+                    "span": {
+                      "start": [
+                        14,
+                        13
+                      ],
+                      "end": [
+                        14,
+                        26
+                      ],
+                      "bytes": [
+                        365,
+                        379
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "16:9": {
+                    "kind": "return",
+                    "span": {
+                      "start": [
+                        16,
+                        9
+                      ],
+                      "end": [
+                        16,
+                        19
+                      ],
+                      "bytes": [
+                        398,
+                        409
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "@formal_in:0": {
+                    "kind": "formal_in",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "n"
+                  },
+                  "@formal_out": {
+                    "kind": "formal_out",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "$ret"
+                  },
+                  "12:9/actual_in:0": {
+                    "kind": "actual_in",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "arg0",
+                    "parent": "12:9"
+                  }
+                },
+                "cfg": [
+                  {
+                    "src": "10:9",
+                    "dst": "11:9",
+                    "kind": "fallthrough"
+                  },
+                  {
+                    "src": "11:9",
+                    "dst": "12:9",
+                    "kind": "fallthrough"
+                  },
+                  {
+                    "src": "12:9",
+                    "dst": "13:9",
+                    "kind": "fallthrough"
+                  },
+                  {
+                    "src": "13:9",
+                    "dst": "14:13",
+                    "kind": "true"
+                  },
+                  {
+                    "src": "13:9",
+                    "dst": "16:9",
+                    "kind": "false"
+                  },
+                  {
+                    "src": "14:13",
+                    "dst": "13:9",
+                    "kind": "loop_back"
+                  },
+                  {
+                    "src": "16:9",
+                    "dst": "@exit",
+                    "kind": "return"
+                  },
+                  {
+                    "src": "@entry",
+                    "dst": "10:9",
+                    "kind": "fallthrough"
+                  }
+                ],
+                "cdg": [
+                  {
+                    "src": "13:9",
+                    "dst": "13:9"
+                  },
+                  {
+                    "src": "13:9",
+                    "dst": "14:13"
+                  }
+                ],
+                "ddg": [
+                  {
+                    "src": "10:9",
+                    "dst": "14:13",
+                    "var": "sum",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "10:9",
+                    "dst": "16:9",
+                    "var": "sum",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "11:9",
+                    "dst": "12:9",
+                    "var": "other",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "12:9",
+                    "dst": "12:9/actual_in:0",
+                    "var": "arg0",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "13:9",
+                    "dst": "13:9",
+                    "var": "i",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "13:9",
+                    "dst": "14:13",
+                    "var": "i",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "14:13",
+                    "dst": "14:13",
+                    "var": "sum",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "14:13",
+                    "dst": "16:9",
+                    "var": "sum",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "16:9",
+                    "dst": "@formal_out",
+                    "var": "$ret",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@entry",
+                    "dst": "11:9",
+                    "var": "n",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@entry",
+                    "dst": "13:9",
+                    "var": "n",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@formal_in:0",
+                    "dst": "11:9",
+                    "var": "n",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@formal_in:0",
+                    "dst": "13:9",
+                    "var": "n",
+                    "prov": [
+                      "ssa"
+                    ]
+                  }
+                ],
+                "types": {}
+              },
+              "guarded(int)": {
+                "id": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/guarded(int)",
+                "kind": "method",
+                "signature": "guarded(int)",
+                "span": {
+                  "start": [
+                    29,
+                    5
+                  ],
+                  "end": [
+                    34,
+                    5
+                  ],
+                  "bytes": [
+                    590,
+                    688
+                  ]
+                },
+                "parameters": [
+                  {
+                    "name": "x",
+                    "type": "int",
+                    "span": {
+                      "start": [
+                        29,
+                        17
+                      ],
+                      "end": [
+                        29,
+                        21
+                      ],
+                      "bytes": [
+                        602,
+                        607
+                      ]
+                    },
+                    "modifiers": [],
+                    "decorators": [],
+                    "is_variadic": false
+                  }
+                ],
+                "return_type": "int",
+                "error_channel": [],
+                "modifiers": [],
+                "decorators": [],
+                "type_parameters": [],
+                "body_span": {
+                  "start": [
+                    29,
+                    24
+                  ],
+                  "end": [
+                    34,
+                    5
+                  ],
+                  "bytes": [
+                    609,
+                    688
+                  ]
+                },
+                "declaration": "int guarded(int x)",
+                "is_implicit": false,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "metrics": {
+                  "cyclomatic": 2
+                },
+                "refs": {
+                  "types": [],
+                  "fields": []
+                },
+                "local_variables": [],
+                "body": {
+                  "@entry": {
+                    "kind": "entry",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "@exit": {
+                    "kind": "exit",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "30:9": {
+                    "kind": "branch",
+                    "span": {
+                      "start": [
+                        30,
+                        9
+                      ],
+                      "end": [
+                        32,
+                        9
+                      ],
+                      "bytes": [
+                        619,
+                        664
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "31:13": {
+                    "kind": "return",
+                    "span": {
+                      "start": [
+                        31,
+                        13
+                      ],
+                      "end": [
+                        31,
+                        22
+                      ],
+                      "bytes": [
+                        644,
+                        654
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "33:9": {
+                    "kind": "return",
+                    "span": {
+                      "start": [
+                        33,
+                        9
+                      ],
+                      "end": [
+                        33,
+                        17
+                      ],
+                      "bytes": [
+                        673,
+                        682
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "@formal_in:0": {
+                    "kind": "formal_in",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "x"
+                  },
+                  "@formal_out": {
+                    "kind": "formal_out",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "$ret"
+                  }
+                },
+                "cfg": [
+                  {
+                    "src": "30:9",
+                    "dst": "31:13",
+                    "kind": "true"
+                  },
+                  {
+                    "src": "30:9",
+                    "dst": "33:9",
+                    "kind": "false"
+                  },
+                  {
+                    "src": "31:13",
+                    "dst": "@exit",
+                    "kind": "return"
+                  },
+                  {
+                    "src": "33:9",
+                    "dst": "@exit",
+                    "kind": "return"
+                  },
+                  {
+                    "src": "@entry",
+                    "dst": "30:9",
+                    "kind": "fallthrough"
+                  }
+                ],
+                "cdg": [
+                  {
+                    "src": "30:9",
+                    "dst": "31:13"
+                  },
+                  {
+                    "src": "30:9",
+                    "dst": "33:9"
+                  }
+                ],
+                "ddg": [
+                  {
+                    "src": "31:13",
+                    "dst": "@formal_out",
+                    "var": "$ret",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "33:9",
+                    "dst": "@formal_out",
+                    "var": "$ret",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@entry",
+                    "dst": "30:9",
+                    "var": "x",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@entry",
+                    "dst": "33:9",
+                    "var": "x",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@formal_in:0",
+                    "dst": "30:9",
+                    "var": "x",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@formal_in:0",
+                    "dst": "33:9",
+                    "var": "x",
+                    "prov": [
+                      "ssa"
+                    ]
+                  }
+                ],
+                "types": {}
+              },
+              "log(int)": {
+                "id": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/log(int)",
+                "kind": "method",
+                "signature": "log(int)",
+                "span": {
+                  "start": [
+                    69,
+                    5
+                  ],
+                  "end": [
+                    70,
+                    5
+                  ],
+                  "bytes": [
+                    1222,
+                    1245
+                  ]
+                },
+                "parameters": [
+                  {
+                    "name": "v",
+                    "type": "int",
+                    "span": {
+                      "start": [
+                        69,
+                        14
+                      ],
+                      "end": [
+                        69,
+                        18
+                      ],
+                      "bytes": [
+                        1231,
+                        1236
+                      ]
+                    },
+                    "modifiers": [],
+                    "decorators": [],
+                    "is_variadic": false
+                  }
+                ],
+                "return_type": "void",
+                "error_channel": [],
+                "modifiers": [],
+                "decorators": [],
+                "type_parameters": [],
+                "body_span": {
+                  "start": [
+                    69,
+                    21
+                  ],
+                  "end": [
+                    70,
+                    5
+                  ],
+                  "bytes": [
+                    1238,
+                    1245
+                  ]
+                },
+                "declaration": "void log(int v)",
+                "is_implicit": false,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "metrics": {
+                  "cyclomatic": 1
+                },
+                "refs": {
+                  "types": [],
+                  "fields": []
+                },
+                "local_variables": [],
+                "body": {
+                  "@entry": {
+                    "kind": "entry",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "@exit": {
+                    "kind": "exit",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "@formal_in:0": {
+                    "kind": "formal_in",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "v"
+                  }
+                },
+                "cfg": [
+                  {
+                    "src": "@entry",
+                    "dst": "@exit",
+                    "kind": "fallthrough"
+                  }
+                ],
+                "cdg": [],
+                "ddg": [],
+                "types": {}
+              },
+              "parse(int)": {
+                "id": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/parse(int)",
+                "kind": "method",
+                "signature": "parse(int)",
+                "span": {
+                  "start": [
+                    48,
+                    5
+                  ],
+                  "end": [
+                    50,
+                    5
+                  ],
+                  "bytes": [
+                    910,
+                    952
+                  ]
+                },
+                "parameters": [
+                  {
+                    "name": "x",
+                    "type": "int",
+                    "span": {
+                      "start": [
+                        48,
+                        15
+                      ],
+                      "end": [
+                        48,
+                        19
+                      ],
+                      "bytes": [
+                        920,
+                        925
+                      ]
+                    },
+                    "modifiers": [],
+                    "decorators": [],
+                    "is_variadic": false
+                  }
+                ],
+                "return_type": "int",
+                "error_channel": [],
+                "modifiers": [],
+                "decorators": [],
+                "type_parameters": [],
+                "body_span": {
+                  "start": [
+                    48,
+                    22
+                  ],
+                  "end": [
+                    50,
+                    5
+                  ],
+                  "bytes": [
+                    927,
+                    952
+                  ]
+                },
+                "declaration": "int parse(int x)",
+                "is_implicit": false,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "metrics": {
+                  "cyclomatic": 1
+                },
+                "refs": {
+                  "types": [],
+                  "fields": []
+                },
+                "local_variables": [],
+                "body": {
+                  "@entry": {
+                    "kind": "entry",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "@exit": {
+                    "kind": "exit",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "49:9": {
+                    "kind": "return",
+                    "span": {
+                      "start": [
+                        49,
+                        9
+                      ],
+                      "end": [
+                        49,
+                        17
+                      ],
+                      "bytes": [
+                        937,
+                        946
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "@formal_in:0": {
+                    "kind": "formal_in",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "x"
+                  },
+                  "@formal_out": {
+                    "kind": "formal_out",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "$ret"
+                  }
+                },
+                "cfg": [
+                  {
+                    "src": "49:9",
+                    "dst": "@exit",
+                    "kind": "return"
+                  },
+                  {
+                    "src": "@entry",
+                    "dst": "49:9",
+                    "kind": "fallthrough"
+                  }
+                ],
+                "cdg": [],
+                "ddg": [
+                  {
+                    "src": "49:9",
+                    "dst": "@formal_out",
+                    "var": "$ret",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@entry",
+                    "dst": "49:9",
+                    "var": "x",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@formal_in:0",
+                    "dst": "49:9",
+                    "var": "x",
+                    "prov": [
+                      "ssa"
+                    ]
+                  }
+                ],
+                "types": {}
+              },
+              "risky(int)": {
+                "id": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/risky(int)",
+                "kind": "method",
+                "signature": "risky(int)",
+                "span": {
+                  "start": [
+                    36,
+                    5
+                  ],
+                  "end": [
+                    46,
+                    5
+                  ],
+                  "bytes": [
+                    694,
+                    904
+                  ]
+                },
+                "parameters": [
+                  {
+                    "name": "x",
+                    "type": "int",
+                    "span": {
+                      "start": [
+                        36,
+                        15
+                      ],
+                      "end": [
+                        36,
+                        19
+                      ],
+                      "bytes": [
+                        704,
+                        709
+                      ]
+                    },
+                    "modifiers": [],
+                    "decorators": [],
+                    "is_variadic": false
+                  }
+                ],
+                "return_type": "int",
+                "error_channel": [],
+                "modifiers": [],
+                "decorators": [],
+                "type_parameters": [],
+                "body_span": {
+                  "start": [
+                    36,
+                    22
+                  ],
+                  "end": [
+                    46,
+                    5
+                  ],
+                  "bytes": [
+                    711,
+                    904
+                  ]
+                },
+                "declaration": "int risky(int x)",
+                "is_implicit": false,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "metrics": {
+                  "cyclomatic": 2
+                },
+                "refs": {
+                  "types": [
+                    "java.lang.NumberFormatException"
+                  ],
+                  "fields": []
+                },
+                "local_variables": [
+                  {
+                    "name": "r",
+                    "type": "int",
+                    "span": {
+                      "start": [
+                        37,
+                        13
+                      ],
+                      "end": [
+                        37,
+                        13
+                      ],
+                      "bytes": [
+                        725,
+                        726
+                      ]
+                    },
+                    "comments": []
+                  }
+                ],
+                "body": {
+                  "@entry": {
+                    "kind": "entry",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "@exit": {
+                    "kind": "exit",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "39:17": {
+                    "kind": "call",
+                    "span": {
+                      "start": [
+                        39,
+                        17
+                      ],
+                      "end": [
+                        39,
+                        24
+                      ],
+                      "bytes": [
+                        758,
+                        766
+                      ]
+                    },
+                    "callee": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/parse(int)",
+                    "arguments": [
+                      "39:23"
+                    ],
+                    "argument_types": [
+                      "int"
+                    ],
+                    "argument_expr": [
+                      "x"
+                    ],
+                    "callee_signature": "parse(int)",
+                    "method_name": "parse",
+                    "return_type": "int",
+                    "accessibility": "package_private",
+                    "is_static_call": false,
+                    "is_constructor_call": false
+                  },
+                  "43:13": {
+                    "kind": "call",
+                    "span": {
+                      "start": [
+                        43,
+                        13
+                      ],
+                      "end": [
+                        43,
+                        18
+                      ],
+                      "bytes": [
+                        863,
+                        869
+                      ]
+                    },
+                    "callee": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/log(int)",
+                    "arguments": [
+                      "43:17"
+                    ],
+                    "argument_types": [
+                      "int"
+                    ],
+                    "argument_expr": [
+                      "x"
+                    ],
+                    "callee_signature": "log(int)",
+                    "method_name": "log",
+                    "return_type": "void",
+                    "accessibility": "package_private",
+                    "is_static_call": false,
+                    "is_constructor_call": false
+                  },
+                  "37:9": {
+                    "kind": "statement",
+                    "span": {
+                      "start": [
+                        37,
+                        9
+                      ],
+                      "end": [
+                        37,
+                        14
+                      ],
+                      "bytes": [
+                        721,
+                        727
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "39:13": {
+                    "kind": "statement",
+                    "span": {
+                      "start": [
+                        39,
+                        13
+                      ],
+                      "end": [
+                        39,
+                        25
+                      ],
+                      "bytes": [
+                        754,
+                        767
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "41:13": {
+                    "kind": "statement",
+                    "span": {
+                      "start": [
+                        41,
+                        13
+                      ],
+                      "end": [
+                        41,
+                        18
+                      ],
+                      "bytes": [
+                        824,
+                        830
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "45:9": {
+                    "kind": "return",
+                    "span": {
+                      "start": [
+                        45,
+                        9
+                      ],
+                      "end": [
+                        45,
+                        17
+                      ],
+                      "bytes": [
+                        889,
+                        898
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "@formal_in:0": {
+                    "kind": "formal_in",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "x"
+                  },
+                  "@formal_out": {
+                    "kind": "formal_out",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "$ret"
+                  },
+                  "39:17/actual_in:0": {
+                    "kind": "actual_in",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "arg0",
+                    "parent": "39:17"
+                  },
+                  "39:17/actual_out": {
+                    "kind": "actual_out",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "$ret",
+                    "parent": "39:17"
+                  },
+                  "43:13/actual_in:0": {
+                    "kind": "actual_in",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "arg0",
+                    "parent": "43:13"
+                  }
+                },
+                "cfg": [
+                  {
+                    "src": "37:9",
+                    "dst": "39:13",
+                    "kind": "fallthrough"
+                  },
+                  {
+                    "src": "39:13",
+                    "dst": "41:13",
+                    "kind": "exception"
+                  },
+                  {
+                    "src": "39:13",
+                    "dst": "43:13",
+                    "kind": "fallthrough"
+                  },
+                  {
+                    "src": "41:13",
+                    "dst": "43:13",
+                    "kind": "fallthrough"
+                  },
+                  {
+                    "src": "43:13",
+                    "dst": "45:9",
+                    "kind": "fallthrough"
+                  },
+                  {
+                    "src": "45:9",
+                    "dst": "@exit",
+                    "kind": "return"
+                  },
+                  {
+                    "src": "@entry",
+                    "dst": "37:9",
+                    "kind": "fallthrough"
+                  }
+                ],
+                "cdg": [
+                  {
+                    "src": "39:13",
+                    "dst": "41:13"
+                  }
+                ],
+                "ddg": [
+                  {
+                    "src": "39:13",
+                    "dst": "39:17/actual_in:0",
+                    "var": "arg0",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "39:13",
+                    "dst": "45:9",
+                    "var": "r",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "39:17/actual_out",
+                    "dst": "39:13",
+                    "var": "$ret",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "41:13",
+                    "dst": "45:9",
+                    "var": "r",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "43:13",
+                    "dst": "43:13/actual_in:0",
+                    "var": "arg0",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "45:9",
+                    "dst": "@formal_out",
+                    "var": "$ret",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@entry",
+                    "dst": "39:13",
+                    "var": "x",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@entry",
+                    "dst": "43:13",
+                    "var": "x",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@formal_in:0",
+                    "dst": "39:13",
+                    "var": "x",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@formal_in:0",
+                    "dst": "43:13",
+                    "var": "x",
+                    "prov": [
+                      "ssa"
+                    ]
+                  }
+                ],
+                "summary": [
+                  {
+                    "src": "39:17/actual_in:0",
+                    "dst": "39:17/actual_out"
+                  }
+                ],
+                "types": {}
+              },
+              "shadowed(int)": {
+                "id": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/shadowed(int)",
+                "kind": "method",
+                "signature": "shadowed(int)",
+                "span": {
+                  "start": [
+                    60,
+                    5
+                  ],
+                  "end": [
+                    67,
+                    5
+                  ],
+                  "bytes": [
+                    1086,
+                    1216
+                  ]
+                },
+                "parameters": [
+                  {
+                    "name": "x",
+                    "type": "int",
+                    "span": {
+                      "start": [
+                        60,
+                        18
+                      ],
+                      "end": [
+                        60,
+                        22
+                      ],
+                      "bytes": [
+                        1099,
+                        1104
+                      ]
+                    },
+                    "modifiers": [],
+                    "decorators": [],
+                    "is_variadic": false
+                  }
+                ],
+                "return_type": "int",
+                "error_channel": [],
+                "modifiers": [],
+                "decorators": [],
+                "type_parameters": [],
+                "body_span": {
+                  "start": [
+                    60,
+                    25
+                  ],
+                  "end": [
+                    67,
+                    5
+                  ],
+                  "bytes": [
+                    1106,
+                    1216
+                  ]
+                },
+                "declaration": "int shadowed(int x)",
+                "is_implicit": false,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "metrics": {
+                  "cyclomatic": 1
+                },
+                "refs": {
+                  "types": [],
+                  "fields": []
+                },
+                "local_variables": [
+                  {
+                    "name": "y",
+                    "type": "int",
+                    "initializer": "x",
+                    "span": {
+                      "start": [
+                        61,
+                        13
+                      ],
+                      "end": [
+                        61,
+                        17
+                      ],
+                      "bytes": [
+                        1120,
+                        1125
+                      ]
+                    },
+                    "comments": []
+                  },
+                  {
+                    "name": "z",
+                    "type": "int",
+                    "initializer": "y + 1",
+                    "span": {
+                      "start": [
+                        63,
+                        17
+                      ],
+                      "end": [
+                        63,
+                        25
+                      ],
+                      "bytes": [
+                        1153,
+                        1162
+                      ]
+                    },
+                    "comments": []
+                  }
+                ],
+                "body": {
+                  "@entry": {
+                    "kind": "entry",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "@exit": {
+                    "kind": "exit",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "61:9": {
+                    "kind": "statement",
+                    "span": {
+                      "start": [
+                        61,
+                        9
+                      ],
+                      "end": [
+                        61,
+                        18
+                      ],
+                      "bytes": [
+                        1116,
+                        1126
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "63:13": {
+                    "kind": "statement",
+                    "span": {
+                      "start": [
+                        63,
+                        13
+                      ],
+                      "end": [
+                        63,
+                        26
+                      ],
+                      "bytes": [
+                        1149,
+                        1163
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "64:13": {
+                    "kind": "statement",
+                    "span": {
+                      "start": [
+                        64,
+                        13
+                      ],
+                      "end": [
+                        64,
+                        18
+                      ],
+                      "bytes": [
+                        1176,
+                        1182
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "66:9": {
+                    "kind": "return",
+                    "span": {
+                      "start": [
+                        66,
+                        9
+                      ],
+                      "end": [
+                        66,
+                        17
+                      ],
+                      "bytes": [
+                        1201,
+                        1210
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "@formal_in:0": {
+                    "kind": "formal_in",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "x"
+                  },
+                  "@formal_out": {
+                    "kind": "formal_out",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "$ret"
+                  }
+                },
+                "cfg": [
+                  {
+                    "src": "61:9",
+                    "dst": "63:13",
+                    "kind": "fallthrough"
+                  },
+                  {
+                    "src": "63:13",
+                    "dst": "64:13",
+                    "kind": "fallthrough"
+                  },
+                  {
+                    "src": "64:13",
+                    "dst": "66:9",
+                    "kind": "fallthrough"
+                  },
+                  {
+                    "src": "66:9",
+                    "dst": "@exit",
+                    "kind": "return"
+                  },
+                  {
+                    "src": "@entry",
+                    "dst": "61:9",
+                    "kind": "fallthrough"
+                  }
+                ],
+                "cdg": [],
+                "ddg": [
+                  {
+                    "src": "61:9",
+                    "dst": "63:13",
+                    "var": "y",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "63:13",
+                    "dst": "64:13",
+                    "var": "z",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "64:13",
+                    "dst": "66:9",
+                    "var": "y",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "66:9",
+                    "dst": "@formal_out",
+                    "var": "$ret",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@entry",
+                    "dst": "61:9",
+                    "var": "x",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@formal_in:0",
+                    "dst": "61:9",
+                    "var": "x",
+                    "prov": [
+                      "ssa"
+                    ]
+                  }
+                ],
+                "types": {}
+              },
+              "viaFinally(int)": {
+                "id": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/viaFinally(int)",
+                "kind": "method",
+                "signature": "viaFinally(int)",
+                "span": {
+                  "start": [
+                    52,
+                    5
+                  ],
+                  "end": [
+                    58,
+                    5
+                  ],
+                  "bytes": [
+                    958,
+                    1080
+                  ]
+                },
+                "parameters": [
+                  {
+                    "name": "x",
+                    "type": "int",
+                    "span": {
+                      "start": [
+                        52,
+                        20
+                      ],
+                      "end": [
+                        52,
+                        24
+                      ],
+                      "bytes": [
+                        973,
+                        978
+                      ]
+                    },
+                    "modifiers": [],
+                    "decorators": [],
+                    "is_variadic": false
+                  }
+                ],
+                "return_type": "int",
+                "error_channel": [],
+                "modifiers": [],
+                "decorators": [],
+                "type_parameters": [],
+                "body_span": {
+                  "start": [
+                    52,
+                    27
+                  ],
+                  "end": [
+                    58,
+                    5
+                  ],
+                  "bytes": [
+                    980,
+                    1080
+                  ]
+                },
+                "declaration": "int viaFinally(int x)",
+                "is_implicit": false,
+                "comments": [],
+                "is_entrypoint": false,
+                "entrypoint_frameworks": [],
+                "metrics": {
+                  "cyclomatic": 1
+                },
+                "refs": {
+                  "types": [],
+                  "fields": []
+                },
+                "local_variables": [],
+                "body": {
+                  "@entry": {
+                    "kind": "entry",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "@exit": {
+                    "kind": "exit",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "54:20": {
+                    "kind": "call",
+                    "span": {
+                      "start": [
+                        54,
+                        20
+                      ],
+                      "end": [
+                        54,
+                        27
+                      ],
+                      "bytes": [
+                        1015,
+                        1023
+                      ]
+                    },
+                    "callee": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/parse(int)",
+                    "arguments": [
+                      "54:26"
+                    ],
+                    "argument_types": [
+                      "int"
+                    ],
+                    "argument_expr": [
+                      "x"
+                    ],
+                    "callee_signature": "parse(int)",
+                    "method_name": "parse",
+                    "return_type": "int",
+                    "accessibility": "package_private",
+                    "is_static_call": false,
+                    "is_constructor_call": false
+                  },
+                  "56:13": {
+                    "kind": "call",
+                    "span": {
+                      "start": [
+                        56,
+                        13
+                      ],
+                      "end": [
+                        56,
+                        18
+                      ],
+                      "bytes": [
+                        1057,
+                        1063
+                      ]
+                    },
+                    "callee": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/log(int)",
+                    "arguments": [
+                      "56:17"
+                    ],
+                    "argument_types": [
+                      "int"
+                    ],
+                    "argument_expr": [
+                      "x"
+                    ],
+                    "callee_signature": "log(int)",
+                    "method_name": "log",
+                    "return_type": "void",
+                    "accessibility": "package_private",
+                    "is_static_call": false,
+                    "is_constructor_call": false
+                  },
+                  "54:13": {
+                    "kind": "return",
+                    "span": {
+                      "start": [
+                        54,
+                        13
+                      ],
+                      "end": [
+                        54,
+                        28
+                      ],
+                      "bytes": [
+                        1008,
+                        1024
+                      ]
+                    },
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false
+                  },
+                  "@formal_in:0": {
+                    "kind": "formal_in",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "x"
+                  },
+                  "@formal_out": {
+                    "kind": "formal_out",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "$ret"
+                  },
+                  "54:20/actual_in:0": {
+                    "kind": "actual_in",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "arg0",
+                    "parent": "54:20"
+                  },
+                  "54:20/actual_out": {
+                    "kind": "actual_out",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "$ret",
+                    "parent": "54:20"
+                  },
+                  "56:13/actual_in:0": {
+                    "kind": "actual_in",
+                    "arguments": [],
+                    "argument_types": [],
+                    "argument_expr": [],
+                    "is_constructor_call": false,
+                    "of": "arg0",
+                    "parent": "56:13"
+                  }
+                },
+                "cfg": [
+                  {
+                    "src": "54:13",
+                    "dst": "56:13",
+                    "kind": "exception"
+                  },
+                  {
+                    "src": "54:13",
+                    "dst": "56:13",
+                    "kind": "return"
+                  },
+                  {
+                    "src": "56:13",
+                    "dst": "@exit",
+                    "kind": "fallthrough"
+                  },
+                  {
+                    "src": "@entry",
+                    "dst": "54:13",
+                    "kind": "fallthrough"
+                  }
+                ],
+                "cdg": [],
+                "ddg": [
+                  {
+                    "src": "54:13",
+                    "dst": "54:20/actual_in:0",
+                    "var": "arg0",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "54:13",
+                    "dst": "@formal_out",
+                    "var": "$ret",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "54:20/actual_out",
+                    "dst": "54:13",
+                    "var": "$ret",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "56:13",
+                    "dst": "56:13/actual_in:0",
+                    "var": "arg0",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@entry",
+                    "dst": "54:13",
+                    "var": "x",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@entry",
+                    "dst": "56:13",
+                    "var": "x",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@formal_in:0",
+                    "dst": "54:13",
+                    "var": "x",
+                    "prov": [
+                      "ssa"
+                    ]
+                  },
+                  {
+                    "src": "@formal_in:0",
+                    "dst": "56:13",
+                    "var": "x",
+                    "prov": [
+                      "ssa"
+                    ]
+                  }
+                ],
+                "summary": [
+                  {
+                    "src": "54:20/actual_in:0",
+                    "dst": "54:20/actual_out"
+                  }
+                ],
+                "types": {}
+              }
+            },
+            "types": {}
+          }
+        },
+        "content_hash": "626e2a4b43455f5ec6a0c685108942a1cbfa91fc912dbf25b5c601928b605593"
+      }
+    },
+    "call_graph": [
+      {
+        "src": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/compute(int)",
+        "dst": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/log(int)",
+        "prov": [
+          "declared"
+        ],
+        "weight": 1
+      },
+      {
+        "src": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/risky(int)",
+        "dst": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/log(int)",
+        "prov": [
+          "declared"
+        ],
+        "weight": 1
+      },
+      {
+        "src": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/risky(int)",
+        "dst": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/parse(int)",
+        "prov": [
+          "declared"
+        ],
+        "weight": 1
+      },
+      {
+        "src": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/viaFinally(int)",
+        "dst": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/log(int)",
+        "prov": [
+          "declared"
+        ],
+        "weight": 1
+      },
+      {
+        "src": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/viaFinally(int)",
+        "dst": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/parse(int)",
+        "prov": [
+          "declared"
+        ],
+        "weight": 1
+      }
+    ],
+    "param_in": [
+      {
+        "src": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/compute(int)@12:9/actual_in:0",
+        "dst": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/log(int)@formal_in:0",
+        "var": "v"
+      },
+      {
+        "src": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/risky(int)@39:17/actual_in:0",
+        "dst": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/parse(int)@formal_in:0",
+        "var": "x"
+      },
+      {
+        "src": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/risky(int)@43:13/actual_in:0",
+        "dst": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/log(int)@formal_in:0",
+        "var": "v"
+      },
+      {
+        "src": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/viaFinally(int)@54:20/actual_in:0",
+        "dst": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/parse(int)@formal_in:0",
+        "var": "x"
+      },
+      {
+        "src": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/viaFinally(int)@56:13/actual_in:0",
+        "dst": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/log(int)@formal_in:0",
+        "var": "v"
+      }
+    ],
+    "param_out": [
+      {
+        "src": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/parse(int)@formal_out",
+        "dst": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/risky(int)@39:17/actual_out",
+        "var": "$ret"
+      },
+      {
+        "src": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/parse(int)@formal_out",
+        "dst": "can://dataflow-test/java/src/main/java/org/example/Dataflow.java/Dataflow/viaFinally(int)@54:20/actual_out",
+        "var": "$ret"
+      }
+    ],
+    "artifacts": {
+      "build.gradle": {
+        "id": "can://dataflow-test/artifact/build.gradle",
+        "kind": "artifact",
+        "path": "build.gradle",
+        "format": "gradle",
+        "roles": [
+          "dependency-manifest",
+          "tool-config"
+        ],
+        "size_bytes": 269,
+        "sha256": "8a9d099e77bc4af0d3ee7a7cc6f2907d2f0d7863694230b1cea35d7385851361",
+        "source": "plugins {\n    id 'java'\n}\n\nrepositories {\n    mavenCentral()\n}\n\njava {\n    sourceCompatibility = JavaVersion.VERSION_11\n    targetCompatibility = JavaVersion.VERSION_11\n}\n\nsourceSets {\n    main {\n        java {\n            srcDirs = [\"src/main/java\"]\n        }\n    }\n}\n",
+        "text_truncated": false,
+        "extraction": "full",
+        "config_keys": []
+      },
+      "settings.gradle": {
+        "id": "can://dataflow-test/artifact/settings.gradle",
+        "kind": "artifact",
+        "path": "settings.gradle",
+        "format": "gradle",
+        "roles": [
+          "tool-config"
+        ],
+        "size_bytes": 35,
+        "sha256": "052333f47fab4e5afdb765d9bba86e67142a1b7dfab36b4517bf67a9e9c93ce8",
+        "source": "rootProject.name = 'dataflow-test'\n",
+        "text_truncated": false,
+        "extraction": "none",
+        "config_keys": []
+      }
+    },
+    "entrypoint_report": {
+      "frameworks_detected": [],
+      "rulesets": [
+        "jakarta",
+        "struts",
+        "spring",
+        "camel",
+        "jaxrs"
+      ],
+      "unresolved": {},
+      "errors": []
+    }
+  }
+}

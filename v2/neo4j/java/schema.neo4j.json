@@ -1,0 +1,552 @@
+{
+  "schema_version": "2.0.0",
+  "generator": "codeanalyzer-java",
+  "marker_labels": [
+    "JEntrypoint",
+    "JCanNode"
+  ],
+  "node_labels": [
+    {
+      "label": "JApplication",
+      "merge_label": "JApplication",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "name": "string",
+        "schema_version": "string",
+        "analyzer_name": "string",
+        "analyzer_version": "string",
+        "entrypoint_frameworks": "string[]",
+        "entrypoint_report_json": "string"
+      }
+    },
+    {
+      "label": "JModule",
+      "merge_label": "JModule",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "file_key": "string",
+        "package": "string",
+        "content_hash": "string"
+      }
+    },
+    {
+      "label": "JType",
+      "merge_label": "JSymbol",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "name": "string",
+        "kind": "string",
+        "modifiers": "string[]",
+        "base_types": "string[]",
+        "interfaces": "string[]",
+        "docstring": "string",
+        "is_entrypoint": "boolean",
+        "entrypoint_frameworks": "string[]",
+        "start_line": "integer",
+        "end_line": "integer"
+      }
+    },
+    {
+      "label": "JCallable",
+      "merge_label": "JSymbol",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "name": "string",
+        "signature": "string",
+        "kind": "string",
+        "declaration": "string",
+        "return_type": "string",
+        "parameters_json": "string",
+        "modifiers": "string[]",
+        "error_channel": "string[]",
+        "code": "string",
+        "docstring": "string",
+        "cyclomatic_complexity": "integer",
+        "referenced_types": "string[]",
+        "accessed_fields": "string[]",
+        "is_implicit": "boolean",
+        "is_entrypoint": "boolean",
+        "entrypoint_frameworks": "string[]",
+        "start_line": "integer",
+        "end_line": "integer"
+      }
+    },
+    {
+      "label": "JExternal",
+      "merge_label": "JSymbol",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "kind": "string",
+        "signature": "string",
+        "declaring_type": "string"
+      }
+    },
+    {
+      "label": "JField",
+      "merge_label": "JField",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "initializer": "string",
+        "modifiers": "string[]",
+        "docstring": "string",
+        "start_line": "integer",
+        "end_line": "integer"
+      }
+    },
+    {
+      "label": "JVariable",
+      "merge_label": "JVariable",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "initializer": "string",
+        "start_line": "integer",
+        "end_line": "integer"
+      }
+    },
+    {
+      "label": "JEnumConstant",
+      "merge_label": "JEnumConstant",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "name": "string",
+        "arguments": "string[]",
+        "docstring": "string"
+      }
+    },
+    {
+      "label": "JRecordComponent",
+      "merge_label": "JRecordComponent",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "modifiers": "string[]",
+        "is_variadic": "boolean",
+        "docstring": "string"
+      }
+    },
+    {
+      "label": "JBodyNode",
+      "merge_label": "JBodyNode",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "kind": "string",
+        "method_name": "string",
+        "receiver_expr": "string",
+        "receiver_type": "string",
+        "return_type": "string",
+        "accessibility": "string",
+        "is_constructor_call": "boolean",
+        "is_static_call": "boolean",
+        "argument_types": "string[]",
+        "argument_expr": "string[]",
+        "var": "string",
+        "call_node": "string",
+        "start_line": "integer",
+        "end_line": "integer"
+      }
+    },
+    {
+      "label": "JPackage",
+      "merge_label": "JPackage",
+      "key": "name",
+      "properties": {
+        "name": "string"
+      }
+    },
+    {
+      "label": "JAnnotation",
+      "merge_label": "JAnnotation",
+      "key": "name",
+      "properties": {
+        "name": "string"
+      }
+    },
+    {
+      "label": "Artifact",
+      "merge_label": "Artifact",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "path": "string",
+        "format": "string",
+        "roles": "string[]",
+        "size_bytes": "integer",
+        "sha256": "string",
+        "source": "string",
+        "text_truncated": "boolean",
+        "extraction": "string"
+      }
+    },
+    {
+      "label": "Package",
+      "merge_label": "Package",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "ecosystem": "string",
+        "group": "string",
+        "name": "string"
+      }
+    },
+    {
+      "label": "ConfigKey",
+      "merge_label": "ConfigKey",
+      "key": "id",
+      "properties": {
+        "id": "string",
+        "key": "string",
+        "namespace": "string",
+        "value": "string",
+        "references": "string[]",
+        "start_line": "integer",
+        "end_line": "integer"
+      }
+    }
+  ],
+  "relationship_types": [
+    {
+      "type": "J_HAS_MODULE",
+      "from": [
+        "JApplication"
+      ],
+      "to": [
+        "JModule"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "J_DECLARES",
+      "from": [
+        "JModule",
+        "JType",
+        "JCallable"
+      ],
+      "to": [
+        "JType"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "J_HAS_METHOD",
+      "from": [
+        "JType"
+      ],
+      "to": [
+        "JCallable"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "J_HAS_FIELD",
+      "from": [
+        "JType"
+      ],
+      "to": [
+        "JField"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "J_DECLARES_VAR",
+      "from": [
+        "JCallable"
+      ],
+      "to": [
+        "JVariable"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "J_HAS_ENUM_CONSTANT",
+      "from": [
+        "JType"
+      ],
+      "to": [
+        "JEnumConstant"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "J_HAS_RECORD_COMPONENT",
+      "from": [
+        "JType"
+      ],
+      "to": [
+        "JRecordComponent"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "J_HAS_BODY_NODE",
+      "from": [
+        "JCallable"
+      ],
+      "to": [
+        "JBodyNode"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "J_RESOLVES_TO",
+      "from": [
+        "JBodyNode"
+      ],
+      "to": [
+        "JCallable",
+        "JExternal"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "J_CALLS",
+      "from": [
+        "JCallable",
+        "JExternal"
+      ],
+      "to": [
+        "JCallable",
+        "JExternal"
+      ],
+      "properties": {
+        "weight": "integer",
+        "prov": "string[]"
+      }
+    },
+    {
+      "type": "J_EXTENDS",
+      "from": [
+        "JType"
+      ],
+      "to": [
+        "JType"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "J_IMPLEMENTS",
+      "from": [
+        "JType"
+      ],
+      "to": [
+        "JType"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "J_IMPORTS",
+      "from": [
+        "JModule"
+      ],
+      "to": [
+        "JModule",
+        "JPackage"
+      ],
+      "properties": {
+        "spellings": "string[]",
+        "is_static": "boolean",
+        "is_wildcard": "boolean"
+      }
+    },
+    {
+      "type": "J_ANNOTATED_BY",
+      "from": [
+        "JType",
+        "JCallable",
+        "JField"
+      ],
+      "to": [
+        "JAnnotation"
+      ],
+      "properties": {
+        "arguments": "string[]"
+      }
+    },
+    {
+      "type": "J_CFG_NEXT",
+      "from": [
+        "JBodyNode"
+      ],
+      "to": [
+        "JBodyNode"
+      ],
+      "properties": {
+        "kind": "string",
+        "_k": "string"
+      }
+    },
+    {
+      "type": "J_CDG",
+      "from": [
+        "JBodyNode"
+      ],
+      "to": [
+        "JBodyNode"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "J_DDG",
+      "from": [
+        "JBodyNode"
+      ],
+      "to": [
+        "JBodyNode"
+      ],
+      "properties": {
+        "var": "string",
+        "prov": "string[]",
+        "_k": "string"
+      }
+    },
+    {
+      "type": "J_PARAM_IN",
+      "from": [
+        "JBodyNode"
+      ],
+      "to": [
+        "JBodyNode"
+      ],
+      "properties": {
+        "var": "string"
+      }
+    },
+    {
+      "type": "J_PARAM_OUT",
+      "from": [
+        "JBodyNode"
+      ],
+      "to": [
+        "JBodyNode"
+      ],
+      "properties": {
+        "var": "string"
+      }
+    },
+    {
+      "type": "J_SUMMARY",
+      "from": [
+        "JBodyNode"
+      ],
+      "to": [
+        "JBodyNode"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "HAS_ARTIFACT",
+      "from": [
+        "JApplication"
+      ],
+      "to": [
+        "Artifact"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "DEFINES_CONFIG",
+      "from": [
+        "Artifact"
+      ],
+      "to": [
+        "ConfigKey"
+      ],
+      "properties": {}
+    },
+    {
+      "type": "DECLARES_DEPENDENCY",
+      "from": [
+        "Artifact"
+      ],
+      "to": [
+        "Package"
+      ],
+      "properties": {
+        "spec": "string",
+        "kind": "string",
+        "extras": "string[]",
+        "prov": "string[]",
+        "direct": "boolean",
+        "_k": "string"
+      }
+    },
+    {
+      "type": "LOCKS",
+      "from": [
+        "Artifact"
+      ],
+      "to": [
+        "Package"
+      ],
+      "properties": {
+        "version": "string"
+      }
+    },
+    {
+      "type": "J_USES_CONFIG",
+      "from": [
+        "JBodyNode",
+        "JCallable",
+        "JField",
+        "JType"
+      ],
+      "to": [
+        "ConfigKey"
+      ],
+      "properties": {
+        "prov": "string[]"
+      }
+    },
+    {
+      "type": "J_READS_CONFIG_UNRESOLVED",
+      "from": [
+        "JApplication"
+      ],
+      "to": [
+        "JExternal"
+      ],
+      "properties": {
+        "key": "string",
+        "reason": "string",
+        "prov": "string[]",
+        "_k": "string"
+      }
+    }
+  ],
+  "constraints": [
+    "CREATE CONSTRAINT japplication_id IF NOT EXISTS FOR (x:JApplication) REQUIRE x.id IS UNIQUE",
+    "CREATE CONSTRAINT jmodule_id IF NOT EXISTS FOR (x:JModule) REQUIRE x.id IS UNIQUE",
+    "CREATE CONSTRAINT jsymbol_id IF NOT EXISTS FOR (x:JSymbol) REQUIRE x.id IS UNIQUE",
+    "CREATE CONSTRAINT jfield_id IF NOT EXISTS FOR (x:JField) REQUIRE x.id IS UNIQUE",
+    "CREATE CONSTRAINT jvariable_id IF NOT EXISTS FOR (x:JVariable) REQUIRE x.id IS UNIQUE",
+    "CREATE CONSTRAINT jenumconstant_id IF NOT EXISTS FOR (x:JEnumConstant) REQUIRE x.id IS UNIQUE",
+    "CREATE CONSTRAINT jrecordcomponent_id IF NOT EXISTS FOR (x:JRecordComponent) REQUIRE x.id IS UNIQUE",
+    "CREATE CONSTRAINT jbodynode_id IF NOT EXISTS FOR (x:JBodyNode) REQUIRE x.id IS UNIQUE",
+    "CREATE CONSTRAINT jpackage_name IF NOT EXISTS FOR (x:JPackage) REQUIRE x.name IS UNIQUE",
+    "CREATE CONSTRAINT jannotation_name IF NOT EXISTS FOR (x:JAnnotation) REQUIRE x.name IS UNIQUE",
+    "CREATE CONSTRAINT artifact_id IF NOT EXISTS FOR (x:Artifact) REQUIRE x.id IS UNIQUE",
+    "CREATE CONSTRAINT package_id IF NOT EXISTS FOR (x:Package) REQUIRE x.id IS UNIQUE",
+    "CREATE CONSTRAINT configkey_id IF NOT EXISTS FOR (x:ConfigKey) REQUIRE x.id IS UNIQUE"
+  ],
+  "indexes": [
+    "CREATE INDEX j_callable_name IF NOT EXISTS FOR (c:JCallable) ON (c.name)",
+    "CREATE INDEX j_type_name IF NOT EXISTS FOR (t:JType) ON (t.name)",
+    "CREATE INDEX j_annotation_name_idx IF NOT EXISTS FOR (an:JAnnotation) ON (an.name)",
+    "CREATE FULLTEXT INDEX j_code_fts IF NOT EXISTS FOR (c:JCallable) ON EACH [c.code, c.docstring]",
+    "CREATE INDEX j_can_node_id IF NOT EXISTS FOR (n:JCanNode) ON (n.id)"
+  ]
+}

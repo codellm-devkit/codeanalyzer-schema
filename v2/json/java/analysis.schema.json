@@ -1,0 +1,704 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codellm-devkit.github.io/schema/v2/java/analysis.schema.json",
+  "title": "codeanalyzer-java v2 analysis output",
+  "description": "What codeanalyzer-java v3.0.1 emits for `--emit json`. Every node $refs the canonical v2 spine and closes with `unevaluatedProperties: false`, so this file is exhaustive by construction: a field the analyzer starts emitting that nobody recorded here fails validation. Property names are the Gson LOWER_CASE_WITH_UNDERSCORES rendering of the Lombok @Data field names; nulls are never serialized, so absent means 'no fact'.",
+  "x-cldk": {
+    "schemaVersion": "2.0.0",
+    "language": "java",
+    "source": {
+      "repo": "codellm-devkit/codeanalyzer-java",
+      "release": "v3.0.1",
+      "definedIn": "src/main/java/com/ibm/cldk/schema/"
+    },
+    "canonical": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json",
+    "extends": [
+      "type: type_parameters, enum_constants, record_components, is_entrypoint_class, base_types, interfaces",
+      "callable: error_channel, type_parameters, body_span, declaration, is_implicit, is_entrypoint, metrics, refs, local_variables",
+      "body node: rich call-site facts (method_name, receiver_expr, receiver_type, argument_types, argument_expr, callee_signature, accessibility, is_static_call, is_constructor_call, comment)",
+      "import: is_static, is_wildcard; comment: is_javadoc; parameter: is_variadic; artifact: text_truncated; dependency: group"
+    ],
+    "omits": [
+      "envelope k_limit (java does not bound access paths in the payload)",
+      "application config_uses / config_reads / unresolved_imports / repository",
+      "module functions and fields (java has no module-level callables or bindings)"
+    ],
+    "diverges": [
+      "body node / parameter `id`: not emitted yet. python and typescript carry the global ordinal id on every body node and the formal-vertex id on every parameter (codeanalyzer-python#176); java's uptake is a child of codellm-devkit/.github#56."
+    ]
+  },
+  "allOf": [
+    {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json"
+    }
+  ],
+  "properties": {
+    "language": {
+      "const": "java"
+    },
+    "application": {
+      "$ref": "#/$defs/JavaApplication"
+    }
+  },
+  "unevaluatedProperties": false,
+  "$defs": {
+    "JavaApplication": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Application",
+      "properties": {
+        "symbol_table": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/JavaModule"
+          }
+        },
+        "external_symbols": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/JavaExternalSymbol"
+          }
+        },
+        "artifacts": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/JavaArtifact"
+          }
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaDependency"
+          }
+        },
+        "entrypoint_report": {
+          "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/EntrypointReport"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "JavaModule": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Module",
+      "required": [
+        "span"
+      ],
+      "properties": {
+        "package": {
+          "description": "The declared package (the Java field is packageName; `package` is a Java keyword).",
+          "type": "string"
+        },
+        "imports": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaImport"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaComment"
+          }
+        },
+        "types": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/JavaType"
+          }
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "JavaType": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Type",
+      "properties": {
+        "kind": {
+          "enum": [
+            "class",
+            "interface",
+            "enum",
+            "record",
+            "annotation"
+          ]
+        },
+        "base_types": {
+          "description": "extends - resolved names of the supertypes.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "interfaces": {
+          "description": "implements - resolved names of the implemented interfaces.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type_parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaTypeParameter"
+          }
+        },
+        "is_entrypoint_class": {
+          "type": "boolean"
+        },
+        "enum_constants": {
+          "description": "Present only on enum types, in declaration order.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaEnumConstant"
+          }
+        },
+        "record_components": {
+          "description": "Present only on record types, in declaration order.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaRecordComponent"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaComment"
+          }
+        },
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaDecorator"
+          }
+        },
+        "fields": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/JavaField"
+          }
+        },
+        "callables": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/JavaCallable"
+          }
+        },
+        "types": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/JavaType"
+          }
+        },
+        "entrypoint_frameworks": {
+          "description": "Frameworks that route to this declaration, when the entrypoint pass matched one.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "JavaCallable": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Callable",
+      "properties": {
+        "kind": {
+          "enum": [
+            "method",
+            "constructor",
+            "initializer"
+          ]
+        },
+        "error_channel": {
+          "description": "The `throws` clause, generalized: one field across languages.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type_parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaTypeParameter"
+          }
+        },
+        "body_span": {
+          "description": "Span of the body block alone; absent when the callable has no body. Slice this for just the method body.",
+          "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Span"
+        },
+        "declaration": {
+          "description": "Signature-with-parameter-names text, e.g. `public int add(int a, int b)`.",
+          "type": "string"
+        },
+        "is_implicit": {
+          "description": "A compiler-generated member the source does not declare (discovered at L2).",
+          "type": "boolean"
+        },
+        "is_entrypoint": {
+          "type": "boolean"
+        },
+        "metrics": {
+          "$ref": "#/$defs/JavaMetrics"
+        },
+        "refs": {
+          "$ref": "#/$defs/JavaRefs"
+        },
+        "local_variables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaVariableDeclaration"
+          }
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaParameter"
+          }
+        },
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaDecorator"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaComment"
+          }
+        },
+        "body": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/JavaBodyNode"
+          }
+        },
+        "types": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/JavaType"
+          }
+        },
+        "cdg": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaIdEdge"
+          }
+        },
+        "summary": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaIdEdge"
+          }
+        },
+        "entrypoint_frameworks": {
+          "description": "Frameworks that route to this declaration, when the entrypoint pass matched one.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "unevaluatedProperties": false,
+      "allOf": [
+        {
+          "description": "A declared callable always carries a span; only an implicit (compiler-generated) member may lack one.",
+          "if": {
+            "required": [
+              "is_implicit"
+            ],
+            "properties": {
+              "is_implicit": {
+                "const": true
+              }
+            }
+          },
+          "then": true,
+          "else": {
+            "required": [
+              "span"
+            ]
+          }
+        }
+      ]
+    },
+    "JavaBodyNode": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/BodyNode",
+      "properties": {
+        "kind": {
+          "description": "What this analyzer actually emits: `call` at L1, the AST regions at L3, and the L3/L4 synthetic vertices.",
+          "enum": [
+            "call",
+            "statement",
+            "return",
+            "branch",
+            "loop",
+            "switch",
+            "entry",
+            "exit",
+            "formal_in",
+            "formal_out",
+            "actual_in",
+            "actual_out"
+          ]
+        },
+        "arguments": {
+          "description": "call nodes: the local ids of the argument body nodes.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "method_name": {
+          "description": "The invoked name, or `<init>` for a constructor call.",
+          "type": "string"
+        },
+        "receiver_expr": {
+          "type": "string"
+        },
+        "receiver_type": {
+          "description": "Resolved receiver type, or the instantiated type of a `new` expression.",
+          "type": "string"
+        },
+        "argument_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "argument_expr": {
+          "description": "The argument expressions as written, positionally.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "callee_signature": {
+          "description": "Erased signature of the resolved callee; absent when unresolvable.",
+          "type": "string"
+        },
+        "return_type": {
+          "type": "string"
+        },
+        "accessibility": {
+          "description": "Declared accessibility of the callee; absent when the callee does not resolve.",
+          "enum": [
+            "public",
+            "protected",
+            "private",
+            "package_private"
+          ]
+        },
+        "is_static_call": {
+          "description": "Absent (not false) when the callee does not resolve - unknown rather than 'not static'.",
+          "type": "boolean"
+        },
+        "is_constructor_call": {
+          "type": "boolean"
+        },
+        "comment": {
+          "description": "Comment attached to the construct containing this call site.",
+          "$ref": "#/$defs/JavaComment"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "JavaField": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Field",
+      "properties": {
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaComment"
+          }
+        },
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaDecorator"
+          }
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "JavaParameter": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Parameter",
+      "properties": {
+        "modifiers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaDecorator"
+          }
+        },
+        "is_variadic": {
+          "description": "A varargs parameter; `type` stays the element type.",
+          "type": "boolean"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "JavaImport": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Import",
+      "properties": {
+        "path": {
+          "description": "The imported name as written (or the package, for a wildcard import).",
+          "type": "string"
+        },
+        "is_static": {
+          "type": "boolean"
+        },
+        "is_wildcard": {
+          "type": "boolean"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "JavaComment": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Comment",
+      "properties": {
+        "is_javadoc": {
+          "type": "boolean"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "JavaDecorator": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Decorator",
+      "properties": {
+        "args": {
+          "description": "Annotation arguments as written. Java's flat form of the canonical decorator arguments.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "JavaTypeParameter": {
+      "description": "One declared type parameter. Order is declaration order - a type argument binds by position.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "bounds": {
+          "description": "Declared bounds, resolved. An unbounded T yields none - the implicit Object bound is left absent rather than fabricated.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "span": {
+          "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Span"
+        },
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaDecorator"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "JavaEnumConstant": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "span": {
+          "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Span"
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaComment"
+          }
+        },
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaDecorator"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "JavaRecordComponent": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "span": {
+          "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Span"
+        },
+        "modifiers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "decorators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaDecorator"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaComment"
+          }
+        },
+        "is_variadic": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "JavaVariableDeclaration": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "initializer": {
+          "type": "string"
+        },
+        "span": {
+          "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Span"
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaComment"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "JavaMetrics": {
+      "type": "object",
+      "properties": {
+        "cyclomatic": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "JavaRefs": {
+      "description": "Cheap cross-references the symbol pass already knows.",
+      "type": "object",
+      "properties": {
+        "types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "JavaIdEdge": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/IdEdge",
+      "unevaluatedProperties": false
+    },
+    "JavaExternalSymbol": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/ExternalSymbol",
+      "properties": {
+        "kind": {
+          "const": "external"
+        },
+        "signature": {
+          "description": "Erased signature of the out-of-project callable.",
+          "type": "string"
+        },
+        "declaring_type": {
+          "description": "Binary name of the declaring type, e.g. java.util.Map$Entry.",
+          "type": "string"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "JavaArtifact": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Artifact",
+      "properties": {
+        "text_truncated": {
+          "description": "True when `source` was truncated to fit memory limits.",
+          "type": "boolean"
+        },
+        "config_keys": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JavaConfigKey"
+          }
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "JavaConfigKey": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/ConfigKey",
+      "properties": {
+        "namespace": {
+          "description": "properties | yaml | xml | env | dockerfile.",
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "JavaDependency": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/Dependency",
+      "properties": {
+        "group": {
+          "description": "Maven groupId; with `name` (the artifactId) it forms the coordinate.",
+          "type": "string"
+        },
+        "ecosystem": {
+          "const": "maven"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "JavaParamEdge": {
+      "$ref": "https://codellm-devkit.github.io/schema/v2/analysis.schema.json#/$defs/ParamEdge",
+      "unevaluatedProperties": false
+    }
+  }
+}
