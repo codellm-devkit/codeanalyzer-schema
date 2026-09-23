@@ -150,6 +150,11 @@
           "description": "can://<lang>/<app>",
           "type": "string"
         },
+        "name": {
+          "description": "The resolved application name the id is built from: a non-blank --app-name, else the input directory's basename. Optional until codeanalyzer-java and codeanalyzer-python emit it, then required (codellm-devkit/.github#93).",
+          "type": "string",
+          "minLength": 1
+        },
         "kind": {
           "const": "application"
         },
