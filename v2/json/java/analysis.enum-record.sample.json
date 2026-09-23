@@ -4,7 +4,7 @@
   "max_level": 2,
   "analyzer": {
     "name": "codeanalyzer-java",
-    "version": "3.1.2"
+    "version": "3.3.3"
   },
   "application": {
     "id": "can://enum-record-bodies-test",

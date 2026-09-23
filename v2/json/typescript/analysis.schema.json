@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://codellm-devkit.github.io/schema/v2/typescript/analysis.schema.json",
   "title": "codeanalyzer-typescript v2 analysis output",
-  "description": "What codeanalyzer-typescript (cants) v1.2.0 emits for `--emit json`. Every node $refs the canonical v2 spine and closes with `unevaluatedProperties: false`, so this file is exhaustive by construction. Field names are the snake_case interface members of src/schema/schema.ts; the emitter strips the internal join fields (call_sites, config_accesses, abs_path) and the module cache metadata (last_modified, file_size) from the wire, keeping content_hash.",
+  "description": "What codeanalyzer-typescript (cants) v1.6.3 emits for `--emit json`. Every node $refs the canonical v2 spine and closes with `unevaluatedProperties: false`, so this file is exhaustive by construction. Field names are the snake_case interface members of src/schema/schema.ts; the emitter strips the internal join fields (call_sites, config_accesses, abs_path) and the module cache metadata (last_modified, file_size) from the wire, keeping content_hash.",
   "x-cldk": {
     "schemaVersion": "2.0.0",
     "language": "typescript",

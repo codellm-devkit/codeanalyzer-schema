@@ -28,7 +28,8 @@
         "id": "string",
         "file_key": "string",
         "package": "string",
-        "content_hash": "string"
+        "content_hash": "string",
+        "source": "string"
       }
     },
     {
@@ -43,10 +44,15 @@
         "base_types": "string[]",
         "interfaces": "string[]",
         "docstring": "string",
+        "type_parameters_json": "string",
         "is_entrypoint": "boolean",
         "entrypoint_frameworks": "string[]",
         "start_line": "integer",
-        "end_line": "integer"
+        "start_column": "integer",
+        "end_line": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer"
       }
     },
     {
@@ -71,8 +77,19 @@
         "is_implicit": "boolean",
         "is_entrypoint": "boolean",
         "entrypoint_frameworks": "string[]",
+        "type_parameters_json": "string",
         "start_line": "integer",
-        "end_line": "integer"
+        "start_column": "integer",
+        "end_line": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer",
+        "body_start_line": "integer",
+        "body_start_column": "integer",
+        "body_end_line": "integer",
+        "body_end_column": "integer",
+        "body_start_byte": "integer",
+        "body_end_byte": "integer"
       }
     },
     {
@@ -98,7 +115,11 @@
         "modifiers": "string[]",
         "docstring": "string",
         "start_line": "integer",
-        "end_line": "integer"
+        "start_column": "integer",
+        "end_line": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer"
       }
     },
     {
@@ -111,7 +132,11 @@
         "type": "string",
         "initializer": "string",
         "start_line": "integer",
-        "end_line": "integer"
+        "start_column": "integer",
+        "end_line": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer"
       }
     },
     {
@@ -122,7 +147,13 @@
         "id": "string",
         "name": "string",
         "arguments": "string[]",
-        "docstring": "string"
+        "docstring": "string",
+        "start_line": "integer",
+        "start_column": "integer",
+        "end_line": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer"
       }
     },
     {
@@ -135,7 +166,13 @@
         "type": "string",
         "modifiers": "string[]",
         "is_variadic": "boolean",
-        "docstring": "string"
+        "docstring": "string",
+        "start_line": "integer",
+        "start_column": "integer",
+        "end_line": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer"
       }
     },
     {
@@ -154,10 +191,16 @@
         "is_static_call": "boolean",
         "argument_types": "string[]",
         "argument_expr": "string[]",
+        "callee_signature": "string",
+        "arguments": "string[]",
         "var": "string",
         "call_node": "string",
         "start_line": "integer",
-        "end_line": "integer"
+        "start_column": "integer",
+        "end_line": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer"
       }
     },
     {
@@ -214,7 +257,11 @@
         "value": "string",
         "references": "string[]",
         "start_line": "integer",
-        "end_line": "integer"
+        "start_column": "integer",
+        "end_line": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer"
       }
     }
   ],
@@ -367,13 +414,22 @@
       "from": [
         "JType",
         "JCallable",
-        "JField"
+        "JField",
+        "JEnumConstant",
+        "JRecordComponent"
       ],
       "to": [
         "JAnnotation"
       ],
       "properties": {
-        "arguments": "string[]"
+        "arguments": "string[]",
+        "_k": "string",
+        "start_line": "integer",
+        "start_column": "integer",
+        "end_line": "integer",
+        "end_column": "integer",
+        "start_byte": "integer",
+        "end_byte": "integer"
       }
     },
     {
@@ -524,6 +580,19 @@
         "reason": "string",
         "prov": "string[]",
         "_k": "string"
+      }
+    },
+    {
+      "type": "J_DISPATCHES_TO",
+      "from": [
+        "JBodyNode"
+      ],
+      "to": [
+        "Artifact"
+      ],
+      "properties": {
+        "via": "string",
+        "prov": "string[]"
       }
     }
   ],

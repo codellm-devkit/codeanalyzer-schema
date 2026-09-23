@@ -4,7 +4,7 @@
   "max_level": 4,
   "analyzer": {
     "name": "codeanalyzer-java",
-    "version": "3.1.2"
+    "version": "3.3.3"
   },
   "application": {
     "id": "can://dataflow-test",
@@ -311,7 +311,9 @@
                     },
                     "arguments": [],
                     "argument_types": [],
-                    "argument_expr": [],
+                    "argument_expr": [
+                      "r"
+                    ],
                     "is_constructor_call": false
                   },
                   "@formal_in:0": {
@@ -706,7 +708,9 @@
                     },
                     "arguments": [],
                     "argument_types": [],
-                    "argument_expr": [],
+                    "argument_expr": [
+                      "sum"
+                    ],
                     "is_constructor_call": false
                   },
                   "@formal_in:0": {
@@ -1022,7 +1026,9 @@
                     },
                     "arguments": [],
                     "argument_types": [],
-                    "argument_expr": [],
+                    "argument_expr": [
+                      "-1"
+                    ],
                     "is_constructor_call": false
                   },
                   "33:9": {
@@ -1043,7 +1049,9 @@
                     },
                     "arguments": [],
                     "argument_types": [],
-                    "argument_expr": [],
+                    "argument_expr": [
+                      "x"
+                    ],
                     "is_constructor_call": false
                   },
                   "@formal_in:0": {
@@ -1366,7 +1374,9 @@
                     },
                     "arguments": [],
                     "argument_types": [],
-                    "argument_expr": [],
+                    "argument_expr": [
+                      "x"
+                    ],
                     "is_constructor_call": false
                   },
                   "@formal_in:0": {
@@ -1684,7 +1694,9 @@
                     },
                     "arguments": [],
                     "argument_types": [],
-                    "argument_expr": [],
+                    "argument_expr": [
+                      "r"
+                    ],
                     "is_constructor_call": false
                   },
                   "@formal_in:0": {
@@ -2074,7 +2086,9 @@
                     },
                     "arguments": [],
                     "argument_types": [],
-                    "argument_expr": [],
+                    "argument_expr": [
+                      "y"
+                    ],
                     "is_constructor_call": false
                   },
                   "@formal_in:0": {
@@ -2346,7 +2360,9 @@
                     },
                     "arguments": [],
                     "argument_types": [],
-                    "argument_expr": [],
+                    "argument_expr": [
+                      "parse(x)"
+                    ],
                     "is_constructor_call": false
                   },
                   "@formal_in:0": {

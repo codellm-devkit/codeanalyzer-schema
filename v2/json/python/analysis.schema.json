@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://codellm-devkit.github.io/schema/v2/python/analysis.schema.json",
   "title": "codeanalyzer-python v2 analysis output",
-  "description": "What codeanalyzer-python (canpy) v1.4.0 emits for `--emit json`. Every node $refs the canonical v2 spine and closes with `unevaluatedProperties: false`, so this file is exhaustive by construction. Property names are the Pydantic field names; the payload is dumped with exclude_none, so an optional fact is absent rather than null, and the internal `call_sites` list is stripped at emit time.",
+  "description": "What codeanalyzer-python (canpy) v1.5.4 emits for `--emit json`. Every node $refs the canonical v2 spine and closes with `unevaluatedProperties: false`, so this file is exhaustive by construction. Property names are the Pydantic field names; the payload is dumped with exclude_none, so an optional fact is absent rather than null, and the internal `call_sites` list is stripped at emit time.",
   "x-cldk": {
     "schemaVersion": "2.0.0",
     "language": "python",
